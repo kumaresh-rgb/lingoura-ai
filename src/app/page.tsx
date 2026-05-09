@@ -30,23 +30,6 @@ const FontLoader = () => (
       position: relative;
     }
 
-    /* ── Mesh Background ── */
-    .bg-mesh {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      z-index: -1;
-      background-color: #FAFBFF;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
-        radial-gradient(at 0% 50%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-        radial-gradient(at 80% 20%, rgba(244, 114, 182, 0.15) 0px, transparent 50%);
-      filter: blur(80px);
-      pointer-events: none;
-    }
-
     /* ── Animations ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(32px); }
@@ -742,7 +725,6 @@ export default function LearnFlowLanding() {
   return (
     <>
       <FontLoader />
-      <div className="bg-mesh" />
 
       {/* NAV */}
       <nav className="nav">

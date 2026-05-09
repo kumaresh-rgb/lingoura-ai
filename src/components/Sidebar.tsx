@@ -41,7 +41,7 @@ export function Sidebar({ isCollapsed, isPinned, togglePin }: { isCollapsed: boo
     <motion.aside 
       animate={{ width: isCollapsed ? 80 : 288 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed left-0 top-0 h-screen bg-surface dark:bg-surface-container-low/80 dark:backdrop-blur-xl z-50 flex flex-col border-r border-slate-200/60 dark:border-white/5"
+      className="fixed left-0 top-0 h-screen bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl z-50 flex flex-col border-r border-slate-200/60 dark:border-white/5"
     >
       {/* Brand Section */}
       <div className={cn(
@@ -77,10 +77,10 @@ export function Sidebar({ isCollapsed, isPinned, togglePin }: { isCollapsed: boo
               key={item.href} 
               href={item.href}
               className={cn(
-                "flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group relative",
+                "flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group relative border border-transparent",
                 isActive 
-                  ? "bg-indigo-50/50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm shadow-indigo-100/20" 
-                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-indigo-50/60 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm border-indigo-100/50 dark:border-indigo-500/20" 
+                  : "text-slate-500 dark:text-slate-400 hover:bg-white/60 dark:hover:bg-white/10 hover:text-indigo-600 dark:hover:text-white hover:border-slate-200/50 dark:hover:border-white/10"
               )}
             >
               <div className="flex-shrink-0">

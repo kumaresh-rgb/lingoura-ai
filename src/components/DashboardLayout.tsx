@@ -31,11 +31,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isCollapsed = !isPinned && !isHovered;
 
   return (
-    <div className="min-h-screen bg-surface relative overflow-hidden">
-      {/* Mesh Background Blobs (Static background elements) */}
-      <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-200/20 dark:bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none z-0" />
-      <div className="fixed bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-violet-200/20 dark:bg-violet-500/10 blur-[120px] rounded-full pointer-events-none z-0" />
-
+    <div className="min-h-screen bg-transparent relative">
       <Header isSidebarCollapsed={isCollapsed} />
       
       <div className="flex relative z-10">

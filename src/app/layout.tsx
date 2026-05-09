@@ -35,6 +35,8 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 
+import { MeshBackground } from "@/components/MeshBackground";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -53,6 +55,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <MeshBackground />
           {children}
         </ThemeProvider>
       </body>

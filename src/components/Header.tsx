@@ -35,7 +35,7 @@ export function Header({ isSidebarCollapsed }: { isSidebarCollapsed: boolean }) 
         left: isSidebarCollapsed ? 80 : 288 
       }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 right-0 h-20 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-slate-200/40 dark:border-white/5 z-[40] px-6 md:px-10 flex items-center justify-between lg:left-auto"
+      className="fixed top-0 right-0 h-20 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border-b border-slate-200/40 dark:border-white/5 z-[40] px-6 md:px-10 flex items-center justify-between lg:left-auto"
     >
       {/* Left Section: Contextual Info */}
       <div className="flex items-center gap-5">
