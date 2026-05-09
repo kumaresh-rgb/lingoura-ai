@@ -1,8 +1,8 @@
-# 🚀 Lingoura AI — Professional AI English Fluency Platform
+# 🚀 Lingoura AI — AI-powered English Learning Platform
 
 ![Lingoura AI Banner](https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=1200&q=80)
 
-Lingoura AI is a state-of-the-art, AI-powered platform designed to help users master English fluency through interactive labs, real-time intelligence analytics, and a premium, high-end user experience.
+Lingoura AI helps you organize lessons, generate notes, create quizzes, and stay on track — all powered by AI. It is a state-of-the-art platform designed to master English fluency through interactive labs and real-time intelligence analytics.
 
 ---
 
