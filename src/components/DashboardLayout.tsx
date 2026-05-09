@@ -34,7 +34,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-transparent relative">
       <Header isSidebarCollapsed={isCollapsed} />
       
-      <div className="flex relative z-10">
+      <div className="flex relative">
         <div 
           onMouseEnter={() => setIsHovered(true)} 
           onMouseLeave={() => setIsHovered(false)}
