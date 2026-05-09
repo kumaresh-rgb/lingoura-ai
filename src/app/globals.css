@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors - Lingoura AI Design System */
+  --color-primary: #6366F1;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #4F46E5;
+  --color-on-primary-container: #faf7ff;
+  
+  --color-secondary: #7C3AED;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #F472B6;
+  --color-on-secondary-container: #3e3f87;
+  
+  --color-tertiary: #EC4899;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #DB2777;
+  --color-on-tertiary-container: #edfaff;
+
+  /* Semantic Colors - Default Light Mode */
+  --color-surface: #ffffff;
+  --color-on-surface: #020617;
+  --color-on-surface-variant: #64748b;
+  
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-high: #e2e8f0;
+  --color-surface-container-highest: #cbd5e1;
+  
+  --color-outline: #cbd5e1;
+  --color-outline-variant: #f1f5f9;
+
+  --color-background: #ffffff;
+  --color-on-background: #020617;
+
+  --color-error: #ef4444;
+  --color-on-error: #ffffff;
+  --color-error-container: #fee2e2;
+  --color-on-error-container: #991b1b;
+
+  /* Spacing Scale */
+  --spacing-base: 8px;
+  --spacing-xs: 4px;
+  --spacing-sm: 12px;
+  --spacing-md: 24px;
+  --spacing-lg: 40px;
+  --spacing-xl: 64px;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 24px;
+
+  /* Typography */
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-lexend);
+  --font-serif: var(--font-baskerville);
+}
+
+/* 
+   Tailwind v4: Tell the engine to use the '.dark' class for the 'dark:' variant.
+   By default, v4 uses @media (prefers-color-scheme: dark).
+*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Variable overrides for dark mode */
+.dark {
+  --color-surface: #020617;
+  --color-on-surface: #f8fafc;
+  --color-on-surface-variant: #94a3b8;
+  
+  --color-surface-container-lowest: #020617;
+  --color-surface-container-low: #0f172a;
+  --color-surface-container: #1e293b;
+  --color-surface-container-high: #334155;
+  --color-surface-container-highest: #475569;
+  
+  --color-outline: #334155;
+  --color-outline-variant: #1e293b;
+
+  --color-background: #020617;
+  --color-on-background: #f8fafc;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans antialiased transition-colors duration-500;
+  }
+  
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply backdrop-blur-[12px] bg-white/70;
+  }
+  
+  .primary-gradient {
+    background: linear-gradient(135deg, #4343d5 0%, #5d5fef 100%);
+  }
+}

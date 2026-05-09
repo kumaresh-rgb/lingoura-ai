@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Linguora AI - Lessons Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Lexend:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "primary-container": "#5d5fef",
+                    "on-primary-fixed": "#07006c",
+                    "surface-container": "#eceef0",
+                    "on-secondary-fixed-variant": "#3d3e87",
+                    "surface-bright": "#f7f9fb",
+                    "tertiary-fixed-dim": "#75d3f1",
+                    "secondary-container": "#aeafff",
+                    "primary-fixed-dim": "#c1c1ff",
+                    "secondary-fixed-dim": "#c1c1ff",
+                    "on-surface-variant": "#464555",
+                    "primary-fixed": "#e1e0ff",
+                    "on-tertiary-fixed": "#001f27",
+                    "surface-dim": "#d8dadc",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#007c96",
+                    "secondary": "#5557a0",
+                    "surface-variant": "#e0e3e5",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#2d3133",
+                    "on-secondary-container": "#3e3f87",
+                    "surface-container-high": "#e6e8ea",
+                    "on-primary-container": "#faf7ff",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-container-low": "#f2f4f6",
+                    "inverse-primary": "#c1c1ff",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#0f0d5a",
+                    "primary": "#4343d5",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c7c4d7",
+                    "outline": "#767586",
+                    "on-tertiary-fixed-variant": "#004e5f",
+                    "on-error": "#ffffff",
+                    "on-background": "#191c1e",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#006277",
+                    "secondary-fixed": "#e1dfff",
+                    "background": "#f7f9fb",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-primary-fixed-variant": "#2e2bc2",
+                    "surface-tint": "#4849da",
+                    "on-tertiary-container": "#edfaff",
+                    "tertiary-fixed": "#b4ebff",
+                    "on-surface": "#191c1e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "container-max": "1200px",
+                    "xs": "4px",
+                    "xl": "64px",
+                    "gutter": "24px",
+                    "sm": "12px",
+                    "lg": "40px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Lexend"],
+                    "h3": ["Manrope"],
+                    "body-md": ["Manrope"],
+                    "h1": ["Manrope"],
+                    "button": ["Lexend"],
+                    "h2": ["Manrope"],
+                    "body-lg": ["Manrope"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "h3": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button": ["16px", {"lineHeight": "1.0", "fontWeight": "500"}],
+                    "h2": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+        }
+        .progress-ring {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .primary-gradient-border {
+            border-top: 3px solid;
+            border-image: linear-gradient(to right, #4343d5, #5d5fef) 1;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full flex justify-between items-center px-6 h-16 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-[0_4px_20px_-10px_rgba(93,95,239,0.1)] z-50 font-manrope antialiased">
+<div class="flex items-center gap-8">
+<h1 class="text-xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">Linguora AI</h1>
+<nav class="hidden md:flex gap-6">
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors active:scale-95 duration-200" href="#">Dashboard</a>
+<a class="text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400 pb-1 font-medium active:scale-95 duration-200" href="#">Curriculum</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors active:scale-95 duration-200" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-1.5 text-sm focus:ring-2 focus:ring-primary-container w-64 transition-all" placeholder="Search lessons..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors"><span class="material-symbols-outlined">dark_mode</span></button>
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</div>
+</header>
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 hidden lg:flex flex-col p-4 gap-2 h-screen z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-r border-slate-200/50 dark:border-slate-800/50 font-manrope text-sm w-64 pt-20">
+<div class="flex items-center gap-3 px-2 mb-6">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-slate-100 leading-tight">Personal Tutor</h3>
+<p class="text-[10px] text-primary font-semibold uppercase tracking-wider">Online &amp; Ready</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<div class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-all hover:translate-x-1 duration-200">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Home</span>
+</div>
+<div class="bg-indigo-50/50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 rounded-lg font-semibold shadow-[0_0_15px_rgba(93,95,239,0.1)] flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-all hover:translate-x-1 duration-200">
+<span class="material-symbols-outlined">school</span>
+<span>Practice</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-all hover:translate-x-1 duration-200">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-medium">Progress</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-all hover:translate-x-1 duration-200">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-medium">Chat</span>
+</div>
+</nav>
+<div class="mt-8 px-2">
+<button class="w-full bg-primary-container text-white rounded-xl py-3 font-button text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                    Start Daily Lesson
+                </button>
+</div>
+<div class="mt-auto flex flex-col gap-1">
+<div class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-all hover:translate-x-1 duration-200">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</div>
+<div class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-all hover:translate-x-1 duration-200">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-medium">Help</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 p-6 md:p-10 max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-lg">
+<h2 class="font-h2 text-h2 text-on-surface mb-xs">Lessons Library</h2>
+<p class="text-body-lg text-outline font-body-lg">Elevate your professional communication with AI-guided modules.</p>
+</div>
+<!-- Filter Tabs -->
+<div class="flex flex-wrap gap-4 mb-lg border-b border-surface-variant pb-4">
+<button class="px-6 py-2 rounded-full bg-primary-container text-white font-button text-sm shadow-md">All Modules</button>
+<button class="px-6 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-button text-sm transition-colors">Interviews</button>
+<button class="px-6 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-button text-sm transition-colors">Presentations</button>
+<button class="px-6 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-button text-sm transition-colors">Meetings</button>
+<button class="px-6 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-button text-sm transition-colors">TED Talks</button>
+<button class="px-6 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-button text-sm transition-colors">Business English</button>
+</div>
+<!-- Lessons Grid (Bento Style Variation) -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+<!-- Lesson Card 1: Interviews -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between group hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-right from-primary to-secondary"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary-fixed rounded-xl text-primary">
+<span class="material-symbols-outlined">person_search</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[10px] uppercase">B2 Upper Int.</span>
+</div>
+</div>
+<div class="mb-6">
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-primary transition-colors">Mastering the Tech Interview</h3>
+<p class="text-sm text-outline mt-2 leading-relaxed">Learn to articulate technical decisions and cultural fit with precision.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant/50">
+<div class="flex gap-4">
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-xs font-medium">25 mins</span>
+</div>
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+<span class="text-xs font-medium">Expert</span>
+</div>
+</div>
+<!-- Progress Ring -->
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-full h-full">
+<circle class="text-surface-variant" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-primary-container progress-ring" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="31.4" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<span class="absolute text-[10px] font-bold">75%</span>
+</div>
+</div>
+</div>
+<!-- Lesson Card 2: Presentations -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between group hover:shadow-xl transition-all duration-300 border-t-2 border-t-tertiary-container">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-tertiary-fixed rounded-xl text-tertiary">
+<span class="material-symbols-outlined">co_present</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-tertiary/10 text-tertiary font-label-caps text-[10px] uppercase">C1 Advanced</span>
+</div>
+<div class="mb-6">
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-tertiary transition-colors">The Art of Storytelling</h3>
+<p class="text-sm text-outline mt-2 leading-relaxed">Use narrative structures to make your business data memorable and persuasive.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant/50">
+<div class="flex gap-4">
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-xs font-medium">15 mins</span>
+</div>
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+<span class="text-xs font-medium">Medium</span>
+</div>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-full h-full">
+<circle class="text-surface-variant" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-tertiary-container progress-ring" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="100.5" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<span class="absolute text-[10px] font-bold">20%</span>
+</div>
+</div>
+</div>
+<!-- Lesson Card 3: Business English (Featured/Large) -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between group hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-indigo-50/30">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary-fixed-dim rounded-xl text-primary">
+<span class="material-symbols-outlined">handshake</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[10px] uppercase">A2 Pre-Int.</span>
+</div>
+<div class="mb-6">
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-primary transition-colors">Executive Email Etiquette</h3>
+<p class="text-sm text-outline mt-2 leading-relaxed">Master the nuances of formal correspondence and tone for high-level stakeholders.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant/50">
+<div class="flex gap-4">
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-xs font-medium">10 mins</span>
+</div>
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+<span class="text-xs font-medium">Easy</span>
+</div>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-full h-full">
+<circle class="text-surface-variant" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-indigo-400 progress-ring" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="0" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<span class="absolute text-[10px] font-bold text-indigo-600"><span class="material-symbols-outlined text-base">check_circle</span></span>
+</div>
+</div>
+</div>
+<!-- Lesson Card 4: Meetings -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-secondary-fixed rounded-xl text-secondary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-caps text-[10px] uppercase">B1 Intermediate</span>
+</div>
+<div class="mb-6">
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-secondary transition-colors">Leading Remote Stand-ups</h3>
+<p class="text-sm text-outline mt-2 leading-relaxed">Concise updates and facilitation techniques for virtual engineering teams.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant/50">
+<div class="flex gap-4">
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-xs font-medium">12 mins</span>
+</div>
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+<span class="text-xs font-medium">Medium</span>
+</div>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-full h-full">
+<circle class="text-surface-variant" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-secondary progress-ring" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="62.8" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<span class="absolute text-[10px] font-bold">50%</span>
+</div>
+</div>
+</div>
+<!-- Lesson Card 5: TED Talks -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-error-container rounded-xl text-on-error-container">
+<span class="material-symbols-outlined">record_voice_over</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-error-container text-on-error-container font-label-caps text-[10px] uppercase">C2 Proficiency</span>
+</div>
+<div class="mb-6">
+<h3 class="font-h3 text-h3 text-on-surface group-hover:text-error transition-colors">Analyzing Public Speaking</h3>
+<p class="text-sm text-outline mt-2 leading-relaxed">Break down rhetorical devices used by world-class speakers to inspire audiences.</p>
+</div>
+<div class="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant/50">
+<div class="flex gap-4">
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-xs font-medium">30 mins</span>
+</div>
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+<span class="text-xs font-medium">Expert</span>
+</div>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-full h-full">
+<circle class="text-surface-variant" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-error progress-ring" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="113" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<span class="absolute text-[10px] font-bold">10%</span>
+</div>
+</div>
+</div>
+<!-- Lesson Card 6: New Module Placeholder -->
+<div class="rounded-xl border-2 border-dashed border-outline-variant p-md flex flex-col items-center justify-center text-center group cursor-pointer hover:border-primary transition-all">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-outline group-hover:bg-primary-container group-hover:text-white transition-all mb-4">
+<span class="material-symbols-outlined">add</span>
+</div>
+<h3 class="font-h3 text-on-surface-variant group-hover:text-primary">Suggest a Topic</h3>
+<p class="text-xs text-outline mt-2">Our AI will build a custom module based on your specific professional needs.</p>
+</div>
+</div>
+<!-- AI Insight Section -->
+<div class="mt-xl bg-surface-container-low rounded-2xl p-md flex flex-col md:flex-row items-center gap-md border border-outline-variant/30">
+<div class="w-20 h-20 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm overflow-hidden border border-primary/20">
+<img alt="AI Avatar" class="w-full h-full object-cover" data-alt="A futuristic and friendly digital avatar representing an AI language tutor. The persona has soft, ethereal features and glowing blue highlights against a minimalist white background. The lighting is diffused and professional, evoking a sense of calm intelligence and high-end technological sophistication." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGGpE3aKlkivNSZkStSmolwVWfRqd7mCJbGRW3om6wwAzMtvLn4RZ8_axo2Ge5-m_AwbJZ0XyNhP-hCH6IsxKOyoiWdRAbceb0hJMA46cLIccjEYvhZv5-QVPDhjp_AStb9ljOoPpStTEg0usLy58jtLvILeodlrYXYPa4r_-yp1FLbHe7BIVfywxwamNAo7sxpCQW_Aru9sr084AZrX95ZjclMcj1uhQIzeQmezIsFEt-fABpbgB3jNEbbDTeofEtO7-ub5Xo6p3v"/>
+</div>
+<div class="flex-1 text-center md:text-left">
+<h4 class="font-bold text-lg text-primary mb-1">Recommended for Today</h4>
+<p class="text-on-surface-variant leading-relaxed italic">"I noticed you've been working on your technical vocabulary. I've curated the 'Mastering the Tech Interview' module to help you bridge the gap between B2 and C1 levels. Ready to start?"</p>
+</div>
+<button class="px-8 py-3 bg-white border-2 border-primary text-primary rounded-xl font-button hover:bg-primary hover:text-white transition-all shrink-0">Resume Journey</button>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom NavBar -->
+<footer class="md:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg border-t border-surface-variant flex justify-around items-center h-16 z-50">
+<div class="flex flex-col items-center text-slate-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-medium">Home</span>
+</div>
+<div class="flex flex-col items-center text-indigo-600">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="text-[10px] font-bold">Practice</span>
+</div>
+<div class="flex flex-col items-center text-slate-400">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-medium">Progress</span>
+</div>
+<div class="flex flex-col items-center text-slate-400">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-[10px] font-medium">Chat</span>
+</div>
+</footer>
+</body></html>
