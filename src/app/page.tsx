@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { Sun, Moon } from "lucide-react";
+
 
 // ─── Google Font Loader ────────────────────────────────────────────────────
 const FontLoader = () => (
@@ -17,17 +19,37 @@ const FontLoader = () => (
       --indigo: #6366F1;
       --violet: #7C3AED;
       --indigo-light: #EEF2FF;
+      --card-bg: #FFFFFF;
+      --nav-bg: rgba(255, 255, 255, 0.75);
+      --border: rgba(17,17,17,.07);
+      --input-bg: #F4F5FC;
+    }
+
+    .landing-dark {
+      --bg: #0B0E14;
+      --ink: #F9FAFB;
+      --muted: #9CA3AF;
+      --light: #374151;
+      --indigo: #818CF8;
+      --violet: #A78BFA;
+      --indigo-light: rgba(99, 102, 241, 0.15);
+      --card-bg: #151B28;
+      --nav-bg: rgba(11, 14, 20, 0.8);
+      --border: rgba(255,255,255,0.1);
+      --input-bg: #1A2131;
     }
 
     html { scroll-behavior: smooth; }
 
-    body {
+    .landing-page-wrapper {
       font-family: var(--font);
       background: var(--bg);
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
       position: relative;
+      min-height: 100vh;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
 
     /* ── Animations ── */
@@ -73,9 +95,9 @@ const FontLoader = () => (
       height: 68px;
       display: flex; align-items: center;
       padding: 0 32px;
-      background: rgba(255, 255, 255, 0.75);
+      background: var(--nav-bg);
       backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--border);
       border-radius: 24px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.06);
       transition: all 0.3s ease;
@@ -97,7 +119,6 @@ const FontLoader = () => (
     .logo-img {
       height: 64px; width: auto; object-fit: contain;
       margin-left: -12px;
-      mix-blend-multiply;
     }
     .nav-links {
       display: flex; gap: 40px; list-style: none;
@@ -110,8 +131,8 @@ const FontLoader = () => (
     .nav-links a:hover { color: var(--indigo); }
     .btn-primary {
       padding: 12px 24px;
-      background: #111111;
-      color: #fff; border: none; border-radius: 8px;
+      background: var(--ink);
+      color: var(--bg); border: none; border-radius: 8px;
       font-family: var(--font); font-size: 11px; font-weight: 700;
       letter-spacing: .12em; text-transform: uppercase;
       cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -119,17 +140,17 @@ const FontLoader = () => (
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-decoration: none;
     }
-    .btn-primary:hover { background: #333333; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
     .btn-primary:active { transform: scale(.98); }
     .btn-ghost {
       padding: 14px 32px;
-      background: #fff; color: var(--ink);
-      border: 1.5px solid rgba(17,17,17,.1);
+      background: var(--card-bg); color: var(--ink);
+      border: 1.5px solid var(--border);
       border-radius: 14px;
       font-family: var(--font); font-size: 15px; font-weight: 700;
       cursor: pointer; transition: background .2s, transform .15s;
     }
-    .btn-ghost:hover { background: #f5f5f5; transform: translateY(-1px); }
+    .btn-ghost:hover { background: var(--bg); transform: translateY(-1px); }
 
     /* ── Hero ── */
     .hero {
@@ -178,13 +199,13 @@ const FontLoader = () => (
     }
     .btn-hero {
       padding: 18px 36px;
-      background: #111111;
-      color: #fff; border: none; border-radius: 10px;
+      background: var(--ink);
+      color: var(--bg); border: none; border-radius: 10px;
       font-family: var(--font); font-size: 16px; font-weight: 600;
       cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    .btn-hero:hover { transform: translateY(-3px); background: #333333; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .btn-hero:hover { transform: translateY(-3px); opacity: 0.9; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
     .social-proof {
       display: flex; align-items: center; gap: 12px;
       padding: 10px 20px; border-radius: 99px;
@@ -206,24 +227,24 @@ const FontLoader = () => (
       position: relative; width: 100%; max-width: 900px;
     }
     .hero-card {
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 48px;
-      border: 1px solid rgba(17,17,17,.07);
+      border: 1px solid var(--border);
       padding: 24px;
       box-shadow: 0 40px 100px rgba(99,102,241,.08), 0 8px 24px rgba(0,0,0,.04);
     }
     .hero-card-inner {
-      background: #F4F5FC;
+      background: var(--input-bg);
       border-radius: 32px;
-      border: 1px solid rgba(17,17,17,.05);
+      border: 1px solid var(--border);
       aspect-ratio: 16/9;
       display: flex; flex-direction: column;
       padding: 40px; gap: 24px; overflow: hidden;
       position: relative;
     }
     .mock-bar {
-      height: 48px; background: #fff; border-radius: 16px;
-      border: 1px solid rgba(17,17,17,.06);
+      height: 48px; background: var(--card-bg); border-radius: 16px;
+      border: 1px solid var(--border);
       display: flex; align-items: center; padding: 0 20px; gap: 12px;
       width: 70%;
     }
@@ -231,8 +252,8 @@ const FontLoader = () => (
     .mock-line { height: 10px; border-radius: 99px; background: rgba(17,17,17,.06); }
     .mock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; }
     .mock-tile {
-      background: #fff; border-radius: 24px;
-      border: 1px solid rgba(17,17,17,.06);
+      background: var(--card-bg); border-radius: 24px;
+      border: 1px solid var(--border);
       padding: 28px; display: flex; flex-direction: column; gap: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,.03);
     }
@@ -244,17 +265,17 @@ const FontLoader = () => (
     }
     .mock-lines { display: flex; flex-direction: column; gap: 8px; }
     .mock-tile-center {
-      background: #fff; border-radius: 24px;
-      border: 1px solid rgba(17,17,17,.06);
+      background: var(--card-bg); border-radius: 24px;
+      border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
       font-size: 72px; opacity: .12;
     }
     /* floating side cards */
     .side-card {
       position: absolute;
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 24px;
-      border: 1px solid rgba(17,17,17,.07);
+      border: 1px solid var(--border);
       padding: 24px;
       box-shadow: 0 24px 64px rgba(0,0,0,.08);
       width: 240px;
@@ -313,8 +334,8 @@ const FontLoader = () => (
     /* ── Pain cards ── */
     .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; }
     .pain-card {
-      background: #fff; padding: 40px; border-radius: 28px;
-      border: 1px solid rgba(17,17,17,.06);
+      background: var(--card-bg); padding: 40px; border-radius: 28px;
+      border: 1px solid var(--border);
       box-shadow: 0 8px 32px rgba(0,0,0,.02);
       transition: transform .3s, box-shadow .3s;
     }
@@ -349,18 +370,18 @@ const FontLoader = () => (
 
     /* feature mock card */
     .feat-mock {
-      background: #fff; border-radius: 48px; padding: 24px;
+      background: var(--card-bg); border-radius: 48px; padding: 24px;
       box-shadow: 0 32px 80px rgba(99,102,241,.09);
-      border: 1px solid rgba(17,17,17,.06);
+      border: 1px solid var(--border);
     }
     .feat-mock-inner {
-      background: #F4F5FC; border-radius: 32px;
+      background: var(--input-bg); border-radius: 32px;
       aspect-ratio: 4/5; padding: 32px;
       display: flex; flex-direction: column; justify-content: flex-end;
     }
     .feat-bottom-card {
-      background: #fff; border-radius: 20px; padding: 24px;
-      border: 1px solid rgba(17,17,17,.06);
+      background: var(--card-bg); border-radius: 20px; padding: 24px;
+      border: 1px solid var(--border);
       box-shadow: 0 8px 32px rgba(0,0,0,.06);
       transform: translateY(16px); transition: transform .4s;
     }
@@ -370,8 +391,8 @@ const FontLoader = () => (
     .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 64px; }
     .step-card {
       position: relative; padding: 40px; border-radius: 28px;
-      border: 1px solid rgba(17,17,17,.06);
-      background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,.02);
+      border: 1px solid var(--border);
+      background: var(--card-bg); box-shadow: 0 8px 32px rgba(0,0,0,.02);
     }
     .step-num {
       position: absolute; top: -18px; left: 36px;
@@ -407,8 +428,8 @@ const FontLoader = () => (
     }
     .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; max-width: 1100px; align-items: center; }
     .plan-card {
-      padding: 48px; border-radius: 32px; border: 1px solid rgba(17,17,17,.04);
-      background: #fff; text-align: left;
+      padding: 48px; border-radius: 32px; border: 1px solid var(--border);
+      background: var(--card-bg); text-align: left;
       box-shadow: 0 10px 40px rgba(0,0,0,.02);
       transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);
       display: flex; flex-direction: column; gap: 32px;
@@ -424,7 +445,7 @@ const FontLoader = () => (
     .plan-card.featured:hover { transform: scale(1.05) translateY(-12px); }
     .plan-icon {
       width: 60px; height: 60px; border-radius: 18px;
-      background: #F4F7FF;
+      background: var(--input-bg);
       display: flex; align-items: center; justify-content: center; font-size: 28px;
     }
     .plan-card.featured .plan-icon { background: rgba(255,255,255,.2); color: #fff; }
@@ -458,15 +479,15 @@ const FontLoader = () => (
     /* ── Testimonials ── */
     .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 64px; }
     .testi-card {
-      background: #fff; padding: 40px; border-radius: 28px;
-      border: 1px solid rgba(17,17,17,.06);
+      background: var(--card-bg); padding: 40px; border-radius: 28px;
+      border: 1px solid var(--border);
       box-shadow: 0 8px 32px rgba(0,0,0,.02);
       transition: transform .3s;
       display: flex; flex-direction: column; gap: 24px;
     }
     .testi-card:hover { transform: translateY(-8px); }
-    .testi-quote { font-size: 17px; font-weight: 500; color: #374151; line-height: 1.65; font-style: italic; flex: 1; }
-    .testi-author { display: flex; align-items: center; gap: 14px; padding-top: 20px; border-top: 1px solid rgba(17,17,17,.05); }
+    .testi-quote { font-size: 17px; font-weight: 500; color: var(--ink); opacity: 0.8; line-height: 1.65; font-style: italic; flex: 1; }
+    .testi-author { display: flex; align-items: center; gap: 14px; padding-top: 20px; border-top: 1px solid var(--border); }
     .testi-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--indigo-light); display:flex;align-items:center;justify-content:center;font-size:18px; }
     .testi-name { font-size: 15px; font-weight: 800; }
     .testi-role { font-size: 12px; font-weight: 600; color: var(--muted); }
@@ -477,17 +498,17 @@ const FontLoader = () => (
     .faq-chat {
       position: sticky; top: 100px;
       background: linear-gradient(145deg,rgba(99,102,241,.07),rgba(99,102,241,.02));
-      border: 1px solid rgba(99,102,241,.12);
+      border: 1px solid var(--border);
       border-radius: 48px; padding: 40px;
     }
     .chat-msg {
       display: flex; gap: 12px; margin-bottom: 20px;
     }
     .chat-msg.right { flex-direction: row-reverse; }
-    .chat-avatar { width: 40px; height: 40px; border-radius: 12px; background: #fff; flex-shrink: 0; display:flex;align-items:center;justify-content:center;font-size:18px; box-shadow:0 4px 12px rgba(0,0,0,.08); }
+    .chat-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--card-bg); flex-shrink: 0; display:flex;align-items:center;justify-content:center;font-size:18px; box-shadow:0 4px 12px rgba(0,0,0,.08); }
     .chat-bubble {
-      background: #fff; padding: 18px 22px; border-radius: 20px; border-radius-top-left: 4px;
-      border: 1px solid rgba(17,17,17,.06); max-width: 75%;
+      background: var(--card-bg); padding: 18px 22px; border-radius: 20px; border-radius-top-left: 4px;
+      border: 1px solid var(--border); max-width: 75%;
       box-shadow: 0 4px 16px rgba(0,0,0,.06);
     }
     .chat-msg.right .chat-bubble {
@@ -507,11 +528,11 @@ const FontLoader = () => (
     .chat-time { font-size: 9px; font-weight: 700; opacity: .45; margin-top: 6px; }
     .faq-list { display: flex; flex-direction: column; gap: 12px; }
     .faq-item {
-      border-radius: 20px; border: 1px solid rgba(17,17,17,.07);
-      background: rgba(17,17,17,.02); overflow: hidden;
+      border-radius: 20px; border: 1px solid var(--border);
+      background: var(--input-bg); overflow: hidden;
       transition: background .2s, border-color .2s;
     }
-    .faq-item.open { background: #fff; border-color: rgba(99,102,241,.15); box-shadow: 0 8px 32px rgba(99,102,241,.08); }
+    .faq-item.open { background: var(--card-bg); border-color: rgba(99,102,241,.15); box-shadow: 0 8px 32px rgba(99,102,241,.08); }
     .faq-trigger {
       display: flex; justify-content: space-between; align-items: center;
       padding: 22px 24px; cursor: pointer; gap: 16px;
@@ -553,26 +574,26 @@ const FontLoader = () => (
     .footer-links { display: flex; flex-direction: column; gap: 14px; }
     .footer-links a { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
     .footer-links a:hover { color: var(--indigo); }
-    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(17,17,17,.05); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid var(--border); }
     .footer-copy { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--light); }
     .footer-watermark {
       position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
       font-size: clamp(80px,18vw,200px); font-weight: 800; letter-spacing: -.05em;
-      color: rgba(17,17,17,.025); white-space: nowrap; pointer-events: none; user-select: none;
+      color: var(--ink); opacity: 0.03; white-space: nowrap; pointer-events: none; user-select: none;
     }
 
     /* ── Feature Grid ── */
     .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; }
     .feat-card {
-      background: #fff; padding: 48px; border-radius: 32px;
-      border: 1px solid rgba(17,17,17,.04);
+      background: var(--card-bg); padding: 48px; border-radius: 32px;
+      border: 1px solid var(--border);
       box-shadow: 0 10px 40px rgba(0,0,0,.02);
       transition: all .3s ease;
     }
     .feat-card:hover { transform: translateY(-10px); box-shadow: 0 30px 70px rgba(0,0,0,0.06); border-color: rgba(99,102,241,0.1); }
     .feat-icon-box {
       width: 56px; height: 56px; border-radius: 16px;
-      background: #F8F9FF; display: flex; align-items: center; justify-content: center;
+      background: var(--input-bg); display: flex; align-items: center; justify-content: center;
       font-size: 26px; margin-bottom: 32px;
     }
     .feat-card h3 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--ink); }
@@ -590,12 +611,12 @@ const FontLoader = () => (
     }
     .timeline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; z-index: 1; }
     .timeline-node {
-      width: 24px; height: 24px; border-radius: 50%; background: #fff;
+      width: 24px; height: 24px; border-radius: 50%; background: var(--card-bg);
       border: 4px solid var(--indigo); margin-bottom: 40px;
     }
     .timeline-card {
-      background: #fff; padding: 32px; border-radius: 24px;
-      border: 1px solid rgba(17,17,17,0.05);
+      background: var(--card-bg); padding: 32px; border-radius: 24px;
+      border: 1px solid var(--border);
       box-shadow: 0 20px 50px rgba(0,0,0,0.04);
     }
 
@@ -603,7 +624,7 @@ const FontLoader = () => (
     .int-wrap { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
     .int-logo {
       width: 64px; height: 64px; border-radius: 50%;
-      background: #fff; border: 1px solid rgba(17,17,17,0.06);
+      background: var(--card-bg); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
       font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
       transition: transform 0.3s;
@@ -721,9 +742,23 @@ const testimonials = [
 export default function LearnFlowLanding() {
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const [openFaq, setOpenFaq] = useState(0);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("landing-theme");
+    if (saved === "dark") {
+      setIsDark(true);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newDark = !isDark;
+    setIsDark(newDark);
+    localStorage.setItem("landing-theme", newDark ? "dark" : "light");
+  };
 
   return (
-    <>
+    <div className={`landing-page-wrapper ${isDark ? "landing-dark" : ""}`}>
       <FontLoader />
 
       {/* NAV */}
@@ -736,9 +771,20 @@ export default function LearnFlowLanding() {
           <ul className="nav-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#how-it-works">Workflow</a></li>
+            <li><a href="/case-studies">Case Studies</a></li>
             <li><a href="#pricing">Pricing</a></li>
           </ul>
-          <a href="#pricing" className="btn-primary">Get Started →</a>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-all active:scale-95 flex items-center justify-center border border-transparent hover:border-indigo-500/20"
+              style={{ background: isDark ? "rgba(255,255,255,0.05)" : "rgba(17,17,17,0.03)" }}
+              aria-label="Toggle dark mode"
+            >
+              {isDark ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-indigo-600" />}
+            </button>
+            <a href="#pricing" className="btn-primary">Get Started →</a>
+          </div>
         </div>
       </nav>
 
@@ -1189,6 +1235,6 @@ export default function LearnFlowLanding() {
         </div>
         <div className="footer-watermark">Lingoura AI</div>
       </footer>
-    </>
+    </div>
   );
 }

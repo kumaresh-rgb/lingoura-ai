@@ -65,6 +65,7 @@
    By default, v4 uses @media (prefers-color-scheme: dark).
 */
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant landing-dark (&:where(.landing-dark, .landing-dark *));
 
 /* Variable overrides for dark mode */
 .dark {
