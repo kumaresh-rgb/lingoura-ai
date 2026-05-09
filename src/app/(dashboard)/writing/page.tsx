@@ -1,234 +1,195 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 import { 
   PenTool, 
-  Sparkles, 
-  Send, 
-  Image as ImageIcon, 
-  FileText, 
-  Mail, 
-  AlignLeft,
-  CheckCircle2,
-  Zap,
-  BarChart3,
-  MessageSquare,
-  ArrowRight,
-  Info,
-  ShieldCheck,
+  Clock, 
   Target,
-  Trophy,
-  History
+  FileText,
+  AlertCircle,
+  CheckCircle2,
+  HelpCircle,
+  BarChart2,
+  AlignLeft,
+  Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function WritingPage() {
-  const [taskType, setTaskType] = useState<"select" | "active" | "feedback">("select");
-  const [text, setText] = useState("");
+const writingTasks = [
+  {
+    id: 1,
+    title: "Task 1: Data Description",
+    description: "Summarize and explain data from a graph, table, chart, or diagram. Describe stages of a process, how something works, or describe an object or event.",
+    timing: "20 mins",
+    wordCount: "150+ Words",
+    status: "Available",
+    type: "Academic / General Training (Letter)",
+    icon: BarChart2,
+    color: "bg-amber-500"
+  },
+  {
+    id: 2,
+    title: "Task 2: Essay Response",
+    description: "Write an essay in response to a point of view, argument, or problem. This task contributes twice as much to the final writing score.",
+    timing: "40 mins",
+    wordCount: "250+ Words",
+    status: "Available",
+    type: "Discursive / Analytical",
+    icon: AlignLeft,
+    color: "bg-rose-500"
+  }
+];
 
+const criteria = [
+  { name: "Task Achievement", score: 75 },
+  { name: "Coherence & Cohesion", score: 60 },
+  { name: "Lexical Resource", score: 85 },
+  { name: "Grammatical Accuracy", score: 70 },
+];
+
+export default function WritingPage() {
   return (
-    <div className="space-y-12 max-w-[1400px] mx-auto">
+    <div className="space-y-10">
+      {/* Header Section */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">Writing Workshop</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-4 text-lg font-medium max-w-2xl leading-relaxed">
-            Craft perfect emails, reports, and essays with real-time AI guidance and structural analysis.
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-bold uppercase tracking-widest">Writing Lab • IELTS Standard</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-on-surface leading-tight">
+            IELTS Writing <span className="text-rose-600 dark:text-rose-400">Excellence.</span>
+          </h1>
+          <p className="text-lg text-on-surface-variant mt-4 leading-relaxed">
+            Practice academic essay writing and data description. Get AI-driven feedback on your coherence, cohesion, and grammatical range.
           </p>
         </div>
-        <div className="flex gap-3">
-          <button className="px-6 py-3 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/10 transition-all font-bold shadow-sm flex items-center gap-2">
-            <History size={18} /> Past Drafts
-          </button>
+        
+        <div className="flex gap-4">
+          <div className="px-6 py-3 bg-surface-container-lowest border border-outline-variant rounded-2xl flex items-center gap-3 shadow-sm">
+            <Sparkles size={18} className="text-rose-600" />
+            <span className="text-sm font-bold text-on-surface">AI Grading Enabled</span>
+          </div>
         </div>
       </section>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-        
-        {/* Left Side: Writing Canvas */}
-        <div className="xl:col-span-8 flex flex-col bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-[3rem] shadow-[0_20px_50px_-20px_rgba(93,95,239,0.05)] overflow-hidden min-h-[700px] group">
-          
-          {/* Header */}
-          <div className="px-8 md:px-12 py-8 border-b border-slate-100 dark:border-white/5 flex flex-col sm:flex-row justify-between items-center bg-slate-50/50 dark:bg-white/5 gap-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl primary-gradient flex items-center justify-center text-white shadow-lg shadow-indigo-100 dark:shadow-none">
-                <PenTool size={24} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Main Tasks List */}
+        <div className="lg:col-span-8 space-y-6">
+          <h2 className="text-xl font-black text-on-surface flex items-center gap-2 mb-4">
+            <FileText size={20} className="text-rose-600" />
+            Exam Tasks
+          </h2>
+          {writingTasks.map((task, i) => (
+            <motion.div 
+              key={task.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-surface-container-lowest border border-outline-variant rounded-[2.5rem] p-8 md:p-10 hover:border-rose-500/50 transition-all group relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 text-rose-500/5 group-hover:text-rose-500/10 transition-colors">
+                 <task.icon size={120} />
               </div>
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">Formal Project Proposal</h2>
-                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest mt-1">B2 Upper Intermediate • Professional</p>
+
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-8">
+                  <div className={cn("h-16 w-16 rounded-2xl flex items-center justify-center text-white", task.color)}>
+                    <task.icon size={32} />
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                    <Clock size={14} className="text-slate-400" />
+                    <span className="text-xs font-bold text-on-surface">{task.timing}</span>
+                  </div>
+                </div>
+
+                <h3 className="text-2xl font-black text-on-surface mb-3">{task.title}</h3>
+                <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
+                  {task.description}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-6 pt-8 border-t border-outline-variant">
+                   <div className="flex items-center gap-2">
+                      <Target size={16} className="text-slate-400" />
+                      <span className="text-xs font-bold text-on-surface-variant">{task.wordCount}</span>
+                   </div>
+                   <div className="flex items-center gap-2">
+                      <HelpCircle size={16} className="text-slate-400" />
+                      <span className="text-xs font-bold text-on-surface-variant">{task.type}</span>
+                   </div>
+                   <button className={cn(
+                     "ml-auto px-6 py-3 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all",
+                     task.color
+                   )}>
+                     Start Writing
+                   </button>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-6">
-               <div className="flex flex-col items-end">
-                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{text.split(/\s+/).filter(x => x).length} words</span>
-                 <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">3m Reading Time</span>
-               </div>
-               <button 
-                 onClick={() => setTaskType("feedback")}
-                 className="primary-gradient text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl shadow-indigo-200 flex items-center gap-3 active:scale-95 transition-all"
-               >
-                 Review Draft <Send size={16} />
-               </button>
-            </div>
-          </div>
-
-          {/* Prompt Section */}
-          <div className="p-8 md:p-12 border-b border-slate-50 dark:border-white/5 bg-indigo-50/20 dark:bg-indigo-500/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
-              <Sparkles size={80} className="text-indigo-600 dark:text-indigo-400" />
-            </div>
-            <div className="flex items-center gap-3 text-indigo-600 dark:text-indigo-400 mb-6 bg-white dark:bg-white/10 w-fit px-4 py-1.5 rounded-full border border-indigo-100 dark:border-white/10 shadow-sm relative z-10">
-              <Sparkles size={16} fill="currentColor" />
-              <span className="text-[10px] font-black uppercase tracking-widest">AI Composition Challenge</span>
-            </div>
-            <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-slate-200 leading-relaxed relative z-10">
-              Compose a persuasive proposal to a senior stakeholder advocating for a <span className="text-indigo-600 dark:text-indigo-400 underline decoration-indigo-200 dark:decoration-indigo-500/30 decoration-4 underline-offset-4">flexible work pilot program</span>. Address potential concerns about productivity and team culture.
-            </h3>
-          </div>
-
-          {/* Editor Area */}
-          <div className="flex-1 p-8 md:p-12 relative">
-            <textarea 
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Start your masterpiece here..."
-              className="w-full h-full text-xl text-slate-700 dark:text-slate-300 leading-[2] placeholder:text-slate-300 dark:placeholder:text-slate-600 resize-none border-none focus:ring-0 outline-none font-medium scrollbar-hide bg-transparent"
-            />
-            
-            {/* Formatting Bar Floating */}
-            <div className="absolute bottom-10 right-10 flex gap-2 bg-white/80 dark:bg-white/10 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-2 rounded-2xl shadow-2xl">
-               <button className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 text-slate-400 hover:text-indigo-600 transition-all font-black">B</button>
-               <button className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 text-slate-400 hover:text-indigo-600 transition-all italic">I</button>
-               <button className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 text-slate-400 hover:text-indigo-600 transition-all"><AlignLeft size={18} /></button>
-            </div>
-          </div>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Right Side: Feedback & Stats */}
-        <div className="xl:col-span-4 space-y-8">
-          
-          {/* Quick Analysis Panel */}
-          <div className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-[3rem] p-10 shadow-sm flex flex-col gap-10">
-             <h3 className="text-2xl font-black flex items-center gap-3 text-slate-900 dark:text-white">
-               <Zap size={24} className="text-orange-500" /> Real-time Quality
-             </h3>
+        {/* Sidebar: Performance & Tips */}
+        <div className="lg:col-span-4 space-y-8">
+           <div className="bg-surface-container-lowest border border-outline-variant rounded-[2.5rem] p-8 shadow-sm">
+              <h3 className="text-lg font-black text-on-surface mb-8">Assessment Criteria</h3>
+              <div className="space-y-6">
+                 {criteria.map((item) => (
+                   <div key={item.name} className="space-y-2">
+                      <div className="flex justify-between text-xs font-bold">
+                         <span className="text-on-surface-variant">{item.name}</span>
+                         <span className="text-on-surface">{item.score}%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                         <motion.div 
+                           initial={{ width: 0 }}
+                           animate={{ width: `${item.score}%` }}
+                           className="h-full bg-rose-500 rounded-full" 
+                         />
+                      </div>
+                   </div>
+                 ))}
+              </div>
+              <p className="mt-8 text-[11px] text-on-surface-variant leading-relaxed">
+                Task 2 contributes twice as much to the final writing score. Allocate your time accordingly.
+              </p>
+           </div>
 
-             <div className="grid grid-cols-2 gap-8">
-                <MetricBox label="Tone Profile" value="Persuasive" icon={<Target size={16} />} color="text-indigo-600 dark:text-indigo-400" />
-                <MetricBox label="Clarity Index" value="Optimal" icon={<CheckCircle2 size={16} />} color="text-emerald-500 dark:text-emerald-400" />
-                <MetricBox label="Plagiarism" value="0% Check" icon={<ShieldCheck size={16} />} color="text-emerald-500 dark:text-emerald-400" />
-                <MetricBox label="AI Originality" value="100% User" icon={<Sparkles size={16} />} color="text-indigo-600 dark:text-indigo-400" />
-             </div>
-
-             <div className="space-y-6">
-                <div className="flex justify-between items-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                  <span>Draft Grade</span>
-                  <span className="text-indigo-600 dark:text-indigo-400">B+ (88/100)</span>
-                </div>
-                <div className="h-2 w-full bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
-                   <motion.div 
-                     initial={{ width: 0 }}
-                     animate={{ width: "88%" }}
-                     transition={{ duration: 1.5, ease: "easeOut" }}
-                     className="h-full primary-gradient rounded-full"
-                   />
-                </div>
-             </div>
-
-             <motion.div 
-               whileHover={{ scale: 1.02 }}
-               className="p-6 bg-slate-50 dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 relative group cursor-help"
-             >
-               <div className="absolute top-4 right-4 text-indigo-400 opacity-50 group-hover:opacity-100 transition-opacity">
-                 <Info size={16} />
-               </div>
-               <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">AI Coach Insight</h4>
-               <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed italic">
-                 &quot;Your opening is strong, but consider adding a specific data point about remote productivity to bolster your persuasive tone.&quot;
-               </p>
-             </motion.div>
-          </div>
-
-          {/* Advanced Insights / Structural Analysis */}
-          <div className="bg-slate-900 dark:bg-white/5 rounded-[3rem] p-10 text-white shadow-3xl flex flex-col relative overflow-hidden group border border-transparent dark:border-white/5">
-            <div className="absolute -bottom-10 -right-10 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
-               <BarChart3 size={200} />
-            </div>
-            
-            <div className="flex justify-between items-center mb-10 relative z-10">
-              <h3 className="text-xl font-black flex items-center gap-3">
-                <Trophy size={24} className="text-amber-400" /> Structural Mastery
-              </h3>
-              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest px-3 py-1 bg-white/5 rounded-full border border-white/10">Elite Analysis</span>
-            </div>
-
-            <div className="space-y-8 relative z-10">
-              <InsightCard 
-                title="Lexical Diversity" 
-                desc="You are using a rich variety of business-specific terminology. Excellent usage of 'advocating' and 'productivity'." 
-                score={92} 
-                color="bg-emerald-500"
-                dark
-              />
-              <InsightCard 
-                title="Syntactic Variation" 
-                desc="Try to mix your sentence lengths. Currently, most sentences are between 15-20 words, which can feel repetitive." 
-                score={58} 
-                color="bg-indigo-500"
-                dark
-              />
-              <InsightCard 
-                title="Logical Cohesion" 
-                desc="Your transition between the intro and body is smooth. Ensure the closing call-to-action is just as crisp." 
-                score={85} 
-                color="bg-amber-500"
-                dark
-              />
-            </div>
-
-            <button className="mt-12 w-full py-5 bg-white dark:bg-indigo-600 text-slate-900 dark:text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-50 dark:hover:bg-indigo-700 transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-2 relative z-10">
-              Generate AI Polish <Sparkles size={16} fill="currentColor" className="text-indigo-600 dark:text-white" />
-            </button>
-          </div>
+           <div className="bg-amber-50/50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10 rounded-[2rem] p-8">
+              <div className="flex items-center gap-2 mb-4">
+                 <AlertCircle size={20} className="text-amber-600" />
+                 <h4 className="font-black text-on-surface">Critical Tip</h4>
+              </div>
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                 Spelling, grammar, and punctuation are all marked. You will lose points for each mistake. 
+                 <br/><br/>
+                 <strong className="text-on-surface">Word Limit Warning:</strong> If you write less than 150/250 words, you will be penalized.
+              </p>
+           </div>
         </div>
       </div>
-    </div>
-  );
-}
 
-function MetricBox({ label, value, icon, color }: { label: string; value: string; icon: React.ReactNode; color?: string }) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-        {icon} {label}
-      </div>
-      <p className={cn("text-sm font-extrabold", color || "text-slate-900 dark:text-white")}>{value}</p>
-    </div>
-  );
-}
-
-function InsightCard({ title, desc, score, color, dark }: { title: string; desc: string; score: number; color?: string; dark?: boolean }) {
-  return (
-    <div className={cn(
-      "space-y-4 p-6 rounded-[2rem] border transition-all duration-300",
-      dark ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-slate-50/30 border-slate-100 hover:border-indigo-100"
-    )}>
-      <div className="flex justify-between items-center">
-        <h4 className={cn("text-xs font-black uppercase tracking-widest", dark ? "text-white" : "text-slate-900")}>{title}</h4>
-        <span className={cn("text-[10px] font-black", dark ? "text-indigo-400" : "text-indigo-600")}>{score}%</span>
-      </div>
-      <div className={cn("h-1 rounded-full overflow-hidden", dark ? "bg-white/10" : "bg-slate-100")}>
-        <motion.div 
-          initial={{ width: 0 }}
-          animate={{ width: `${score}%` }}
-          transition={{ duration: 1.5, delay: 0.5 }}
-          className={cn("h-full rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]", color || "bg-indigo-500")} 
-        />
-      </div>
-      <p className={cn("text-[10px] leading-relaxed font-bold", dark ? "text-slate-400" : "text-slate-500")}>
-        {desc}
-      </p>
+      {/* Formatting Rules */}
+      <section className="bg-surface-container-lowest border border-outline-variant rounded-[3rem] p-10">
+        <h2 className="text-2xl font-black text-on-surface mb-8">Test Rules & Guidelines</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="space-y-3">
+             <div className="h-1 w-12 bg-rose-500 rounded-full" />
+             <h4 className="font-bold text-on-surface">Drafting</h4>
+             <p className="text-sm text-on-surface-variant leading-relaxed">You may make notes on the question paper, but they will not be marked.</p>
+          </div>
+          <div className="space-y-3">
+             <div className="h-1 w-12 bg-indigo-500 rounded-full" />
+             <h4 className="font-bold text-on-surface">Writing Style</h4>
+             <p className="text-sm text-on-surface-variant leading-relaxed">Must write in full paragraphs. Note form or bullet points will lose marks.</p>
+          </div>
+          <div className="space-y-3">
+             <div className="h-1 w-12 bg-emerald-500 rounded-full" />
+             <h4 className="font-bold text-on-surface">Tool Usage</h4>
+             <p className="text-sm text-on-surface-variant leading-relaxed">You may write in either pencil or pen. Capitals are allowed for everything.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

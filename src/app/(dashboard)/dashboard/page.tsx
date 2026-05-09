@@ -1,277 +1,336 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { 
-  Flame, 
   TrendingUp, 
   Clock, 
-  Languages, 
-  CheckCircle2, 
-  MessageSquare, 
-  Sparkles,
-  ArrowRight,
-  BrainCircuit,
-  Zap,
-  Play,
-  Activity,
+  Target, 
+  Zap, 
   ArrowUpRight,
-  Globe
+  ChevronRight,
+  BookOpen,
+  Mic2,
+  Headphones,
+  PenTool,
+  Calendar,
+  Sparkles,
+  Award,
+  BarChart3,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
+import { ProfileShareCard } from "@/components/ProfileShareCard";
 import { cn } from "@/lib/utils";
 
+const stats = [
+  { label: "Overall Band", value: "7.5", icon: Award, color: "text-indigo-600", bg: "bg-indigo-50", darkBg: "dark:bg-indigo-500/10", darkColor: "dark:text-indigo-400" },
+  { label: "Study Time", value: "42h", icon: Clock, color: "text-amber-600", bg: "bg-amber-50", darkBg: "dark:bg-amber-500/10", darkColor: "dark:text-amber-400" },
+  { label: "Goal Target", value: "8.5", icon: Target, color: "text-emerald-600", bg: "bg-emerald-50", darkBg: "dark:bg-emerald-500/10", darkColor: "dark:text-emerald-400" },
+  { label: "Daily Streak", value: "12d", icon: Zap, color: "text-rose-600", bg: "bg-rose-50", darkBg: "dark:bg-rose-500/10", darkColor: "dark:text-rose-400" },
+];
+
+const cefrData = [
+  { skill: "Listening", score: 8.0, color: "bg-indigo-500", icon: Headphones },
+  { skill: "Reading", score: 7.5, color: "bg-violet-500", icon: BookOpen },
+  { skill: "Speaking", score: 7.0, color: "bg-emerald-500", icon: Mic2 },
+  { skill: "Writing", score: 6.5, color: "bg-rose-500", icon: PenTool },
+];
+
+const activityData = [
+  { day: "Mon", score: 6.5 },
+  { day: "Tue", score: 7.0 },
+  { day: "Wed", score: 7.5 },
+  { day: "Thu", score: 7.2 },
+  { day: "Fri", score: 7.8 },
+  { day: "Sat", score: 8.0 },
+  { day: "Sun", score: 7.5 },
+];
+
+const recentTests = [
+  { type: "Listening", name: "Section 4: Academic Lecture", score: "36/40", band: "8.0", date: "2 hours ago", status: "completed" },
+  { type: "Reading", name: "Section 2: Work Environment", score: "32/40", band: "7.5", date: "Yesterday", status: "completed" },
+  { type: "Writing", name: "Task 2: Global Warming Essay", score: "Pending", band: "N/A", date: "2 days ago", status: "review" },
+];
+
 export default function DashboardPage() {
+  const [isShareOpen, setIsShareOpen] = React.useState(false);
+
   return (
-    <div className="space-y-12 pb-20">
-      {/* Hero Greeting & Quick Stats */}
-      <section className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-b border-slate-100 dark:border-white/5 pb-12">
-        <div className="min-w-0">
+    <div className="space-y-10">
+      <ProfileShareCard isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
+      
+      {/* Welcome & Overview Section */}
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
           <div className="flex items-center gap-2 mb-3">
-             <span className="px-3 py-1 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-full text-[10px] font-bold uppercase tracking-widest">Active Member</span>
-             <span className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">May 2026</span>
+            <span className="px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold uppercase tracking-widest">Active Member • May 2026</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-on-surface leading-tight">
             Welcome back, <span className="text-indigo-600 dark:text-indigo-400">Alex.</span>
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-4 text-lg md:text-xl font-medium max-w-2xl leading-relaxed">
-            You've mastered 42 new idioms this week. Ready to tackle <span className="text-slate-900 dark:text-white font-bold underline decoration-indigo-300 dark:decoration-indigo-500/50 underline-offset-8">Advanced Negotiation</span> today?
+          <p className="text-lg text-on-surface-variant mt-4 leading-relaxed">
+            You've mastered <span className="text-indigo-600 dark:text-indigo-400 font-bold italic underline decoration-indigo-200 dark:decoration-indigo-500/30">42 new idioms</span> this week. Ready to tackle <span className="text-indigo-600 dark:text-indigo-400 font-bold italic underline decoration-indigo-200 dark:decoration-indigo-500/30">Advanced Negotiation</span> today?
           </p>
         </div>
         
-        <div className="flex items-center gap-4">
-           <div className="h-16 w-16 rounded-[2rem] bg-slate-900 dark:bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-slate-200 dark:shadow-none">
-              <Flame size={28} className="text-orange-500 fill-orange-500" />
-           </div>
-           <div>
-              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Daily Streak</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">12 Days</p>
-           </div>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => setIsShareOpen(true)}
+            className="px-6 py-4 bg-white dark:bg-white/5 border border-outline-variant text-on-surface rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-white/10 transition-all flex items-center gap-3 active:scale-95 group"
+          >
+            <Sparkles size={18} className="text-indigo-600 dark:text-indigo-400 group-hover:rotate-12 transition-transform" />
+            Share Profile
+          </button>
+          <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center gap-2 group">
+            Start Mock Test
+            <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+          </button>
         </div>
       </section>
 
-      {/* Bento Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 w-full">
-        
-        {/* Main Performance Analytics (8 cols) */}
-        <motion.div 
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           className="md:col-span-8 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[3rem] p-10 md:p-12 shadow-sm relative overflow-hidden group backdrop-blur-xl"
-        >
-          <div className="absolute top-0 right-0 p-12 opacity-[0.02] dark:opacity-[0.05] pointer-events-none group-hover:scale-110 transition-transform duration-1000 text-slate-900 dark:text-white">
-             <Activity size={350} />
-          </div>
-
-          <div className="flex justify-between items-start mb-12 relative z-10">
-            <div>
-              <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">CEFR Progress</h3>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">Holistic Leveling Analysis</p>
-            </div>
-            <div className="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-4 py-2 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-               <TrendingUp size={14} /> +4.2% Growth
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10">
-             <div className="md:col-span-2">
-                <div className="flex items-end gap-3 h-48 mb-6">
-                   {[40, 55, 45, 70, 85, 78, 92].map((h, i) => (
-                      <div key={i} className="flex-1 bg-slate-50 dark:bg-white/5 rounded-t-2xl relative overflow-hidden group/bar">
-                         <motion.div 
-                            initial={{ height: 0 }}
-                            animate={{ height: `${h}%` }}
-                            className="absolute bottom-0 w-full primary-gradient rounded-t-2xl shadow-lg shadow-indigo-100 dark:shadow-none"
-                         />
-                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-bold px-2 py-1 rounded-md">
-                            {h}%
-                         </div>
-                      </div>
-                   ))}
-                </div>
-                <div className="flex justify-between items-center text-[10px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest px-2">
-                   <span>Mon</span>
-                   <span>Wed</span>
-                   <span>Fri</span>
-                   <span>Sun</span>
-                </div>
-             </div>
-
-             <div className="space-y-6">
-                <MiniStat label="Speaking" value="B2" percent={78} />
-                <MiniStat label="Listening" value="C1" percent={92} />
-                <MiniStat label="Writing" value="B2" percent={64} />
-             </div>
-          </div>
-        </motion.div>
-
-        {/* Quick Insights (4 cols) */}
-        <div className="md:col-span-4 grid grid-cols-1 gap-8">
-           <motion.div 
-             whileHover={{ y: -5 }}
-             className="bg-indigo-600 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-indigo-100 dark:shadow-none relative overflow-hidden group"
-           >
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-500">
-                 <Languages size={150} />
-              </div>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-2">Vocabulary Depth</p>
-              <p className="text-4xl font-black tracking-tight">1,240</p>
-              <p className="text-sm font-medium opacity-60 mt-2">Active Words Mastered</p>
-              <button className="mt-8 flex items-center gap-2 text-xs font-bold bg-white/20 hover:bg-white/30 transition-all px-4 py-2.5 rounded-xl border border-white/10 backdrop-blur-md">
-                 Review Now <ArrowRight size={14} />
-              </button>
-           </motion.div>
-
-           <motion.div 
-             whileHover={{ y: -5 }}
-             className="bg-slate-900 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-slate-200 dark:shadow-none relative overflow-hidden group backdrop-blur-xl"
-           >
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                 <Clock size={150} />
-              </div>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-2">Learning Velocity</p>
-              <p className="text-4xl font-black tracking-tight text-indigo-400 dark:text-indigo-400">42h</p>
-              <p className="text-sm font-medium opacity-40 mt-2">Total Dedicated Time</p>
-              <div className="mt-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-                 <TrendingUp size={12} /> +15% this week
-              </div>
-           </motion.div>
-        </div>
-
-        {/* Active Learning Path (8 cols) */}
-        <div className="md:col-span-8 space-y-8">
-           <div className="flex items-center justify-between px-2">
-              <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Learning Path</h2>
-              <Link href="/lessons" className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:underline flex items-center gap-2">
-                 View Curriculum <ArrowUpRight size={16} />
-              </Link>
-           </div>
-           
-           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <PathCard 
-                 title="Advanced Negotiation"
-                 module="Module 4: Handling Objections"
-                 progress={65}
-                 image="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=400&q=80"
-                 status="Active"
-              />
-              <PathCard 
-                 title="The Subjunctive Mood"
-                 module="Module 2: Hypotheses & Regrets"
-                 progress={15}
-                 image="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=400&q=80"
-                 status="Up Next"
-              />
-           </div>
-        </div>
-
-        {/* AI Recommendations & Trends (4 cols) */}
-        <div className="md:col-span-4 space-y-8">
-           <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white px-2">AI Insights</h2>
-           <div className="bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[3rem] p-10 shadow-sm space-y-8 backdrop-blur-xl">
-              <ActivityItem 
-                 icon={<Sparkles size={18} />} 
-                 title="Pattern Unlocked" 
-                 desc="Refined use of passive voice." 
-                 color="text-indigo-600 bg-indigo-50 dark:text-indigo-400 dark:bg-indigo-500/10"
-              />
-              <ActivityItem 
-                 icon={<CheckCircle2 size={18} />} 
-                 title="Unit Mastered" 
-                 desc="Modal Verbs: 95% Accuracy" 
-                 color="text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-500/10"
-              />
-              <div className="pt-6 border-t border-slate-50 dark:border-white/5">
-                 <button className="w-full bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-900 dark:text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all">
-                    View Growth Report
-                 </button>
-              </div>
-           </div>
-
-           <div className="bg-indigo-50/50 dark:bg-indigo-500/5 rounded-[3rem] p-10 border border-indigo-100/50 dark:border-indigo-500/10 relative overflow-hidden group backdrop-blur-xl">
-              <div className="relative z-10">
-                 <p className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <BrainCircuit size={14} /> AI Recommendation
-                 </p>
-                 <h4 className="text-lg font-bold text-slate-900 dark:text-white leading-snug">Focus on formal tone for business emails.</h4>
-                 <button className="mt-6 text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2 hover:translate-x-1 transition-transform">
-                    Start Session <ArrowRight size={14} />
-                 </button>
-              </div>
-           </div>
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-function MiniStat({ label, value, percent }: { label: string; value: string; percent: number }) {
-  return (
-    <div className="space-y-2">
-       <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-          <span>{label}</span>
-          <span className="text-slate-900 dark:text-white">{value}</span>
-       </div>
-       <div className="h-1.5 w-full bg-slate-50 dark:bg-white/5 rounded-full overflow-hidden border border-slate-100 dark:border-white/5">
+      {/* Main Stats Grid */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, i) => (
           <motion.div 
-             initial={{ width: 0 }}
-             animate={{ width: `${percent}%` }}
-             className="h-full bg-indigo-500 rounded-full"
-          />
-       </div>
-    </div>
-  );
-}
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className={cn("p-4 rounded-2xl transition-colors", stat.bg, stat.darkBg, stat.color, stat.darkColor)}>
+                <stat.icon size={24} />
+              </div>
+              <div className="flex items-center gap-1 text-emerald-500 font-bold text-sm">
+                <ArrowUpRight size={16} />
+                +12%
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-on-surface-variant uppercase tracking-widest">{stat.label}</p>
+              <h3 className="text-4xl font-black text-on-surface mt-1">{stat.value}</h3>
+            </div>
+          </motion.div>
+        ))}
+      </section>
 
-function PathCard({ title, module, progress, image, status }: { title: string; module: string; progress: number; image: string; status: string }) {
-  return (
-    <motion.div 
-       whileHover={{ y: -8 }}
-       className="group cursor-pointer bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[2.5rem] p-6 shadow-sm hover:shadow-xl dark:shadow-none transition-all duration-500 backdrop-blur-xl"
-    >
-       <div className="h-44 w-full rounded-3xl overflow-hidden mb-6 relative">
-          <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-          <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors" />
-          <div className={cn(
-             "absolute top-4 left-4 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest backdrop-blur-md border border-white/20 shadow-xl",
-             status === "Active" ? "bg-white text-indigo-600" : "bg-black/50 text-white"
-          )}>
-             {status}
+      {/* Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* CEFR Progress Chart - Refined */}
+        <div className="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-[3rem] p-8 md:p-10 shadow-sm relative overflow-hidden group">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <BarChart3 size={18} className="text-indigo-600" />
+                <h2 className="text-2xl font-black text-on-surface">IELTS Band Analysis</h2>
+              </div>
+              <p className="text-on-surface-variant font-medium">Holistic sectional performance overview</p>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+              <Calendar size={14} className="text-slate-400" />
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Last 30 Days</span>
+              <ChevronRight size={14} className="text-slate-400" />
+            </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-center translate-y-full group-hover:translate-y-0 transition-transform">
-             <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-2xl scale-0 group-hover:scale-100 transition-transform delay-100">
-                <Play size={20} fill="currentColor" />
-             </div>
-          </div>
-       </div>
-       <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{title}</h4>
-       <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">{module}</p>
-       <div className="mt-8 flex items-center gap-4">
-          <div className="flex-1 h-1.5 bg-slate-50 dark:bg-white/5 rounded-full overflow-hidden border border-slate-100 dark:border-white/5">
-             <motion.div 
-                initial={{ width: 0 }}
-                whileInView={{ width: `${progress}%` }}
-                className="h-full primary-gradient rounded-full"
-             />
-          </div>
-          <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400">{progress}%</span>
-       </div>
-    </motion.div>
-  );
-}
 
-function ActivityItem({ icon, title, desc, color }: { icon: React.ReactNode; title: string; desc: string; color: string }) {
-  return (
-    <div className="flex gap-5 group cursor-default">
-       <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 shadow-sm", color)}>
-          {icon}
-       </div>
-       <div className="flex flex-col justify-center">
-          <p className="text-sm font-black text-slate-900 dark:text-white leading-tight">{title}</p>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 font-medium">{desc}</p>
-       </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Radar-like breakdown */}
+            <div className="space-y-6">
+              {cefrData.map((data) => (
+                <div key={data.skill} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <data.icon size={16} className="text-on-surface-variant" />
+                      <span className="text-sm font-bold text-on-surface">{data.skill}</span>
+                    </div>
+                    <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{data.score} / 9.0</span>
+                  </div>
+                  <div className="h-3 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(data.score / 9) * 100}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className={cn("h-full rounded-full shadow-[0_0_12px_rgba(99,102,241,0.3)]", data.color)}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Visual Graph Mock */}
+            <div className="relative h-64 flex items-end justify-between px-2 pt-10">
+              <div className="absolute inset-0 border-b border-slate-100 dark:border-white/5 flex flex-col justify-between pointer-events-none">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="w-full border-t border-slate-100/50 dark:border-white/5 border-dashed" />
+                ))}
+              </div>
+              {activityData.map((d, i) => (
+                <div key={i} className="relative flex flex-col items-center group/bar w-8">
+                  <motion.div 
+                    initial={{ height: 0 }}
+                    animate={{ height: `${(d.score / 9) * 100}%` }}
+                    className="w-full bg-gradient-to-t from-indigo-500/20 to-indigo-500 rounded-t-lg relative group-hover/bar:from-indigo-500 group-hover/bar:to-indigo-400 transition-all duration-300"
+                  >
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap">
+                      Band {d.score}
+                    </div>
+                  </motion.div>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-4 uppercase">{d.day}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Intelligence Insight Card */}
+        <div className="lg:col-span-4 flex flex-col gap-8">
+          <div className="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-100 dark:shadow-none relative overflow-hidden group">
+            <Zap className="absolute -right-8 -top-8 h-32 w-32 text-white/10 group-hover:rotate-12 transition-transform duration-700" />
+            <div className="relative z-10">
+              <h3 className="text-2xl font-black mb-4 leading-tight">IELTS Strategy Insight</h3>
+              <p className="text-indigo-100 font-medium text-sm leading-relaxed mb-8">
+                "Based on your recent listening scores, you should focus on Section 4 monologues. Pay attention to academic subject markers."
+              </p>
+              <button className="w-full py-4 bg-white text-indigo-600 rounded-2xl font-bold hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2">
+                Improve Listening
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-[2.5rem] p-8 shadow-sm">
+            <h3 className="text-lg font-black text-on-surface mb-6 flex items-center gap-2">
+              <TrendingUp size={20} className="text-emerald-500" />
+              Progress to Band 8.5
+            </h3>
+            <div className="relative pt-1">
+              <div className="flex mb-2 items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold inline-block py-1 px-2 uppercase rounded-full text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400">
+                    On Track
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-black inline-block text-on-surface">
+                    78%
+                  </span>
+                </div>
+              </div>
+              <div className="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-slate-100 dark:bg-white/5">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: "78%" }}
+                  className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"
+                />
+              </div>
+              <p className="text-[11px] text-on-surface-variant font-medium">Estimated completion in 14 days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-[3.5rem] p-8 md:p-12 shadow-sm">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2 className="text-2xl font-black text-on-surface">Recent Test Activity</h2>
+              <p className="text-on-surface-variant font-medium">Your latest performances in IELTS practice</p>
+            </div>
+            <button className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">View All History</button>
+          </div>
+
+          <div className="space-y-4">
+            {recentTests.map((test, i) => (
+              <div key={i} className="flex items-center justify-between p-6 bg-slate-50/50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5 hover:border-indigo-200 transition-all group">
+                <div className="flex items-center gap-5">
+                  <div className={cn(
+                    "h-14 w-14 rounded-2xl flex items-center justify-center transition-colors",
+                    test.type === "Listening" ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400" :
+                    test.type === "Reading" ? "bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400" :
+                    "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
+                  )}>
+                    {test.type === "Listening" ? <Headphones size={24} /> : test.type === "Reading" ? <BookOpen size={24} /> : <PenTool size={24} />}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-on-surface group-hover:text-indigo-600 transition-colors">{test.name}</h4>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-xs text-on-surface-variant">{test.type}</span>
+                      <span className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                      <span className="text-xs text-on-surface-variant">{test.date}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-black text-on-surface">{test.band}</div>
+                  <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{test.score}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Detailed Skills Breakdown */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-[3rem] p-8 shadow-sm">
+            <h3 className="text-lg font-black text-on-surface mb-8">Sectional Focus</h3>
+            <div className="space-y-6">
+              {[
+                { name: "Sentence Completion", progress: 85, color: "bg-indigo-500" },
+                { name: "Matching Information", progress: 62, color: "bg-violet-500" },
+                { name: "Short Answer Qs", progress: 45, color: "bg-emerald-500" },
+                { name: "Essay Organization", progress: 70, color: "bg-rose-500" },
+              ].map((skill) => (
+                <div key={skill.name} className="space-y-2">
+                  <div className="flex justify-between text-xs font-bold">
+                    <span className="text-on-surface-variant">{skill.name}</span>
+                    <span className="text-on-surface">{skill.progress}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                    <div className={cn("h-full rounded-full", skill.color)} style={{ width: `${skill.progress}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="w-full mt-10 py-4 border border-outline-variant hover:bg-slate-50 dark:hover:bg-white/5 text-on-surface text-sm font-bold rounded-2xl transition-all">
+              Full Analytics Report
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Test Tips Grid */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="p-8 bg-emerald-50/30 dark:bg-emerald-500/5 border border-emerald-100/50 dark:border-emerald-500/10 rounded-[2.5rem]">
+          <div className="h-12 w-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 flex items-center justify-center mb-6">
+            <CheckCircle2 size={24} />
+          </div>
+          <h4 className="text-lg font-bold text-emerald-900 dark:text-emerald-400 mb-2">Listening Tip</h4>
+          <p className="text-sm text-emerald-700/70 dark:text-emerald-400/60 leading-relaxed">
+            Write your answers in pencil and remember you have 10 minutes to transfer them to the answer sheet.
+          </p>
+        </div>
+        <div className="p-8 bg-blue-50/30 dark:bg-blue-500/5 border border-blue-100/50 dark:border-blue-500/10 rounded-[2.5rem]">
+          <div className="h-12 w-12 rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 flex items-center justify-center mb-6">
+            <CheckCircle2 size={24} />
+          </div>
+          <h4 className="text-lg font-bold text-blue-900 dark:text-blue-400 mb-2">Reading Tip</h4>
+          <p className="text-sm text-blue-700/70 dark:text-blue-400/60 leading-relaxed">
+            No extra time is given for transfer. Write your answers directly on the answer sheet if possible.
+          </p>
+        </div>
+        <div className="p-8 bg-amber-50/30 dark:bg-amber-500/5 border border-amber-100/50 dark:border-amber-500/10 rounded-[2.5rem]">
+          <div className="h-12 w-12 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 flex items-center justify-center mb-6">
+            <AlertCircle size={24} />
+          </div>
+          <h4 className="text-lg font-bold text-amber-900 dark:text-amber-400 mb-2">Writing Tip</h4>
+          <p className="text-sm text-amber-700/70 dark:text-amber-400/60 leading-relaxed">
+            Pay attention to word limits: Task 1 needs 150+ words, Task 2 needs 250+ words.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

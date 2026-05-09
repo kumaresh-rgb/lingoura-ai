@@ -49,7 +49,7 @@ export function Sidebar({ isCollapsed, isPinned, togglePin }: { isCollapsed: boo
         isCollapsed ? "justify-center px-0" : ""
       )}>
         <div className="flex items-center justify-center w-full">
-          <img src="/logo-icon.png" alt="Logo" className="h-20 w-auto object-contain" />
+          <img src="/logo-icon.png" alt="Logo" className="h-20 w-auto object-contain mix-blend-multiply dark:mix-blend-normal" />
         </div>
       </div>
 
@@ -57,11 +57,15 @@ export function Sidebar({ isCollapsed, isPinned, togglePin }: { isCollapsed: boo
       <button 
         onClick={togglePin}
         className={cn(
-          "absolute -right-3 top-8 bg-white border border-slate-200 rounded-lg h-6 w-6 flex items-center justify-center shadow-sm hover:shadow-md transition-all z-50",
-          isPinned ? "text-indigo-600" : "text-slate-400 hover:text-slate-900"
+          "absolute right-0 top-10 translate-x-1/2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-full h-8 w-8 flex items-center justify-center shadow-lg hover:shadow-indigo-200 dark:hover:shadow-none transition-all z-50 group/pin",
+          isPinned ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 hover:text-slate-900 dark:hover:text-white"
         )}
       >
-        {isPinned ? <Pin size={12} className="fill-indigo-600" /> : <PinOff size={12} />}
+        {isPinned ? (
+          <Pin size={14} className="fill-indigo-600 dark:fill-indigo-400" />
+        ) : (
+          <PinOff size={14} className="group-hover/pin:scale-110 transition-transform" />
+        )}
       </button>
 
       {/* Navigation */}
