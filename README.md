@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Lingoura AI — Professional AI English Fluency Platform
 
-## Getting Started
+![Lingoura AI Banner](https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=1200&q=80)
 
-First, run the development server:
+Lingoura AI is a state-of-the-art, AI-powered platform designed to help users master English fluency through interactive labs, real-time intelligence analytics, and a premium, high-end user experience.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 📊 Fluency Analytics
+Deep-dive into your CEFR progress with holistic leveling analysis across Speaking, Listening, Reading, and Writing. Track your daily growth with interactive mesh-glow heatmaps.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🎙️ Speaking Lab
+Interactive AI-driven conversation practice. Master advanced negotiations, everyday idioms, and professional jargon with real-time AI feedback.
 
-## Learn More
+### 🎧 Listening Lab
+High-fidelity audio sessions designed to sharpen your comprehension across various accents and professional contexts.
 
-To learn more about Next.js, take a look at the following resources:
+### 🧠 Vocabulary Intelligence
+Smart word tracking that categorizes your vocabulary depth and mastery, helping you focus on the most impactful words for your specific field.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎨 Design Philosophy
 
-## Deploy on Vercel
+Lingoura AI is built with a **Premium SaaS Aesthetic**:
+- **Dynamic Themes**: Seamless switching between professional Light Mode and a deep, immersive Dark Mode.
+- **Fluid Layout**: A synchronized, motion-driven sidebar and navigation system that provides a weightless feel.
+- **Micro-Animations**: Built with Framer Motion for high-end interaction feedback.
+- **Glassmorphism**: Subtle backdrop blurs and mesh gradients for a modern, state-of-the-art look.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠️ Technology Stack
+
+- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) (Newest Engine)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **State Management**: React Context & Hooks
+- **Theme**: `next-themes`
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18.x or higher
+- npm or yarn
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/kumaresh-rgb/lingoura-ai.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📸 Screenshots
+
+*(Add your beautiful screenshots here)*
+> **Tip**: You can upload your screenshots to a `public/screenshots` folder and link them here!
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Developed with ❤️ by [Kumaresh](https://github.com/kumaresh-rgb)
