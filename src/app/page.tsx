@@ -112,8 +112,9 @@ const FontLoader = () => (
       text-decoration: none;
     }
     .logo-img {
-      height: 90px; width: auto; object-fit: contain;
+      height: 64px; width: auto; object-fit: contain;
       margin-left: -12px;
+      mix-blend-multiply;
     }
     .nav-links {
       display: flex; gap: 40px; list-style: none;
@@ -713,24 +714,24 @@ interface Plan {
 }
 
 const plans: Plan[] = [
-  { name: "Free Plan",  price: { monthly: "0",  yearly: "0"  }, desc: "Perfect to get started", icon: "⚡", features: ["Access basic courses", "Limited AI tutor usage", "Basic notes", "Progress tracking"], cta: "Get Started" },
-  { name: "Pro Plan",   price: { monthly: "20", yearly: "17" }, desc: "Best for serious learners", icon: "✨", features: ["Unlimited AI tutor", "Smart notes & summaries", "Quiz generator", "Full progress insights", "Priority support"], cta: "Upgrade to Pro", featured: true },
-  { name: "Team Plan",  price: { monthly: "35", yearly: "30" }, desc: "For teams and organizations", icon: "👥", features: ["Everything in Pro", "Team collaboration", "Shared workspace", "Admin controls"], cta: "Contact Sales" },
+  { name: "Standard Plan", price: { monthly: "0",  yearly: "0"  }, desc: "Perfect for beginners", icon: "⚡", features: ["Basic IELTS Overview", "1 Mock Test per month", "Daily Vocabulary", "Progress tracking"], cta: "Start Learning" },
+  { name: "Premium IELTS", price: { monthly: "29", yearly: "24" }, desc: "Best for serious candidates", icon: "✨", features: ["Unlimited AI Speaking Prep", "Unlimited Writing Evaluation", "Official IELTS Mock Tests", "Band Score Prediction", "Priority support"], cta: "Get Band 8.0", featured: true },
+  { name: "Tutor Pro",     price: { monthly: "49", yearly: "42" }, desc: "For coaches and schools", icon: "👥", features: ["Everything in Premium", "Student management", "Detailed error analysis", "Custom feedback templates"], cta: "Contact Sales" },
 ];
 
 const faqs = [
-  { q: "Is Lingoura AI free to use?",              a: "Yes, you can start with our free plan and upgrade anytime as your learning needs grow." },
-  { q: "How does the AI tutor work?",               a: "Our AI tutor uses advanced neural paths to understand your learning style and provide personalized guidance in real-time." },
-  { q: "Can I use Lingoura AI for any topic?",     a: "Absolutely! Our AI is trained across thousands of disciplines to help you master any subject." },
-  { q: "Do I need prior knowledge to get started?", a: "Not at all. Lingoura AI adapts to your current level, whether you're a beginner or an expert." },
-  { q: "Can I track my learning progress?",         a: "Yes — immersive insights and neural path tracking show exactly how you're evolving every session." },
-  { q: "Is my data safe?",                          a: "Security is our top priority. All your data is encrypted and used only to enhance your learning experience." },
+  { q: "Is Lingoura AI suitable for both Academic and General Training?", a: "Yes! Our AI is trained on both Academic and General Training modules to provide specialized feedback for your specific test type." },
+  { q: "How accurate is the AI Band Score prediction?", a: "Our scoring algorithms are aligned with the official IELTS assessment criteria (Task Achievement, Coherence, Lexical Resource, etc.) to provide predictions within 0.5 of your actual score." },
+  { q: "Can I practice Speaking with the AI?", a: "Absolutely. Our real-time AI Speaking coach simulates Part 1, 2, and 3 of the IELTS test and provides instant feedback on fluency and pronunciation." },
+  { q: "Does it help with Writing Task 1 and 2?", a: "Yes. You can submit your essays and data descriptions for instant evaluation against IELTS standards, including grammatical range and accuracy." },
+  { q: "Are the Reading and Listening tests exam-standard?", a: "Yes — all our practice materials are designed to match the difficulty, timing, and structure of real IELTS exams." },
+  { q: "How often are the practice materials updated?", a: "We update our question bank weekly with the latest IELTS topics and trends to ensure you're always prepared for the current exam cycle." },
 ];
 
 const testimonials = [
-  { name: "Sarah Chen",  role: "Product Designer",   avatar: "👩‍🎨", quote: "Lingoura AI completely changed how I study. I finally feel structured and focused every day." },
-  { name: "Daniel Lee",  role: "Frontend Developer",  avatar: "👨‍💻", quote: "The AI tutor is insanely helpful. It explains things better than most courses I've taken." },
-  { name: "Amanda Park", role: "Graduate Student",    avatar: "👩‍🎓", quote: "I love how everything is connected — notes, quizzes and progress all in one place." },
+  { name: "Maria Garcia",  role: "IELTS Candidate (Band 8.5)", avatar: "👩‍🎓", quote: "Lingoura AI was the only tool that gave me the instant feedback I needed to fix my Writing Task 2 coherence issues." },
+  { name: "Ahmed Khan",    role: "IELTS Candidate (Band 8.0)", avatar: "👨‍💻", quote: "The AI Speaking practice felt so real. It helped me overcome my nervousness and improve my pronunciation significantly." },
+  { name: "Li Wei",        role: "Graduate Student",          avatar: "👩‍🎓", quote: "I love how the dashboard tracks my band score progress across all four sections. It keeps me incredibly motivated." },
 ];
 
 // ─── Main Component ────────────────────────────────────────────────────────
@@ -761,16 +762,15 @@ export default function LearnFlowLanding() {
 
       {/* HERO */}
       <section className="hero" style={{ paddingTop: 160 }}>
-        <div className="badge fade-up">✨ Next-Gen Learning Engine</div>
+        <div className="badge fade-up">✨ Certified IELTS Coaching</div>
 
         <h1 className="hero-h1 fade-up d-100">
-          Your AI That Understands<br />
-          <span className="grad-text">How You Learn</span>
+          Master the IELTS<br />
+          <span className="grad-text">With AI Precision</span>
         </h1>
 
         <p className="hero-sub fade-up d-200">
-          Lingoura AI helps you organize lessons, generate notes, create quizzes,
-          and stay on track — all powered by AI.
+          The ultimate AI-powered preparation platform for IELTS. Master Speaking, Writing, Reading, and Listening with real-time feedback and exam-standard mocks.
         </p>
 
         <div className="hero-ctas fade-up d-300">
@@ -784,7 +784,7 @@ export default function LearnFlowLanding() {
           </div>
           <span>Join</span>
           <span className="accent">10,000+</span>
-          <span>learners improving with AI</span>
+          <span>candidates achieving Band 8.0+</span>
         </div>
 
         {/* MOCK UI */}
@@ -856,9 +856,9 @@ export default function LearnFlowLanding() {
           </R>
           <div className="pain-grid">
             {[
-              { icon: "📄", title: "Too Much Information",  desc: "You jump between resources, videos, and notes — but nothing feels connected." },
-              { icon: "🖱️", title: "No Clear Direction",    desc: "You don't know what to learn next or how to structure your progress." },
-              { icon: "⭐", title: "Hard to Retain",        desc: "You understand something today, but forget it tomorrow." },
+              { icon: "📉", title: "Inaccurate Feedback",  desc: "Self-study feels like guessing. You don't know why your band score is stuck." },
+              { icon: "⌛", title: "Wasted Prep Time",      desc: "Spending hours on generic resources that don't match actual exam standards." },
+              { icon: "😰", title: "Exam Anxiety",        desc: "Fear of the Speaking examiner or the high-pressure Writing tasks." },
             ].map((item, i) => (
               <R key={i} delay={i * .1}>
                 <div className="pain-card">
@@ -877,9 +877,9 @@ export default function LearnFlowLanding() {
         <div className="section-inner">
           <div className="features-split">
             <R>
-              <div className="section-tag">Meet Lingoura AI</div>
-              <h2 className="section-h2">One AI to <span className="grad-text">accelerate</span><br />your learning</h2>
-              <p className="section-sub">Structure, clarity, and personalized guidance — so you can focus on understanding, not just memorizing.</p>
+              <div className="section-tag">IELTS Specialized AI</div>
+              <h2 className="section-h2">The only coach you <span className="grad-text">need</span><br />for Band 8.5</h2>
+              <p className="section-sub">Personalized IELTS roadmaps, instant band score predictions, and human-like AI speaking partners.</p>
               <div className="feature-pills">
                 {[
                   { icon: "⚡", label: "Active Learning" },
@@ -918,12 +918,12 @@ export default function LearnFlowLanding() {
           </R>
           <div className="feat-grid">
             {[
-              { icon: "📝", title: "Smart Notes", desc: "Auto-generate concise notes from any lecture, video or document instantly." },
-              { icon: "🤖", title: "AI Tutor", desc: "Your personal mentor available 24/7 to explain complex concepts in simple terms." },
-              { icon: "🧩", title: "Quiz Gen", desc: "Instantly create practice tests to reinforce your knowledge and find gaps." },
-              { icon: "📊", title: "Progress", desc: "Deep analytics on your learning speed, retention and consistency streaks." },
-              { icon: "📂", title: "Shared Space", desc: "Collaborate with your team or classmates in shared learning environments." },
-              { icon: "🔗", title: "Collections", desc: "Organize your resources into beautiful, searchable knowledge libraries." },
+              { icon: "🎧", title: "Listening Mastery", desc: "4 sections of authentic social and academic recordings with exam-standard questions." },
+              { icon: "📖", title: "Reading Lab", desc: "Master Skimming and Scanning with texts from official books, journals, and newspapers." },
+              { icon: "✍️", title: "Writing Evaluator", desc: "Instant Band 9 level feedback on Task 1 data descriptions and Task 2 essays." },
+              { icon: "🗣️", title: "Speaking Coach", desc: "Real-time AI voice partner that evaluates your fluency, coherence, and grammar." },
+              { icon: "📊", title: "Band Prediction", desc: "Accurate score forecasting across all modules based on official assessment criteria." },
+              { icon: "📈", title: "Progress Track", desc: "Deep analytics on your consistency, performance trends, and focus areas." },
             ].map((f, i) => (
               <R key={i} delay={i * 0.05}>
                 <div className="feat-card">
@@ -1156,10 +1156,10 @@ export default function LearnFlowLanding() {
         <div className="section-inner" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           <R>
             <h2 className="cta-h2">
-              Start learning<br />smarter with AI<br />today
+              Ready to achieve<br />your dream Band<br />score?
             </h2>
             <p className="section-sub" style={{ textAlign: "center", marginBottom: 48, maxWidth: 520 }}>
-              Join thousands of learners using Lingoura AI to stay focused, organized, and consistent every day.
+              Join thousands of candidates using Lingoura AI to perfect their IELTS skills and unlock their global future.
             </p>
             <div className="hero-ctas">
               <button className="btn-hero">Get Started Free</button>
