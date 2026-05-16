@@ -1,6 +1,7 @@
 using Lingoura.Application.Authentication.DTOs;
 using Lingoura.Application.Common.Interfaces;
 using Lingoura.Common.Constants;
+using Lingoura.Common.Exceptions;
 using Lingoura.Common.Results;
 using Lingoura.Domain.Entities;
 using DomainRefreshToken = Lingoura.Domain.Entities.RefreshToken;
@@ -31,8 +32,7 @@ public sealed class LoginCommandHandler(
         }
 
         if (await userManager.IsLockedOutAsync(user))
-            return Result.Failure<AuthResponseDto>(
-                Error.Failure("Auth.AccountLocked", "Account locked. Please try again later."));
+            throw new TooManyRequestsException("Account temporarily locked due to too many failed attempts. Please try again later.");
 
         var passwordValid = await userManager.CheckPasswordAsync(user, cmd.Password);
         if (!passwordValid)
@@ -40,10 +40,12 @@ public sealed class LoginCommandHandler(
             await userManager.AccessFailedAsync(user);
 
             if (await userManager.IsLockedOutAsync(user))
+            {
                 logger.LogWarning("User {UserId} locked out after failed attempts", user.Id);
-            else
-                logger.LogWarning("Failed password attempt for user {UserId}", user.Id);
+                throw new TooManyRequestsException("Account temporarily locked due to too many failed attempts. Please try again later.");
+            }
 
+            logger.LogWarning("Failed password attempt for user {UserId}", user.Id);
             return Result.Failure<AuthResponseDto>(InvalidCredentials);
         }
 

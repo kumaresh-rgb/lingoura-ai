@@ -62,7 +62,9 @@ try
         opts.ReportApiVersions = true;
     });
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .ConfigureApiBehaviorOptions(opts =>
+            opts.SuppressModelStateInvalidFilter = true);   // all validation → FluentValidation → 422
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
