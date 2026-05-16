@@ -1,0 +1,50 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Database__ConnectionString=Host=postgres;Port=5432;Database=lingoura;Username=lingoura;Password=${DB_PASSWORD}
+      - Jwt__SecretKey=${JWT_SECRET}
+      - Jwt__Issuer=${JWT_ISSUER:-https://api.lingoura.ai}
+      - Jwt__Audience=${JWT_AUDIENCE:-https://app.lingoura.ai}
+      - GoogleAuth__ClientId=${GOOGLE_CLIENT_ID}
+      - Cors__AllowedOrigins__0=${CORS_ORIGIN:-https://app.lingoura.ai}
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lingoura
+      POSTGRES_USER: lingoura
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lingoura -d lingoura"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

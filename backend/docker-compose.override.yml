@@ -1,0 +1,14 @@
+services:
+  api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Database__ConnectionString=Host=postgres;Port=5432;Database=lingoura_dev;Username=lingoura;Password=lingoura_dev
+      - Jwt__SecretKey=dev-secret-key-minimum-32-chars!!
+      - Jwt__Issuer=http://localhost:8080
+      - Jwt__Audience=http://localhost:3000
+      - GoogleAuth__ClientId=REPLACE_WITH_GOOGLE_CLIENT_ID
+      - Cors__AllowedOrigins__0=http://localhost:3000
+
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: lingoura_dev

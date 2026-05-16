@@ -1,0 +1,6 @@
+@Lingoura.Api_HostAddress = http://localhost:5030
+
+GET {{Lingoura.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
