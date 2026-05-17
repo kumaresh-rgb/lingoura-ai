@@ -2,691 +2,767 @@
 import { useState, useEffect, useRef } from "react";
 import { Sun, Moon } from "lucide-react";
 
-
-// ─── Google Font Loader ────────────────────────────────────────────────────
-const FontLoader = () => (
+// ─── Font + Global CSS ─────────────────────────────────────────────────────
+const Styles = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font: 'Plus Jakarta Sans', sans-serif;
-      --bg: #FAFBFF;
-      --ink: #111111;
-      --muted: #6B7280;
-      --light: #C4C4C4;
-      --indigo: #6366F1;
-      --violet: #7C3AED;
-      --indigo-light: #EEF2FF;
-      --card-bg: #FFFFFF;
-      --nav-bg: rgba(255, 255, 255, 0.75);
-      --border: rgba(17,17,17,.07);
-      --input-bg: #F4F5FC;
+      --font: 'Manrope', 'Plus Jakarta Sans', system-ui, sans-serif;
+      --bg:          #020617;
+      --surface:     #0f172a;
+      --surface-hi:  #1e293b;
+      --ink:         #f8fafc;
+      --muted:       #94a3b8;
+      --outline:     rgba(255,255,255,0.08);
+      --primary:     #c0c1ff;
+      --secondary:   #ffb0cd;
+      --tertiary:    #89ceff;
+      --radius-xl:   28px;
+      --radius-lg:   20px;
+      --radius-md:   14px;
+      --radius-pill: 9999px;
     }
-
-    .landing-dark {
-      --bg: #0B0E14;
-      --ink: #F9FAFB;
-      --muted: #9CA3AF;
-      --light: #374151;
-      --indigo: #818CF8;
-      --violet: #A78BFA;
-      --indigo-light: rgba(99, 102, 241, 0.15);
-      --card-bg: #151B28;
-      --nav-bg: rgba(11, 14, 20, 0.8);
-      --border: rgba(255,255,255,0.1);
-      --input-bg: #1A2131;
+    .lp-light {
+      --bg:        #f8fafc;
+      --surface:   #f1f5f9;
+      --surface-hi:#e2e8f0;
+      --ink:       #0f172a;
+      --muted:     #64748b;
+      --outline:   rgba(0,0,0,0.07);
+      --primary:   #6366f1;
+      --secondary: #ec4899;
+      --tertiary:  #0ea5e9;
     }
 
     html { scroll-behavior: smooth; }
 
-    .landing-page-wrapper {
+    /* ── Page shell ── */
+    .lp {
       font-family: var(--font);
-      background: var(--bg);
+      background-color: var(--bg);
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      position: relative;
       min-height: 100vh;
-      transition: background-color 0.4s ease, color 0.4s ease;
+      position: relative;
+      transition: background-color 0.4s, color 0.4s;
     }
 
-    /* ── Animations ── */
+    /* Mesh gradient overlay */
+    .lp::after {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse at 0% 0%,   rgba(192,193,255,.09) 0, transparent 55%),
+        radial-gradient(ellipse at 100% 0%,  rgba(255,176,205,.06) 0, transparent 55%),
+        radial-gradient(ellipse at 100% 100%,rgba(137,206,255,.04) 0, transparent 55%),
+        radial-gradient(ellipse at 0% 100%,  rgba(192,193,255,.04) 0, transparent 55%);
+    }
+    .lp-light::after {
+      background:
+        radial-gradient(ellipse at 0% 0%,   rgba(99,102,241,.05) 0, transparent 55%),
+        radial-gradient(ellipse at 100% 0%,  rgba(236,72,153,.03) 0, transparent 55%),
+        radial-gradient(ellipse at 100% 100%,rgba(14,165,233,.02) 0, transparent 55%);
+    }
+    .lp > * { position: relative; z-index: 1; }
+
+    /* ── Keyframes ── */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(32px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-    @keyframes float1 {
-      0%,100% { transform: translateY(0px); }
-      50%      { transform: translateY(-14px); }
+    @keyframes marquee {
+      from { transform:translateX(0); }
+      to   { transform:translateX(-50%); }
     }
-    @keyframes float2 {
-      0%,100% { transform: translateY(0px); }
-      50%      { transform: translateY(10px); }
+    @keyframes waveFloat {
+      0%,100% { transform:scaleY(1); }
+      50%     { transform:scaleY(1.6); }
     }
-    @keyframes pulse-ring {
-      0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99,102,241,.35); }
-      70%  { transform: scale(1);    box-shadow: 0 0 0 18px rgba(99,102,241,0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+    @keyframes floatY {
+      0%,100% { transform:translateY(0); }
+      50%     { transform:translateY(-10px); }
     }
 
-    .fade-up   { animation: fadeUp .9s cubic-bezier(.22,1,.36,1) both; }
-    .d-100     { animation-delay: .1s; }
-    .d-200     { animation-delay: .2s; }
-    .d-300     { animation-delay: .3s; }
-    .d-400     { animation-delay: .4s; }
-    .d-500     { animation-delay: .5s; }
-    .float1    { animation: float1 6s ease-in-out infinite; }
-    .float2    { animation: float2 7s ease-in-out infinite; }
+    .fade-up { animation: fadeUp .85s cubic-bezier(.22,1,.36,1) both; }
+    .d1 { animation-delay:.1s; } .d2 { animation-delay:.2s; }
+    .d3 { animation-delay:.3s; } .d4 { animation-delay:.4s; }
+    .d5 { animation-delay:.5s; }
+
+    .reveal {
+      opacity:0; transform:translateY(24px);
+      transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal.vis { opacity:1; transform:translateY(0); }
 
     /* ── Gradient text ── */
-    .grad-text {
-      background: linear-gradient(135deg, var(--violet) 0%, var(--indigo) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .grad {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .grad-tri {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--tertiary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .glow { text-shadow: 0 0 60px rgba(192,193,255,.4); }
+    .lp-light .glow { text-shadow: 0 0 60px rgba(99,102,241,.2); }
+
+    /* ── Glass surface ── */
+    .glass {
+      backdrop-filter: blur(24px) saturate(180%);
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    .lp-light .glass {
+      background: rgba(255,255,255,.75);
+      border-color: rgba(0,0,0,.07);
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: var(--radius-xl);
+    }
+    .lp-light .card {
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(0,0,0,.05);
     }
 
     /* ── Nav ── */
     .nav {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      width: calc(100% - 40px); max-width: 1200px; z-index: 1000;
-      height: 68px;
-      display: flex; align-items: center;
-      padding: 0 32px;
-      background: var(--nav-bg);
-      backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.06);
-      transition: all 0.3s ease;
+      position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 40px); max-width: 1280px; z-index: 200;
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(2,6,23,.55);
+      backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-pill);
+      box-shadow: 0 8px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+      transition: all .3s;
     }
-    .nav-inner {
-      width: 100%;
-      display: flex; justify-content: space-between; align-items: center;
+    .lp-light .nav {
+      background: rgba(248,250,252,.8);
+      border-color: rgba(0,0,0,.08);
+      box-shadow: 0 8px 40px rgba(0,0,0,.08);
     }
     .logo {
       display: flex; align-items: center; gap: 4px;
-      font-family: var(--font); font-weight: 800; font-size: 28px;
-      letter-spacing: -.03em;
-      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-decoration: none;
+      font-size: 18px; font-weight: 800; letter-spacing: -.025em;
+      color: var(--ink); text-decoration: none;
     }
-    .logo-img {
-      height: 64px; width: auto; object-fit: contain;
-      margin-left: -12px;
-    }
-    .nav-links {
-      display: flex; gap: 40px; list-style: none;
-    }
+    .logo-img { height: 52px; width: auto; margin-left: -8px; }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
     .nav-links a {
-      font-size: 11px; font-weight: 700; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--muted);
+      font-size: 14px; font-weight: 600; color: var(--muted);
       text-decoration: none; transition: color .2s;
     }
-    .nav-links a:hover { color: var(--indigo); }
-    .btn-primary {
-      padding: 12px 24px;
-      background: var(--ink);
-      color: var(--bg); border: none; border-radius: 8px;
-      font-family: var(--font); font-size: 11px; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex; align-items: center; gap: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-decoration: none;
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a.active { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .theme-btn {
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,.06); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); transition: all .2s;
     }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-    .btn-primary:active { transform: scale(.98); }
-    .btn-ghost {
-      padding: 14px 32px;
-      background: var(--card-bg); color: var(--ink);
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      font-family: var(--font); font-size: 15px; font-weight: 700;
-      cursor: pointer; transition: background .2s, transform .15s;
+    .lp-light .theme-btn { background: rgba(0,0,0,.05); }
+    .theme-btn:hover { background: rgba(255,255,255,.12); color: var(--ink); }
+    .lp-light .theme-btn:hover { background: rgba(0,0,0,.09); }
+    .btn-pill {
+      padding: 10px 22px; border-radius: var(--radius-pill); border: none;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #02061a; font-family: var(--font); font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all .25s; white-space: nowrap;
+      box-shadow: 0 4px 18px rgba(192,193,255,.25);
+      text-decoration: none; display: inline-flex; align-items: center;
     }
-    .btn-ghost:hover { background: var(--bg); transform: translateY(-1px); }
+    .btn-pill:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(192,193,255,.35); }
+    .btn-pill:active { transform: scale(.97); }
+    .lp-light .btn-pill { color: #02061a; }
+
+    /* ── Section base ── */
+    .section { padding: 100px 24px; }
+    .container { max-width: 1280px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--primary); margin-bottom: 16px;
+    }
+    .section-h2 {
+      font-size: clamp(30px, 4.5vw, 54px);
+      font-weight: 800; letter-spacing: -.035em; line-height: 1.07;
+      color: var(--ink); margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 18px; font-weight: 500; color: var(--muted); line-height: 1.65;
+    }
 
     /* ── Hero ── */
     .hero {
-      padding: 160px 48px 100px;
-      text-align: center;
-      display: flex; flex-direction: column; align-items: center;
-      position: relative; overflow: hidden;
+      padding: 168px 24px 80px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      max-width: 1280px; margin: 0 auto;
     }
-    .hero::before {
-      content: '';
-      position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
-      width: 900px; height: 600px;
-      background: radial-gradient(ellipse at center, rgba(99,102,241,.07) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 16px; border-radius: 99px;
-      background: rgba(99,102,241,.08);
-      border: 1px solid rgba(99,102,241,.18);
-      color: var(--indigo);
-      font-size: 10px; font-weight: 800; letter-spacing: .28em; text-transform: uppercase;
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 7px 20px; border-radius: var(--radius-pill);
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
       margin-bottom: 36px;
     }
+    .lp-light .hero-badge { background: rgba(99,102,241,.06); border-color: rgba(99,102,241,.18); }
+    .badge-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--secondary); box-shadow: 0 0 12px rgba(255,176,205,.8);
+    }
+    .lp-light .badge-dot { background: var(--secondary); box-shadow: 0 0 12px rgba(236,72,153,.4); }
+    .badge-text { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--secondary); }
+    .lp-light .badge-text { color: var(--secondary); }
     .hero-h1 {
-      font-size: clamp(56px, 9vw, 112px);
-      font-weight: 800;
-      line-height: .88;
-      letter-spacing: -.045em;
-      color: var(--ink);
-      margin-bottom: 28px;
-      max-width: 900px;
+      font-size: clamp(48px, 9.5vw, 108px);
+      font-weight: 800; letter-spacing: -.05em; line-height: .94;
+      color: var(--ink); margin-bottom: 28px; max-width: 920px;
     }
     .hero-sub {
-      font-size: clamp(17px, 2vw, 21px);
-      font-weight: 500;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 580px;
-      margin-bottom: 48px;
-      letter-spacing: -.01em;
+      font-size: clamp(16px, 1.8vw, 20px); font-weight: 500;
+      color: var(--muted); line-height: 1.65; max-width: 600px; margin-bottom: 48px;
     }
-    .hero-ctas {
-      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-      margin-bottom: 36px;
-    }
-    .btn-hero {
-      padding: 18px 36px;
-      background: var(--ink);
-      color: var(--bg); border: none; border-radius: 10px;
-      font-family: var(--font); font-size: 16px; font-weight: 600;
-      cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    .btn-hero:hover { transform: translateY(-3px); opacity: 0.9; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-    .social-proof {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 20px; border-radius: 99px;
-      background: rgba(17,17,17,.04); border: 1px solid rgba(17,17,17,.07);
-      font-size: 12px; font-weight: 700; color: var(--muted);
-      letter-spacing: .06em; margin-bottom: 80px;
-    }
-    .avatars { display: flex; }
-    .avatar {
-      width: 26px; height: 26px; border-radius: 50%;
-      border: 2px solid #fff; margin-left: -8px;
-      background: var(--indigo-light);
-    }
-    .avatar:first-child { margin-left: 0; }
-    .social-proof span.accent { color: var(--indigo); font-weight: 800; }
-
-    /* ── Mock UI Card ── */
-    .hero-card-wrap {
-      position: relative; width: 100%; max-width: 900px;
-    }
-    .hero-card {
-      background: var(--card-bg);
-      border-radius: 48px;
-      border: 1px solid var(--border);
-      padding: 24px;
-      box-shadow: 0 40px 100px rgba(99,102,241,.08), 0 8px 24px rgba(0,0,0,.04);
-    }
-    .hero-card-inner {
-      background: var(--input-bg);
-      border-radius: 32px;
-      border: 1px solid var(--border);
-      aspect-ratio: 16/9;
-      display: flex; flex-direction: column;
-      padding: 40px; gap: 24px; overflow: hidden;
-      position: relative;
-    }
-    .mock-bar {
-      height: 48px; background: var(--card-bg); border-radius: 16px;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; padding: 0 20px; gap: 12px;
-      width: 70%;
-    }
-    .mock-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--indigo-light); }
-    .mock-line { height: 10px; border-radius: 99px; background: rgba(17,17,17,.06); }
-    .mock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; }
-    .mock-tile {
-      background: var(--card-bg); border-radius: 24px;
-      border: 1px solid var(--border);
-      padding: 28px; display: flex; flex-direction: column; gap: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.03);
-    }
-    .mock-icon-box {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: var(--indigo-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-    }
-    .mock-lines { display: flex; flex-direction: column; gap: 8px; }
-    .mock-tile-center {
-      background: var(--card-bg); border-radius: 24px;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 72px; opacity: .12;
-    }
-    /* floating side cards */
-    .side-card {
-      position: absolute;
-      background: var(--card-bg);
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      padding: 24px;
-      box-shadow: 0 24px 64px rgba(0,0,0,.08);
-      width: 240px;
-    }
-    .side-card-left  { left: -80px; top: 40px; }
-    .side-card-right { right: -80px; top: 120px; }
-    .sc-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .sc-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: var(--indigo-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-    }
-    .sc-label { font-size: 12px; font-weight: 800; color: var(--ink); }
-    .sc-lines { display: flex; flex-direction: column; gap: 6px; }
-    .sc-check-row { display: flex; align-items: center; gap: 8px; }
-    .sc-check { color: #10B981; font-size: 12px; font-weight: 800; }
-
-    /* ── Trusted by ── */
-    .trusted {
-      padding: 60px 48px;
-      text-align: center;
-    }
-    .trusted-label {
-      font-size: 10px; font-weight: 800; letter-spacing: .28em;
-      text-transform: uppercase; color: var(--light); margin-bottom: 32px;
-    }
-    .trusted-logos {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 48px; filter: grayscale(1); opacity: .35;
-    }
-    .trusted-logos span {
-      font-size: 20px; font-weight: 800; letter-spacing: -.03em; color: var(--ink);
-    }
-
-    /* ── Section base ── */
-    section { padding: 120px 48px; background: transparent; }
-    .section-inner { max-width: 1280px; margin: 0 auto; }
-    .section-tag {
-      display: inline-flex; padding: 6px 16px; border-radius: 99px;
-      background: rgba(99,102,241,.06); border: 1px solid rgba(99,102,241,.14);
-      font-size: 10px; font-weight: 800; letter-spacing: .24em;
-      text-transform: uppercase; color: var(--indigo);
-      margin-bottom: 24px;
-    }
-    .section-h2 {
-      font-size: clamp(36px, 5vw, 64px);
-      font-weight: 800; letter-spacing: -.04em;
-      line-height: 1.0; color: var(--ink); margin-bottom: 20px;
-    }
-    .section-sub {
-      font-size: 18px; font-weight: 500;
-      color: var(--muted); line-height: 1.6; max-width: 560px;
-    }
-
-    /* ── Pain cards ── */
-    .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; }
-    .pain-card {
-      background: var(--card-bg); padding: 40px; border-radius: 28px;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 32px rgba(0,0,0,.02);
-      transition: transform .3s, box-shadow .3s;
-    }
-    .pain-card:hover { transform: translateY(-8px); box-shadow: 0 24px 64px rgba(99,102,241,.1); }
-    .pain-icon {
-      width: 52px; height: 52px; border-radius: 14px;
-      background: var(--indigo-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; margin-bottom: 28px;
-    }
-    .pain-title { font-size: 20px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 12px; }
-    .pain-desc { font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.6; }
-
-    /* ── Features ── */
-    .features-bg { background: transparent; }
-    .features-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .feature-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; }
-    .feature-pill {
-      display: flex; align-items: center; gap: 12px;
-      padding: 16px; border-radius: 14px;
-      background: rgba(99,102,241,.04); border: 1px solid rgba(99,102,241,.1);
-      transition: background .2s;
-    }
-    .feature-pill:hover { background: rgba(99,102,241,.1); }
-    .fp-icon {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: var(--indigo-light);
-      display: flex; align-items: center; justify-content: center; font-size: 18px;
-      flex-shrink: 0;
-    }
-    .fp-label { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-
-    /* feature mock card */
-    .feat-mock {
-      background: var(--card-bg); border-radius: 48px; padding: 24px;
-      box-shadow: 0 32px 80px rgba(99,102,241,.09);
-      border: 1px solid var(--border);
-    }
-    .feat-mock-inner {
-      background: var(--input-bg); border-radius: 32px;
-      aspect-ratio: 4/5; padding: 32px;
-      display: flex; flex-direction: column; justify-content: flex-end;
-    }
-    .feat-bottom-card {
-      background: var(--card-bg); border-radius: 20px; padding: 24px;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 32px rgba(0,0,0,.06);
-      transform: translateY(16px); transition: transform .4s;
-    }
-    .feat-mock:hover .feat-bottom-card { transform: translateY(0); }
-
-    /* ── How it works (steps) ── */
-    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 64px; }
-    .step-card {
-      position: relative; padding: 40px; border-radius: 28px;
-      border: 1px solid var(--border);
-      background: var(--card-bg); box-shadow: 0 8px 32px rgba(0,0,0,.02);
-    }
-    .step-num {
-      position: absolute; top: -18px; left: 36px;
-      width: 36px; height: 36px; border-radius: 50%;
-      background: linear-gradient(135deg,var(--violet),var(--indigo));
-      color: #fff; display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 800;
-      box-shadow: 0 6px 18px rgba(99,102,241,.35);
-    }
-    .step-icon { font-size: 36px; margin-bottom: 20px; }
-    .step-title { font-size: 20px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 10px; }
-    .step-desc { font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.6; }
-
-    /* ── Pricing ── */
-    .pricing-center { text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .billing-toggle {
-      display: flex; gap: 4px; padding: 4px;
-      background: rgba(17,17,17,.05); border-radius: 14px;
-      border: 1px solid rgba(17,17,17,.08); margin: 32px 0 48px;
-    }
-    .toggle-btn {
-      padding: 10px 28px; border-radius: 10px; border: none;
-      background: transparent; cursor: pointer;
-      font-family: var(--font); font-size: 11px; font-weight: 800;
-      letter-spacing: .16em; text-transform: uppercase;
-      color: var(--muted); transition: all .2s;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .toggle-btn.active { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
-    .save-badge {
-      font-size: 9px; font-weight: 800; letter-spacing: .1em;
-      background: var(--indigo); color: #fff; padding: 2px 8px; border-radius: 6px;
-    }
-    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; max-width: 1100px; align-items: center; }
-    .plan-card {
-      padding: 48px; border-radius: 32px; border: 1px solid var(--border);
-      background: var(--card-bg); text-align: left;
-      box-shadow: 0 10px 40px rgba(0,0,0,.02);
-      transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);
-      display: flex; flex-direction: column; gap: 32px;
-    }
-    .plan-card:hover { transform: translateY(-12px); box-shadow: 0 40px 80px rgba(0,0,0,0.06); }
-    .plan-card.featured {
-      background: #6366F1;
-      color: #fff; border-color: transparent;
-      box-shadow: 0 30px 60px rgba(99,102,241,0.3);
-      transform: scale(1.05);
-      z-index: 1;
-    }
-    .plan-card.featured:hover { transform: scale(1.05) translateY(-12px); }
-    .plan-icon {
-      width: 60px; height: 60px; border-radius: 18px;
-      background: var(--input-bg);
-      display: flex; align-items: center; justify-content: center; font-size: 28px;
-    }
-    .plan-card.featured .plan-icon { background: rgba(255,255,255,.2); color: #fff; }
-    .plan-name { font-size: 28px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 4px; }
-    .plan-desc { font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; opacity: .7; }
-    .plan-price { font-size: 64px; font-weight: 800; letter-spacing: -.05em; line-height: 1; }
-    .plan-per { font-size: 16px; font-weight: 600; opacity: .7; }
-    .plan-features { display: flex; flex-direction: column; gap: 16px; flex: 1; padding: 32px 0; border-top: 1px solid rgba(17,17,17,.04); }
-    .plan-card.featured .plan-features { border-top-color: rgba(255,255,255,.15); }
-    .pf-item { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 500; }
-    .pf-check { font-size: 14px; font-weight: 900; color: #10B981; }
-    .plan-card.featured .pf-check { color: #fff; }
-    .plan-btn {
-      width: 100%; padding: 20px; border-radius: 14px; border: none;
-      font-family: var(--font); font-size: 13px; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase;
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 52px; }
+    .btn-hero-main {
+      padding: 18px 48px; border-radius: var(--radius-pill); border: none;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #02061a; font-family: var(--font); font-size: 16px; font-weight: 700;
       cursor: pointer; transition: all .3s;
-      background: #111111;
-      color: #fff;
+      box-shadow: 0 8px 32px rgba(192,193,255,.3);
+      text-decoration: none; display: inline-block;
     }
-    .plan-card.featured .plan-btn { background: #fff; color: #6366F1; }
-    .plan-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-    .popular-chip {
-      position: absolute; top: 24px; right: 24px;
-      padding: 6px 14px; border-radius: 99px;
-      background: rgba(255,255,255,0.2); color: #fff;
-      font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
-      backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3);
+    .btn-hero-main:hover { transform: scale(1.05); box-shadow: 0 14px 44px rgba(192,193,255,.45); }
+    .btn-hero-ghost {
+      padding: 17px 40px; border-radius: var(--radius-pill);
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.05); backdrop-filter: blur(12px);
+      color: var(--ink); font-family: var(--font); font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: all .3s;
+      display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
     }
+    .lp-light .btn-hero-ghost { border-color: rgba(0,0,0,.13); background: rgba(255,255,255,.8); }
+    .btn-hero-ghost:hover { background: rgba(255,255,255,.1); }
+    .lp-light .btn-hero-ghost:hover { background: #fff; box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+
+    /* Social proof */
+    .social-proof { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 72px; }
+    .avatars { display: flex; }
+    .av {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 2.5px solid var(--bg); margin-left: -12px;
+      background: var(--surface-hi);
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .av:first-child { margin-left: 0; }
+    .av-plus {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 2.5px solid var(--bg); margin-left: -12px;
+      background: var(--surface-hi);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--primary);
+    }
+    .sp-label { font-size: 15px; font-weight: 600; color: var(--ink); }
+
+    /* Hero visual */
+    .hero-visual {
+      width: 100%; max-width: 960px;
+      border-radius: 32px;
+      overflow: hidden;
+      border: 1px solid var(--outline);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 48px 120px rgba(192,193,255,.09);
+      background: var(--surface);
+    }
+    .hv-topbar {
+      height: 44px; background: var(--bg); border-bottom: 1px solid var(--outline);
+      display: flex; align-items: center; padding: 0 20px; gap: 8px;
+    }
+    .hv-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .hv-body {
+      display: grid; grid-template-columns: 190px 1fr;
+      aspect-ratio: 16/7; overflow: hidden;
+    }
+    .hv-sidebar { border-right: 1px solid var(--outline); padding: 18px 14px; display: flex; flex-direction: column; gap: 6px; }
+    .hv-si {
+      height: 34px; border-radius: 9px; border: 1px solid transparent;
+      display: flex; align-items: center; padding: 0 10px; gap: 8px;
+      background: rgba(255,255,255,.03);
+    }
+    .hv-si.act { background: rgba(192,193,255,.1); border-color: rgba(192,193,255,.2); }
+    .lp-light .hv-si.act { background: rgba(99,102,241,.08); border-color: rgba(99,102,241,.18); }
+    .hv-si-ico { width: 14px; height: 14px; border-radius: 4px; background: var(--primary); opacity: .6; flex-shrink:0; }
+    .hv-si-line { height: 7px; border-radius: 4px; background: rgba(255,255,255,.1); flex: 1; }
+    .hv-si.act .hv-si-line { background: rgba(192,193,255,.35); }
+    .hv-main { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .hv-row { display: flex; align-items: center; justify-content: space-between; }
+    .hv-title { height: 12px; border-radius: 6px; background: rgba(255,255,255,.14); width: 120px; }
+    .hv-action { height: 28px; border-radius: 8px; background: rgba(192,193,255,.2); width: 72px; }
+    .hv-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .hv-stat {
+      background: rgba(255,255,255,.03); border: 1px solid var(--outline);
+      border-radius: 12px; padding: 12px;
+    }
+    .hv-stat-v { height: 16px; border-radius: 5px; width: 55%; margin-bottom: 6px; }
+    .hv-stat-l { height: 7px; border-radius: 4px; background: rgba(255,255,255,.07); width: 75%; }
+    .hv-chart {
+      flex: 1; border-radius: 14px;
+      background: rgba(255,255,255,.02); border: 1px solid var(--outline);
+      display: flex; align-items: flex-end; padding: 14px; gap: 6px;
+    }
+    .hv-bar { flex: 1; border-radius: 4px 4px 0 0; }
+
+    /* ── Marquee ── */
+    .marquee-wrap {
+      padding: 44px 0; overflow: hidden;
+      border-top: 1px solid var(--outline); border-bottom: 1px solid var(--outline);
+      background: rgba(255,255,255,.01);
+    }
+    .marquee-label {
+      text-align: center; margin-bottom: 28px;
+      font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted); opacity: .6;
+    }
+    .marquee-track { display: flex; animation: marquee 26s linear infinite; white-space: nowrap; }
+    .marquee-inner { display: flex; align-items: center; gap: 72px; padding: 0 36px; min-width: max-content; }
+    .mq-logo {
+      font-size: 17px; font-weight: 800; letter-spacing: -.02em;
+      color: var(--muted); opacity: .3; transition: opacity .2s; cursor: default;
+    }
+    .mq-logo:hover { opacity: .65; }
+
+    /* ── Bento grid (features) ── */
+    .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; margin-top: 56px; }
+    .bento-8 { grid-column: span 8; }
+    .bento-4 { grid-column: span 4; }
+    .bento-card {
+      border-radius: 24px; padding: 36px;
+      overflow: hidden; position: relative;
+      min-height: 300px; display: flex; flex-direction: column;
+    }
+    .bento-card .bc-icon { font-size: 32px; margin-bottom: 16px; }
+    .bento-card h3 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); margin-bottom: 10px; }
+    .bento-card p { font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.65; max-width: 360px; }
+    .bento-glow {
+      position: absolute; width: 260px; height: 260px; border-radius: 50%;
+      filter: blur(80px); pointer-events: none;
+    }
+    .bento-glow-r { right: -60px; bottom: -60px; }
+    .bento-glow-l { left: -60px; top: -60px; }
+
+    /* Waveform in speaking card */
+    .waveform { display: flex; gap: 4px; align-items: flex-end; height: 88px; margin-top: auto; padding-top: 24px; }
+    .wv { flex: 1; border-radius: 3px 3px 0 0; }
+    .wv:nth-child(1) { height: 40%; animation: waveFloat 1.8s ease-in-out infinite; }
+    .wv:nth-child(2) { height: 65%; animation: waveFloat 1.8s ease-in-out .2s infinite; }
+    .wv:nth-child(3) { height: 100%; animation: waveFloat 1.8s ease-in-out .4s infinite; }
+    .wv:nth-child(4) { height: 55%; animation: waveFloat 1.8s ease-in-out .6s infinite; }
+    .wv:nth-child(5) { height: 35%; animation: waveFloat 1.8s ease-in-out .8s infinite; }
+
+    /* Band score display */
+    .band-score {
+      font-size: 56px; font-weight: 900; letter-spacing: -.04em;
+      margin-top: auto; padding-top: 24px;
+    }
+
+    /* ── Capability cards ── */
+    .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 56px; }
+    .cap-card { padding: 8px; transition: transform .3s; }
+    .cap-card:hover { transform: translateY(-4px); }
+    .cap-ico {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 20px; border: 1px solid;
+    }
+    .cap-ico.p { background: rgba(192,193,255,.1); border-color: rgba(192,193,255,.2); }
+    .cap-ico.s { background: rgba(255,176,205,.1); border-color: rgba(255,176,205,.2); }
+    .cap-ico.t { background: rgba(137,206,255,.1); border-color: rgba(137,206,255,.2); }
+    .lp-light .cap-ico.p { background: rgba(99,102,241,.08); border-color: rgba(99,102,241,.2); }
+    .lp-light .cap-ico.s { background: rgba(236,72,153,.08); border-color: rgba(236,72,153,.2); }
+    .lp-light .cap-ico.t { background: rgba(14,165,233,.08); border-color: rgba(14,165,233,.2); }
+    .cap-card h4 { font-size: 18px; font-weight: 800; letter-spacing: -.015em; color: var(--ink); margin-bottom: 10px; }
+    .cap-card p { font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.65; }
+
+    /* ── Timeline / Roadmap ── */
+    .timeline { position: relative; max-width: 740px; margin: 64px auto 0; }
+    .tl-line {
+      position: absolute; left: 50%; top: 16px; bottom: 16px;
+      width: 1px; background: var(--outline); transform: translateX(-50%);
+    }
+    .tl-step {
+      display: grid; grid-template-columns: 1fr 48px 1fr; gap: 20px;
+      align-items: center; margin-bottom: 56px; position: relative;
+    }
+    .tl-step:last-child { margin-bottom: 0; }
+    .tl-node {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--surface); border: 3.5px solid; z-index: 1;
+      box-shadow: 0 0 0 4px var(--bg);
+      justify-self: center;
+    }
+    .tl-node.p { border-color: var(--primary); box-shadow: 0 0 0 4px var(--bg), 0 0 18px rgba(192,193,255,.5); }
+    .tl-node.s { border-color: var(--secondary); box-shadow: 0 0 0 4px var(--bg), 0 0 18px rgba(255,176,205,.5); }
+    .tl-node.t { border-color: var(--tertiary); box-shadow: 0 0 0 4px var(--bg), 0 0 18px rgba(137,206,255,.5); }
+    .tl-content { }
+    .tl-step:nth-child(odd) .tl-left { text-align: right; }
+    .tl-step:nth-child(even) .tl-left { text-align: left; order: 3; }
+    .tl-step:nth-child(even) .tl-right { order: 1; text-align: right; }
+    .tl-chip {
+      display: inline-block; padding: 3px 12px; border-radius: var(--radius-pill);
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      margin-bottom: 8px;
+    }
+    .lp-light .tl-chip { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.09); }
+    .tl-title { font-size: 18px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); margin-bottom: 6px; }
+    .tl-desc { font-size: 14px; font-weight: 500; color: var(--muted); line-height: 1.6; }
+    .tl-glass-chip {
+      display: inline-block; padding: 8px 16px; border-radius: 10px;
+      font-size: 13px; font-weight: 700; border: 1px solid rgba(255,255,255,.1);
+      backdrop-filter: blur(12px); background: rgba(255,255,255,.04);
+    }
+    .lp-light .tl-glass-chip { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.09); }
 
     /* ── Testimonials ── */
-    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 64px; }
-    .testi-card {
-      background: var(--card-bg); padding: 40px; border-radius: 28px;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 32px rgba(0,0,0,.02);
-      transition: transform .3s;
-      display: flex; flex-direction: column; gap: 24px;
+    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 56px; }
+    .testi-card { border-radius: 24px; padding: 32px; display: flex; flex-direction: column; gap: 20px; transition: transform .3s; }
+    .testi-card:hover { transform: translateY(-6px); }
+    .testi-user { display: flex; align-items: center; gap: 14px; }
+    .testi-av {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--surface-hi); border: 2px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+      flex-shrink: 0;
     }
-    .testi-card:hover { transform: translateY(-8px); }
-    .testi-quote { font-size: 17px; font-weight: 500; color: var(--ink); opacity: 0.8; line-height: 1.65; font-style: italic; flex: 1; }
-    .testi-author { display: flex; align-items: center; gap: 14px; padding-top: 20px; border-top: 1px solid var(--border); }
-    .testi-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--indigo-light); display:flex;align-items:center;justify-content:center;font-size:18px; }
-    .testi-name { font-size: 15px; font-weight: 800; }
-    .testi-role { font-size: 12px; font-weight: 600; color: var(--muted); }
-    .stars { color: var(--indigo); font-size: 14px; letter-spacing: 2px; }
+    .testi-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .testi-role { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .testi-quote { font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.72; font-style: italic; flex: 1; }
+    .stars { font-size: 14px; letter-spacing: 2px; }
+
+    /* ── Pricing ── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; align-items: center; max-width: 1100px; }
+    .plan-card {
+      border-radius: 26px; padding: 44px; display: flex; flex-direction: column; gap: 26px;
+      border: 1px solid var(--outline);
+      background: var(--surface);
+      transition: transform .4s cubic-bezier(.23,1,.32,1), box-shadow .4s;
+      position: relative;
+    }
+    .lp-light .plan-card { background: #fff; }
+    .plan-card:not(.featured):hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(0,0,0,.12); }
+    .plan-card.featured {
+      background: linear-gradient(145deg, rgba(192,193,255,.1), rgba(192,193,255,.02));
+      border-color: rgba(192,193,255,.35);
+      box-shadow: 0 0 0 1px rgba(192,193,255,.2), 0 28px 70px rgba(192,193,255,.12);
+      transform: scale(1.04);
+    }
+    .lp-light .plan-card.featured {
+      background: linear-gradient(145deg, rgba(99,102,241,.07), rgba(99,102,241,.01));
+      border-color: rgba(99,102,241,.28);
+      box-shadow: 0 0 0 1px rgba(99,102,241,.18), 0 28px 70px rgba(99,102,241,.1);
+    }
+    .plan-card.featured:hover { transform: scale(1.04) translateY(-8px); }
+    .feat-chip {
+      position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+      padding: 5px 20px; border-radius: var(--radius-pill);
+      background: var(--primary); color: #02061a;
+      font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+      white-space: nowrap; box-shadow: 0 4px 16px rgba(192,193,255,.3);
+    }
+    .lp-light .feat-chip { color: #02061a; }
+    .plan-name { font-size: 24px; font-weight: 800; letter-spacing: -.025em; color: var(--ink); }
+    .plan-price-row { display: flex; align-items: baseline; gap: 6px; }
+    .plan-price { font-size: 52px; font-weight: 800; letter-spacing: -.045em; line-height: 1; color: var(--ink); }
+    .plan-per { font-size: 15px; font-weight: 500; color: var(--muted); }
+    .plan-features { display: flex; flex-direction: column; gap: 13px; flex: 1; }
+    .pf-row { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 500; color: var(--ink); }
+    .pf-check { color: var(--primary); font-weight: 900; font-size: 13px; flex-shrink: 0; }
+    .plan-btn {
+      width: 100%; padding: 15px; border-radius: var(--radius-pill);
+      font-family: var(--font); font-size: 14px; font-weight: 700; cursor: pointer; transition: all .3s;
+    }
+    .plan-btn.outline { background: transparent; border: 1px solid rgba(255,255,255,.18); color: var(--ink); }
+    .lp-light .plan-btn.outline { border-color: rgba(0,0,0,.14); }
+    .plan-btn.outline:hover { border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.05); }
+    .lp-light .plan-btn.outline:hover { border-color: rgba(0,0,0,.25); background: rgba(0,0,0,.03); }
+    .plan-btn.filled { background: var(--primary); border: none; color: #02061a; }
+    .plan-btn.filled:hover { transform: scale(1.02); box-shadow: 0 8px 32px rgba(192,193,255,.3); }
+    .lp-light .plan-btn.filled { color: #02061a; }
+
+    /* Billing toggle */
+    .billing-toggle {
+      display: flex; gap: 4px; padding: 4px;
+      background: rgba(255,255,255,.05); border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,.08);
+      margin: 28px 0 48px;
+    }
+    .lp-light .billing-toggle { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.07); }
+    .toggle-btn {
+      padding: 9px 24px; border-radius: 10px; border: none;
+      background: transparent; cursor: pointer; font-family: var(--font);
+      font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); transition: all .2s; display: flex; align-items: center; gap: 8px;
+    }
+    .toggle-btn.active { background: rgba(255,255,255,.08); color: var(--ink); }
+    .lp-light .toggle-btn.active { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.07); color: var(--ink); }
+    .save-badge {
+      font-size: 9px; font-weight: 800; letter-spacing: .1em;
+      background: var(--primary); color: #02061a; padding: 2px 8px; border-radius: 6px;
+    }
 
     /* ── FAQ ── */
-    .faq-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-    .faq-chat {
-      position: sticky; top: 100px;
-      background: linear-gradient(145deg,rgba(99,102,241,.07),rgba(99,102,241,.02));
-      border: 1px solid var(--border);
-      border-radius: 48px; padding: 40px;
-    }
-    .chat-msg {
-      display: flex; gap: 12px; margin-bottom: 20px;
-    }
-    .chat-msg.right { flex-direction: row-reverse; }
-    .chat-avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--card-bg); flex-shrink: 0; display:flex;align-items:center;justify-content:center;font-size:18px; box-shadow:0 4px 12px rgba(0,0,0,.08); }
-    .chat-bubble {
-      background: var(--card-bg); padding: 18px 22px; border-radius: 20px; border-radius-top-left: 4px;
-      border: 1px solid var(--border); max-width: 75%;
-      box-shadow: 0 4px 16px rgba(0,0,0,.06);
-    }
-    .chat-msg.right .chat-bubble {
-      background: var(--indigo); color: #fff; border-color: transparent;
-    }
-    .chat-name { font-size: 9px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; color: var(--indigo); margin-bottom: 6px; }
-    .chat-msg.right .chat-name { color: rgba(255,255,255,.7); }
-    .chat-text { font-size: 15px; font-weight: 600; line-height: 1.5; }
-    .chat-actions { display: flex; gap: 8px; margin-top: 12px; }
-    .chat-action-btn {
-      padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(17,17,17,.08);
-      background: rgba(17,17,17,.03); font-family: var(--font);
-      font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
-      cursor: pointer; color: var(--muted); transition: all .2s;
-    }
-    .chat-action-btn:hover { background: var(--indigo); color: #fff; border-color: var(--indigo); }
-    .chat-time { font-size: 9px; font-weight: 700; opacity: .45; margin-top: 6px; }
-    .faq-list { display: flex; flex-direction: column; gap: 12px; }
+    .faq-list { display: flex; flex-direction: column; gap: 10px; }
     .faq-item {
-      border-radius: 20px; border: 1px solid var(--border);
-      background: var(--input-bg); overflow: hidden;
-      transition: background .2s, border-color .2s;
+      border-radius: var(--radius-md); overflow: hidden;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.02); transition: all .25s;
     }
-    .faq-item.open { background: var(--card-bg); border-color: rgba(99,102,241,.15); box-shadow: 0 8px 32px rgba(99,102,241,.08); }
+    .lp-light .faq-item { border-color: rgba(0,0,0,.07); background: rgba(0,0,0,.02); }
+    .faq-item.open { background: rgba(255,255,255,.04); border-color: rgba(192,193,255,.2); }
+    .lp-light .faq-item.open { background: #fff; border-color: rgba(99,102,241,.2); box-shadow: 0 4px 20px rgba(0,0,0,.05); }
     .faq-trigger {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 22px 24px; cursor: pointer; gap: 16px;
+      padding: 20px 22px; cursor: pointer; gap: 16px;
     }
-    .faq-q { font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
-    .faq-chevron { font-size: 18px; color: var(--muted); flex-shrink: 0; transition: transform .3s; }
-    .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--indigo); }
-    .faq-answer { padding: 0 24px 22px; font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.65; }
+    .faq-q { font-size: 16px; font-weight: 700; color: var(--ink); }
+    .faq-ch { color: var(--muted); transition: transform .3s; font-size: 20px; flex-shrink: 0; }
+    .faq-item.open .faq-ch { transform: rotate(180deg); color: var(--primary); }
+    .faq-ans { padding: 0 22px 20px; font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.65; }
 
-    /* ── CTA ── */
-    .cta-section {
-      text-align: center; display: flex; flex-direction: column; align-items: center;
-      position: relative; overflow: hidden;
+    /* ── CTA box ── */
+    .cta-box {
+      border-radius: 32px; padding: 88px 48px; text-align: center; position: relative; overflow: hidden;
+      background: linear-gradient(145deg, rgba(192,193,255,.1) 0%, rgba(15,23,42,0) 60%, rgba(255,176,205,.06) 100%);
+      border: 1px solid rgba(255,255,255,.1);
     }
-    .cta-section::before {
-      content: '';
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 120%; height: 120%;
-      background: radial-gradient(ellipse at center, rgba(99,102,241,.05) 0%, transparent 55%);
-      pointer-events: none;
+    .lp-light .cta-box {
+      background: linear-gradient(145deg, rgba(99,102,241,.07) 0%, rgba(255,255,255,0) 60%, rgba(236,72,153,.04) 100%);
+      border-color: rgba(0,0,0,.07);
     }
+    .cta-orb {
+      position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none;
+      width: 360px; height: 360px;
+    }
+    .cta-orb-1 { background: rgba(192,193,255,.15); top: -120px; left: -80px; }
+    .cta-orb-2 { background: rgba(255,176,205,.1); bottom: -120px; right: -80px; }
     .cta-h2 {
-      font-size: clamp(48px, 8vw, 100px);
-      font-weight: 800; letter-spacing: -.05em; line-height: .88;
-      color: var(--ink); margin-bottom: 24px;
+      font-size: clamp(36px, 6vw, 72px); font-weight: 800; letter-spacing: -.045em; line-height: 1.03;
+      color: var(--ink); margin-bottom: 20px; position: relative; z-index: 1;
     }
-    .cta-small { display: flex; gap: 20px; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--light); }
+    .cta-sub {
+      font-size: 18px; font-weight: 500; color: var(--muted);
+      max-width: 540px; margin: 0 auto 44px; line-height: 1.65; position: relative; z-index: 1;
+    }
+    .btn-cta {
+      padding: 20px 56px; border-radius: var(--radius-pill); border: none;
+      background: var(--ink); color: var(--bg);
+      font-family: var(--font); font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all .3s;
+      box-shadow: 0 8px 32px rgba(0,0,0,.25); position: relative; z-index: 1;
+    }
+    .btn-cta:hover { transform: scale(1.04); box-shadow: 0 14px 48px rgba(0,0,0,.35); }
 
     /* ── Footer ── */
-    footer {
-      padding: 80px 48px 48px;
-      position: relative; overflow: hidden;
-      background: transparent;
-    }
+    .footer { padding: 80px 24px 0; border-top: 1px solid var(--outline); }
     .footer-inner { max-width: 1280px; margin: 0 auto; }
-    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 64px; }
-    .footer-tagline { font-size: 16px; font-weight: 500; color: var(--muted); margin-top: 16px; max-width: 240px; line-height: 1.6; }
-    .footer-col-title { font-size: 10px; font-weight: 900; letter-spacing: .22em; text-transform: uppercase; color: var(--ink); margin-bottom: 24px; }
-    .footer-links { display: flex; flex-direction: column; gap: 14px; }
-    .footer-links a { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
-    .footer-links a:hover { color: var(--indigo); }
-    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid var(--border); }
-    .footer-copy { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--light); }
-    .footer-watermark {
-      position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
-      font-size: clamp(80px,18vw,200px); font-weight: 800; letter-spacing: -.05em;
-      color: var(--ink); opacity: 0.03; white-space: nowrap; pointer-events: none; user-select: none;
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; }
+    .footer-logo { font-size: 18px; font-weight: 800; letter-spacing: -.025em; color: var(--ink); margin-bottom: 12px; display: flex; align-items: center; }
+    .footer-tagline { font-size: 14px; font-weight: 500; color: var(--muted); line-height: 1.6; max-width: 250px; }
+    .footer-col-title { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); opacity: .55; margin-bottom: 18px; }
+    .footer-links { display: flex; flex-direction: column; gap: 11px; }
+    .footer-links a { font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 22px 0 48px; border-top: 1px solid var(--outline);
+    }
+    .footer-copy { font-size: 12px; font-weight: 600; color: var(--muted); opacity: .5; }
+    .footer-wm {
+      text-align: center; overflow: hidden; padding-bottom: 8px;
+      font-size: clamp(64px, 16vw, 180px); font-weight: 800; letter-spacing: -.05em; line-height: 1;
+      color: var(--ink); opacity: .025; white-space: nowrap;
+      pointer-events: none; user-select: none;
     }
 
-    /* ── Feature Grid ── */
-    .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; }
-    .feat-card {
-      background: var(--card-bg); padding: 48px; border-radius: 32px;
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 40px rgba(0,0,0,.02);
-      transition: all .3s ease;
+    /* ── Hamburger / mobile menu ── */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 6px; border: none;
+      background: none; border-radius: 8px; transition: background .2s;
     }
-    .feat-card:hover { transform: translateY(-10px); box-shadow: 0 30px 70px rgba(0,0,0,0.06); border-color: rgba(99,102,241,0.1); }
-    .feat-icon-box {
-      width: 56px; height: 56px; border-radius: 16px;
-      background: var(--input-bg); display: flex; align-items: center; justify-content: center;
-      font-size: 26px; margin-bottom: 32px;
+    .hamburger:hover { background: rgba(255,255,255,.08); }
+    .lp-light .hamburger:hover { background: rgba(0,0,0,.06); }
+    .hb-line { width: 22px; height: 2px; border-radius: 2px; background: var(--ink); transition: all .3s; }
+    .mobile-menu {
+      position: fixed; inset: 0; z-index: 150;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      padding: 90px 32px 40px;
+      transform: translateX(110%);
+      transition: transform .4s cubic-bezier(.22,1,.36,1);
     }
-    .feat-card h3 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--ink); }
-    .feat-card p { font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.7; }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a {
+      font-size: 22px; font-weight: 800; letter-spacing: -.025em;
+      color: var(--ink); text-decoration: none;
+      padding: 18px 0; border-bottom: 1px solid var(--outline);
+      transition: color .2s; display: block;
+    }
+    .mobile-menu a:hover { color: var(--primary); }
+    .mm-cta { margin-top: 32px; }
 
-    /* ── Timeline ── */
-    .timeline-wrap { margin-top: 80px; position: relative; padding-bottom: 60px; }
-    .timeline-line {
-      position: absolute; top: 120px; left: 0; right: 0; height: 4px;
-      background: rgba(99,102,241,0.1); border-radius: 2px;
+    /* ── Stats bar ── */
+    .stats-section { padding: 0 24px 80px; }
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--outline);
+      border: 1px solid var(--outline); border-radius: 24px;
+      overflow: hidden; max-width: 880px; width: 100%; margin: 0 auto;
     }
-    .timeline-progress {
-      position: absolute; top: 120px; left: 0; width: 65%; height: 4px;
-      background: var(--indigo); border-radius: 2px;
+    .stat-item {
+      background: var(--surface); padding: 28px 20px; text-align: center;
+      transition: background .2s;
     }
-    .timeline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; z-index: 1; }
-    .timeline-node {
-      width: 24px; height: 24px; border-radius: 50%; background: var(--card-bg);
-      border: 4px solid var(--indigo); margin-bottom: 40px;
-    }
-    .timeline-card {
-      background: var(--card-bg); padding: 32px; border-radius: 24px;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+    .stat-item:hover { background: var(--surface-hi); }
+    .lp-light .stat-item { background: #fff; }
+    .lp-light .stat-item:hover { background: var(--surface); }
+    .stat-value { font-size: 34px; font-weight: 900; letter-spacing: -.04em; line-height: 1; }
+    .stat-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); margin-top: 6px;
     }
 
-    /* ── Integrations ── */
-    .int-wrap { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
-    .int-logo {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: var(--card-bg); border: 1px solid var(--border);
+    /* ── How It Works ── */
+    .hiw-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      margin-top: 56px; position: relative;
+    }
+    .hiw-step { padding: 40px 32px; text-align: center; position: relative; z-index: 1; }
+    .hiw-step:not(:last-child)::after {
+      content: ''; position: absolute;
+      top: 52px; right: 0; left: auto;
+      width: 1px; height: 40px;
+      background: var(--outline);
+    }
+    .hiw-num {
+      width: 40px; height: 40px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-      transition: transform 0.3s;
+      font-size: 13px; font-weight: 900;
+      background: var(--bg); border: 1.5px solid;
+      margin: 0 auto 20px;
     }
-    .int-logo:hover { transform: scale(1.1) translateY(-5px); }
+    .hiw-ico { font-size: 32px; margin-bottom: 14px; }
+    .hiw-title { font-size: 19px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); margin-bottom: 10px; }
+    .hiw-desc { font-size: 15px; font-weight: 500; color: var(--muted); line-height: 1.65; }
 
-    /* ── Reveal utility ── */
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    /* ── Comparison table ── */
+    .comp-wrap {
+      overflow-x: auto; margin-top: 56px;
+      border: 1px solid var(--outline); border-radius: 20px;
+      background: var(--surface);
+    }
+    .lp-light .comp-wrap { background: #fff; }
+    .comp-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+    .comp-table th {
+      padding: 18px 24px; text-align: left;
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--outline); white-space: nowrap;
+    }
+    .comp-table th.comp-ours { color: var(--primary); background: rgba(192,193,255,.05); }
+    .lp-light .comp-table th.comp-ours { background: rgba(99,102,241,.04); }
+    .comp-table td {
+      padding: 14px 24px; font-size: 14px; font-weight: 600;
+      color: var(--ink); border-bottom: 1px solid var(--outline); white-space: nowrap;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table td.comp-ours { background: rgba(192,193,255,.03); }
+    .lp-light .comp-table td.comp-ours { background: rgba(99,102,241,.02); }
+    .comp-table td:first-child { color: var(--muted); font-size: 13px; }
+    .comp-yes { color: #4ade80; }
+    .comp-no  { color: rgba(255,255,255,.18); }
+    .lp-light .comp-no { color: rgba(0,0,0,.15); }
+
+    /* ── Results / case-study strip ── */
+    .results-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 56px;
+    }
+    .result-card {
+      border-radius: 20px; padding: 32px; position: relative; overflow: hidden;
+      border: 1px solid var(--outline); background: var(--surface);
+      transition: transform .3s;
+    }
+    .result-card:hover { transform: translateY(-6px); }
+    .lp-light .result-card { background: #fff; }
+    .result-score {
+      font-size: 48px; font-weight: 900; letter-spacing: -.045em; line-height: 1;
+      margin-bottom: 4px;
+    }
+    .result-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .result-name { font-size: 15px; font-weight: 700; color: var(--ink); margin-top: 16px; margin-bottom: 2px; }
+    .result-role { font-size: 12px; font-weight: 600; color: var(--muted); }
+    .result-quote { font-size: 14px; font-weight: 500; color: var(--muted); line-height: 1.6; margin-top: 12px; font-style: italic; }
+    .result-glow {
+      position: absolute; width: 160px; height: 160px; border-radius: 50%;
+      filter: blur(60px); pointer-events: none; bottom: -40px; right: -40px;
+      opacity: .2;
+    }
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      .pain-grid, .feat-grid, .pricing-grid, .testi-grid, .steps-grid, .timeline-grid { grid-template-columns: repeat(2, 1fr); }
-      .features-split, .faq-split { grid-template-columns: 1fr; gap: 40px; }
-      .side-card { display: none; }
+      .bento-8 { grid-column: span 12; }
+      .bento-4 { grid-column: span 6; }
+      .cap-grid, .testi-grid, .pricing-grid { grid-template-columns: repeat(2,1fr); }
       .footer-top { grid-template-columns: 1fr 1fr; }
-    }
-
-    @media (max-width: 768px) {
-      .nav { width: calc(100% - 20px); top: 10px; padding: 0 16px; height: 60px; }
-      .nav-links { display: none; }
-      .nav-inner { justify-content: space-between; }
-      .btn-primary { padding: 8px 16px; font-size: 10px; }
-      
-      section { padding: 60px 20px; }
-      .hero { padding-top: 120px; }
-      .hero-h1 { font-size: 38px; line-height: 1.1; }
-      .hero-sub { font-size: 16px; margin-bottom: 32px; }
-      .hero-ctas { flex-direction: column; width: 100%; gap: 12px; }
-      .btn-hero, .btn-ghost { width: 100%; text-align: center; }
-      
-      .pain-grid, .feat-grid, .pricing-grid, .testi-grid, .steps-grid, .timeline-grid { grid-template-columns: 1fr; width: 100%; }
-      .timeline-line, .timeline-progress, .timeline-node { display: none; }
-      .timeline-card { margin-bottom: 20px; }
-      
-      .footer-top { grid-template-columns: 1fr; gap: 32px; }
-      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-      
-      .plan-card { padding: 32px; }
       .plan-card.featured { transform: scale(1); }
-      .plan-card.featured:hover { transform: translateY(-12px); }
-      
-      .faq-chat { position: relative; top: 0; padding: 24px; border-radius: 24px; }
-      .cta-h2 { font-size: 32px; }
-      .section-h2 { font-size: 28px; }
-      .hero-card { padding: 12px; border-radius: 24px; }
-      .hero-card-inner { padding: 16px; border-radius: 16px; }
-      .mock-bar { width: 100%; }
-      .side-card { display: none !important; }
+      .tl-line { left: 14px; }
+      .tl-step { grid-template-columns: 0 28px 1fr; }
+      .tl-step:nth-child(even) .tl-left,
+      .tl-step:nth-child(odd) .tl-left { display: none; }
+      .tl-step:nth-child(even) .tl-right { order: unset; text-align: left; }
+    }
+    @media (max-width: 768px) {
+      .nav { width: calc(100% - 24px); top: 10px; height: 56px; padding: 0 18px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .section { padding: 64px 16px; }
+      .hero { padding: 120px 16px 72px; }
+      .hero-ctas { flex-direction: column; width: 100%; }
+      .btn-hero-main, .btn-hero-ghost { width: 100%; text-align: center; justify-content: center; }
+      .bento-4, .bento-8 { grid-column: span 12; }
+      .cap-grid, .testi-grid, .pricing-grid, .results-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .cta-box { padding: 52px 24px; }
+      .hv-sidebar { display: none; }
+      .hv-body { grid-template-columns: 1fr; }
+      .plan-card.featured { transform: scale(1); }
+      .tl-step { grid-template-columns: 0 28px 1fr; }
+      .tl-step .tl-left { display: none; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); border-radius: 16px; }
+      .stat-value { font-size: 26px; }
+      .hiw-grid { grid-template-columns: 1fr; }
+      .hiw-step:not(:last-child)::after { display: none; }
+      .hiw-step { padding: 24px 16px; }
+      .stats-section { padding: 0 16px 60px; }
     }
   `}</style>
 );
 
-// ─── Reveal on scroll ──────────────────────────────────────────────────────
+// ─── Reveal hook ───────────────────────────────────────────────────────────
 function useReveal() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { (el as HTMLElement).classList.add("visible"); obs.disconnect(); } },
-      { threshold: 0.12 }
+      ([e]) => { if (e.isIntersecting) { el.classList.add("vis"); obs.disconnect(); } },
+      { threshold: 0.1 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -694,7 +770,7 @@ function useReveal() {
   return ref;
 }
 
-function R({ children, delay = 0, style = {} }: { children: React.ReactNode, delay?: number, style?: React.CSSProperties }) {
+function R({ children, delay = 0, style = {} }: { children: React.ReactNode; delay?: number; style?: React.CSSProperties }) {
   const ref = useReveal();
   return (
     <div ref={ref} className="reveal" style={{ transitionDelay: `${delay}s`, ...style }}>
@@ -704,336 +780,317 @@ function R({ children, delay = 0, style = {} }: { children: React.ReactNode, del
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────
-interface Plan {
-  name: string;
-  price: {
-    monthly: string;
-    yearly: string;
-  };
-  desc: string;
-  icon: string;
-  features: string[];
-  cta: string;
-  featured?: boolean;
-}
-
-const plans: Plan[] = [
-  { name: "Standard Plan", price: { monthly: "0",  yearly: "0"  }, desc: "Perfect for beginners", icon: "⚡", features: ["Basic IELTS Overview", "1 Mock Test per month", "Daily Vocabulary", "Progress tracking"], cta: "Start Learning" },
-  { name: "Premium IELTS", price: { monthly: "29", yearly: "24" }, desc: "Best for serious candidates", icon: "✨", features: ["Unlimited AI Speaking Prep", "Unlimited Writing Evaluation", "Official IELTS Mock Tests", "Band Score Prediction", "Priority support"], cta: "Get Band 8.0", featured: true },
-  { name: "Tutor Pro",     price: { monthly: "49", yearly: "42" }, desc: "For coaches and schools", icon: "👥", features: ["Everything in Premium", "Student management", "Detailed error analysis", "Custom feedback templates"], cta: "Contact Sales" },
+const plans = [
+  {
+    name: "Starter",
+    price: { monthly: "0",  yearly: "0"  },
+    desc: "Perfect to begin your IELTS journey",
+    features: ["Basic IELTS Overview", "1 Mock Test / month", "Daily Vocabulary Builder", "Progress Dashboard"],
+    cta: "Start Free", featured: false, href: "/register",
+  },
+  {
+    name: "Pro Learner",
+    price: { monthly: "29", yearly: "24" },
+    desc: "Best for serious Band 8+ candidates",
+    features: ["Unlimited AI Speaking Prep", "Unlimited Writing Evaluation", "Official IELTS Mock Tests", "Band Score Prediction", "Personal Fluency Roadmap"],
+    cta: "Get Band 8.0", featured: true, href: "/register?plan=pro",
+  },
+  {
+    name: "Global Elite",
+    price: { monthly: "49", yearly: "42" },
+    desc: "For coaches and institutions",
+    features: ["Everything in Pro", "1-on-1 Expert Coaching", "Student Management", "Enterprise Interview Prep", "Priority Support"],
+    cta: "Contact Sales", featured: false, href: "mailto:sales@lingoura.ai",
+  },
 ];
 
 const faqs = [
-  { q: "Is Lingoura AI suitable for both Academic and General Training?", a: "Yes! Our AI is trained on both Academic and General Training modules to provide specialized feedback for your specific test type." },
-  { q: "How accurate is the AI Band Score prediction?", a: "Our scoring algorithms are aligned with the official IELTS assessment criteria (Task Achievement, Coherence, Lexical Resource, etc.) to provide predictions within 0.5 of your actual score." },
-  { q: "Can I practice Speaking with the AI?", a: "Absolutely. Our real-time AI Speaking coach simulates Part 1, 2, and 3 of the IELTS test and provides instant feedback on fluency and pronunciation." },
-  { q: "Does it help with Writing Task 1 and 2?", a: "Yes. You can submit your essays and data descriptions for instant evaluation against IELTS standards, including grammatical range and accuracy." },
-  { q: "Are the Reading and Listening tests exam-standard?", a: "Yes — all our practice materials are designed to match the difficulty, timing, and structure of real IELTS exams." },
-  { q: "How often are the practice materials updated?", a: "We update our question bank weekly with the latest IELTS topics and trends to ensure you're always prepared for the current exam cycle." },
+  { q: "Is Lingoura AI suitable for both Academic and General Training?",   a: "Yes. Our AI is trained on both Academic and General Training modules to provide specialized feedback for your specific test type." },
+  { q: "How accurate is the AI Band Score prediction?",                     a: "Our scoring algorithms are aligned with the official IELTS criteria (Task Achievement, Coherence, Lexical Resource, Grammatical Range & Accuracy) to predict within 0.5 of your actual score." },
+  { q: "Can I practice Speaking with the AI?",                             a: "Absolutely. Our real-time AI Speaking coach simulates Part 1, 2, and 3 and provides instant feedback on fluency, coherence, and pronunciation." },
+  { q: "Does it help with Writing Task 1 and Task 2?",                     a: "Yes. Submit essays and data descriptions for instant evaluation against all four IELTS Writing assessment criteria." },
+  { q: "Are the practice materials exam-standard?",                         a: "All Reading and Listening materials are designed to match the difficulty, timing, and structure of real IELTS exams." },
+  { q: "How often are the practice materials updated?",                     a: "We update our question bank weekly with the latest IELTS topics and trends from official Cambridge and IDP resources." },
 ];
 
 const testimonials = [
-  { name: "Maria Garcia",  role: "IELTS Candidate (Band 8.5)", avatar: "👩‍🎓", quote: "Lingoura AI was the only tool that gave me the instant feedback I needed to fix my Writing Task 2 coherence issues." },
-  { name: "Ahmed Khan",    role: "IELTS Candidate (Band 8.0)", avatar: "👨‍💻", quote: "The AI Speaking practice felt so real. It helped me overcome my nervousness and improve my pronunciation significantly." },
-  { name: "Li Wei",        role: "Graduate Student",          avatar: "👩‍🎓", quote: "I love how the dashboard tracks my band score progress across all four sections. It keeps me incredibly motivated." },
+  { name: "Sarah Chen",      role: "Product Manager",         emoji: "👩‍💼", color: "var(--primary)",   quote: "The real-time Speaking feedback during roleplays changed everything. I finally feel confident walking into the exam room." },
+  { name: "David Müller",    role: "Research Scientist",       emoji: "👨‍🔬", color: "var(--secondary)", quote: "The Writing Audit goes way beyond generic AI tools. It understands academic nuance and helped me polish my essays to Band 8.5." },
+  { name: "Elena Rodriguez", role: "Executive Director",       emoji: "👩‍💼", color: "var(--tertiary)",  quote: "Consistency was always my biggest hurdle. Lingoura's roadmap keeps me on track with tangible progress every single day." },
 ];
 
-// ─── Main Component ────────────────────────────────────────────────────────
-export default function LearnFlowLanding() {
+const brands = ["NOVA LABS", "BRIGHTCORE", "COGNIFY", "SKILLBRIDGE", "ORBIT LABS", "AXION", "PRISM HQ", "VELOX AI"];
+
+// ─── Chart heights for hero visual ────────────────────────────────────────
+const chartBars = [
+  { h: "40%", bg: "rgba(192,193,255,.3)" },
+  { h: "65%", bg: "rgba(192,193,255,.45)" },
+  { h: "55%", bg: "rgba(192,193,255,.35)" },
+  { h: "90%", bg: "rgba(192,193,255,.6)" },
+  { h: "70%", bg: "rgba(192,193,255,.5)" },
+  { h: "45%", bg: "rgba(192,193,255,.35)" },
+  { h: "80%", bg: "rgba(192,193,255,.55)" },
+];
+
+const statColors = ["rgba(192,193,255,.55)", "rgba(255,176,205,.5)", "rgba(137,206,255,.5)"];
+
+// ─── Main ──────────────────────────────────────────────────────────────────
+export default function LingouaLanding() {
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const [openFaq, setOpenFaq] = useState(0);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("landing-theme");
-    if (saved === "dark") {
-      setIsDark(true);
-    }
+    const saved = localStorage.getItem("lp-theme");
+    if (saved !== null) setIsDark(saved === "dark");
   }, []);
 
   const toggleTheme = () => {
-    const newDark = !isDark;
-    setIsDark(newDark);
-    localStorage.setItem("landing-theme", newDark ? "dark" : "light");
+    const next = !isDark;
+    setIsDark(next);
+    localStorage.setItem("lp-theme", next ? "dark" : "light");
   };
 
   return (
-    <div className={`landing-page-wrapper ${isDark ? "landing-dark" : ""}`}>
-      <FontLoader />
+    <div className={`lp ${isDark ? "" : "lp-light"}`}>
+      <Styles />
 
-      {/* NAV */}
+      {/* ── NAV ── */}
       <nav className="nav">
-        <div className="nav-inner">
-          <a href="#" className="logo">
-            <img src="/logo-icon.png" alt="Lingoura AI" className="logo-img" />
-            Lingoura AI
-          </a>
-          <ul className="nav-links">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#how-it-works">Workflow</a></li>
-            <li><a href="/case-studies">Case Studies</a></li>
-            <li><a href="#pricing">Pricing</a></li>
-          </ul>
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={toggleTheme}
-              className="p-2.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-all active:scale-95 flex items-center justify-center border border-transparent hover:border-indigo-500/20"
-              style={{ background: isDark ? "rgba(255,255,255,0.05)" : "rgba(17,17,17,0.03)" }}
-              aria-label="Toggle dark mode"
-            >
-              {isDark ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-indigo-600" />}
-            </button>
-            <a href="#pricing" className="btn-primary">Get Started →</a>
-          </div>
+        <a href="#" className="logo">
+          <img src="/logo-icon.png" alt="" className="logo-img" />
+          Lingoura AI
+        </a>
+        <ul className="nav-links">
+          <li><a href="#features" className="active">Product</a></li>
+          <li><a href="#how">Curriculum</a></li>
+          <li><a href="/case-studies">Case Studies</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+        <div className="nav-actions">
+          <button onClick={toggleTheme} className="theme-btn" aria-label="Toggle theme">
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <a href="#pricing" className="btn-pill" style={{ display: mobileMenuOpen ? "none" : "" }}>Get Started</a>
+          <button
+            className="hamburger"
+            aria-label="Open menu"
+            onClick={() => setMobileMenuOpen((o) => !o)}
+          >
+            <span className="hb-line" style={mobileMenuOpen ? { transform: "rotate(45deg) translate(5px, 5px)" } : {}} />
+            <span className="hb-line" style={mobileMenuOpen ? { opacity: 0 } : {}} />
+            <span className="hb-line" style={mobileMenuOpen ? { transform: "rotate(-45deg) translate(5px, -5px)" } : {}} />
+          </button>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="hero" style={{ paddingTop: 160 }}>
-        <div className="badge fade-up">✨ Certified IELTS Coaching</div>
+      {/* ── MOBILE MENU ── */}
+      <div className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}>
+        <a href="#features" onClick={() => setMobileMenuOpen(false)}>Product</a>
+        <a href="#how" onClick={() => setMobileMenuOpen(false)}>Curriculum</a>
+        <a href="/case-studies" onClick={() => setMobileMenuOpen(false)}>Case Studies</a>
+        <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
+        <a href="/login" onClick={() => setMobileMenuOpen(false)} style={{ color: "var(--muted)" }}>Sign In</a>
+        <div className="mm-cta">
+          <a href="#pricing" className="btn-pill" onClick={() => setMobileMenuOpen(false)} style={{ width: "100%", justifyContent: "center", padding: "14px 24px", fontSize: 15 }}>
+            Get Started Free
+          </a>
+        </div>
+      </div>
 
-        <h1 className="hero-h1 fade-up d-100">
-          Master the IELTS<br />
-          <span className="grad-text">With AI Precision</span>
+      {/* ── HERO ── */}
+      <div className="hero">
+        <div className="hero-badge fade-up">
+          <span className="badge-dot" />
+          <span className="badge-text">Now powered by Advanced AI</span>
+        </div>
+
+        <h1 className="hero-h1 fade-up d1">
+          Language Mastery{" "}<br />
+          with{" "}
+          <span className="grad glow">Precision AI</span>
         </h1>
 
-        <p className="hero-sub fade-up d-200">
-          The ultimate AI-powered preparation platform for IELTS. Master Speaking, Writing, Reading, and Listening with real-time feedback and exam-standard mocks.
+        <p className="hero-sub fade-up d2">
+          Lingoura combines cognitive science with real-time AI to elevate your English fluency. An adaptive IELTS curriculum designed for high-stakes professional success.
         </p>
 
-        <div className="hero-ctas fade-up d-300">
-          <a href="#pricing" className="btn-hero" style={{ textDecoration: "none", display: "inline-block" }}>Get Started Free</a>
-          <a href="#how-it-works" className="btn-ghost" style={{ textDecoration: "none", display: "inline-block" }}>See How It Works</a>
+        <div className="hero-ctas fade-up d3">
+          <a href="#pricing" className="btn-hero-main">Get Started Free</a>
+          <a href="#how" className="btn-hero-ghost">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Watch Demo
+          </a>
         </div>
 
-        <div className="social-proof fade-up d-400">
+        <div className="social-proof fade-up d4">
           <div className="avatars">
-            {[1,2,3].map(i => <div key={i} className="avatar" />)}
+            {["🧑", "👩", "👨"].map((e, i) => <div key={i} className="av">{e}</div>)}
+            <div className="av-plus">+10k</div>
           </div>
-          <span>Join</span>
-          <span className="accent">10,000+</span>
-          <span>candidates achieving Band 8.0+</span>
+          <p className="sp-label">Join 10,000+ candidates achieving Band 8.0+</p>
         </div>
 
-        {/* MOCK UI */}
-        <div className="hero-card-wrap fade-up d-500">
-          {/* floating left */}
-          <div className="side-card side-card-left float1">
-            <div className="sc-row">
-              <div className="sc-icon">🧠</div>
-              <span className="sc-label">AI Tutor</span>
-            </div>
-            <div className="sc-lines">
-              <div className="mock-line" style={{ width: "100%", background: "#EEF2FF" }} />
-              <div className="mock-line" style={{ width: "75%", background: "#F4F4F5" }} />
-              <div style={{ height: 40, borderRadius: 10, background: "#EEF2FF", marginTop: 10, border: "1px solid rgba(99,102,241,.12)" }} />
-            </div>
+        {/* Platform mockup */}
+        <div className="hero-visual fade-up d5">
+          <div className="hv-topbar">
+            <div className="hv-dot" style={{ background: "#FF5F57" }} />
+            <div className="hv-dot" style={{ background: "#FEBC2E" }} />
+            <div className="hv-dot" style={{ background: "#28C840" }} />
           </div>
-
-          {/* floating right */}
-          <div className="side-card side-card-right float2">
-            <div className="sc-check-row" style={{ marginBottom: 14 }}>
-              <div className="sc-check">✓</div>
-              <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: ".18em", textTransform: "uppercase", color: "#10B981" }}>Fluency Boosted</span>
-            </div>
-            <div style={{ height: 100, background: "#F4F5FC", borderRadius: 14, border: "1px solid rgba(17,17,17,.06)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, opacity: .3 }}>
-              📊
-            </div>
-          </div>
-
-          <div className="hero-card">
-            <div className="hero-card-inner">
-              <div className="mock-bar">
-                {[1,2,3].map(i=><div key={i} className="mock-dot" />)}
-                <div className="mock-line" style={{ width: 120, background: "#E0E7FF" }} />
-              </div>
-              <div className="mock-grid">
-                <div className="mock-tile">
-                  <div className="mock-icon-box">💬</div>
-                  <div className="mock-lines">
-                    <div className="mock-line" style={{ width: "100%", height: 8 }} />
-                    <div className="mock-line" style={{ width: "70%", height: 8 }} />
-                    <div className="mock-line" style={{ width: "85%", height: 8 }} />
-                  </div>
-                </div>
-                <div className="mock-tile-center mock-tile">✨</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Trusted by */}
-        <div className="trusted" style={{ width: "100%", maxWidth: 900 }}>
-          <p className="trusted-label">Trusted by teams and learners worldwide</p>
-          <div className="trusted-logos">
-            {["Nova Labs", "BrightCore", "Cognify", "SkillBridge", "Orbit Labs"].map(n => (
-              <span key={n}>{n}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* WHY LEARNING FEELS HARD */}
-      <section>
-        <div className="section-inner">
-          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="section-tag">Why Learning Feels Hard</div>
-            <h2 className="section-h2" style={{ maxWidth: 700, textAlign: "center" }}>
-              Learning today feels overwhelming,<br />unstructured, and easy to forget.
-            </h2>
-          </R>
-          <div className="pain-grid">
-            {[
-              { icon: "📉", title: "Inaccurate Feedback",  desc: "Self-study feels like guessing. You don't know why your band score is stuck." },
-              { icon: "⌛", title: "Wasted Prep Time",      desc: "Spending hours on generic resources that don't match actual exam standards." },
-              { icon: "😰", title: "Exam Anxiety",        desc: "Fear of the Speaking examiner or the high-pressure Writing tasks." },
-            ].map((item, i) => (
-              <R key={i} delay={i * .1}>
-                <div className="pain-card">
-                  <div className="pain-icon">{item.icon}</div>
-                  <h3 className="pain-title">{item.title}</h3>
-                  <p className="pain-desc">{item.desc}</p>
-                </div>
-              </R>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section id="features" className="features-bg">
-        <div className="section-inner">
-          <div className="features-split">
-            <R>
-              <div className="section-tag">IELTS Specialized AI</div>
-              <h2 className="section-h2">The only coach you <span className="grad-text">need</span><br />for Band 8.5</h2>
-              <p className="section-sub">Personalized IELTS roadmaps, instant band score predictions, and human-like AI speaking partners.</p>
-              <div className="feature-pills">
-                {[
-                  { icon: "⚡", label: "Active Learning" },
-                  { icon: "🔄", label: "Smart Retention" },
-                  { icon: "🧠", label: "Neural Paths" },
-                  { icon: "💡", label: "Expert Insights" },
-                ].map(f => (
-                  <div className="feature-pill" key={f.label}>
-                    <div className="fp-icon">{f.icon}</div>
-                    <span className="fp-label">{f.label}</span>
-                  </div>
-                ))}
-              </div>
-            </R>
-            <R delay={.15}>
-              <div className="feat-mock">
-                <div className="feat-mock-inner">
-                  <div className="feat-bottom-card">
-                    <div className="mock-line" style={{ width: "55%", height: 10, background: "#E0E7FF", marginBottom: 14 }} />
-                    <div className="mock-line" style={{ width: "100%", height: 7, background: "#F4F4F5", marginBottom: 8 }} />
-                    <div className="mock-line" style={{ width: "100%", height: 7, background: "#F4F4F5" }} />
-                  </div>
-                </div>
-              </div>
-            </R>
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURE GRID */}
-      <section>
-        <div className="section-inner">
-          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="section-tag">All-in-one Platform</div>
-            <h2 className="section-h2" style={{ maxWidth: 700 }}>Everything you need to learn<br />at scale with AI</h2>
-          </R>
-          <div className="feat-grid">
-            {[
-              { icon: "🎧", title: "Listening Mastery", desc: "4 sections of authentic social and academic recordings with exam-standard questions." },
-              { icon: "📖", title: "Reading Lab", desc: "Master Skimming and Scanning with texts from official books, journals, and newspapers." },
-              { icon: "✍️", title: "Writing Evaluator", desc: "Instant Band 9 level feedback on Task 1 data descriptions and Task 2 essays." },
-              { icon: "🗣️", title: "Speaking Coach", desc: "Real-time AI voice partner that evaluates your fluency, coherence, and grammar." },
-              { icon: "📊", title: "Band Prediction", desc: "Accurate score forecasting across all modules based on official assessment criteria." },
-              { icon: "📈", title: "Progress Track", desc: "Deep analytics on your consistency, performance trends, and focus areas." },
-            ].map((f, i) => (
-              <R key={i} delay={i * 0.05}>
-                <div className="feat-card">
-                  <div className="feat-icon-box">{f.icon}</div>
-                  <h3>{f.title}</h3>
-                  <p>{f.desc}</p>
-                </div>
-              </R>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* TIMELINE */}
-      <section>
-        <div className="section-inner">
-          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="section-tag">Master Any Topic</div>
-            <h2 className="section-h2">See how our users master<br />a focus topic</h2>
-          </R>
-          <div className="timeline-wrap">
-            <div className="timeline-line" />
-            <div className="timeline-progress" />
-            <div className="timeline-grid">
-              {[
-                { label: "Foundation", title: "Building the Basics", desc: "Start with fundamental concepts and core definitions to build a solid base." },
-                { label: "Deep Dive", title: "Core Concepts", desc: "Master the underlying principles and complex mechanics of your subject." },
-                { label: "Mastery", title: "Advanced Application", desc: "Apply your knowledge to real-world scenarios and complex problem solving." },
-              ].map((t, i) => (
-                <div key={i}>
-                  <div className="timeline-node" style={{ opacity: i < 2 ? 1 : 0.3 }} />
-                  <R delay={i * 0.1}>
-                    <div className="timeline-card">
-                      <div className="section-tag" style={{ fontSize: 9, marginBottom: 12 }}>{t.label}</div>
-                      <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 10 }}>{t.title}</h3>
-                      <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.6 }}>{t.desc}</p>
-                    </div>
-                  </R>
+          <div className="hv-body">
+            <div className="hv-sidebar">
+              {[true, false, false, false, false].map((active, i) => (
+                <div key={i} className={`hv-si ${active ? "act" : ""}`}>
+                  <div className="hv-si-ico" />
+                  <div className="hv-si-line" />
                 </div>
               ))}
             </div>
+            <div className="hv-main">
+              <div className="hv-row">
+                <div className="hv-title" />
+                <div className="hv-action" />
+              </div>
+              <div className="hv-stats">
+                {statColors.map((bg, i) => (
+                  <div key={i} className="hv-stat">
+                    <div className="hv-stat-v" style={{ background: bg }} />
+                    <div className="hv-stat-l" />
+                  </div>
+                ))}
+              </div>
+              <div className="hv-chart">
+                {chartBars.map((b, i) => (
+                  <div key={i} className="hv-bar" style={{ height: b.h, background: b.bg }} />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* INTEGRATIONS */}
-      <section>
-        <div className="section-inner" style={{ textAlign: "center" }}>
-          <R style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="section-tag">Integrations</div>
-            <h2 className="section-h2">Integrates with all your<br />favorite tools</h2>
-            <p className="section-sub">Connect Lingoura AI with the tools you already use to create a seamless learning workflow.</p>
-          </R>
-          <div className="int-wrap">
-            {["📁", "📝", "💬", "🎨", "📅", "🚀", "🛠️", "💡"].map((icon, i) => (
-              <R key={i} delay={i * 0.05}>
-                <div className="int-logo">{icon}</div>
-              </R>
-            ))}
-          </div>
+      {/* ── STATS BAR ── */}
+      <div className="stats-section">
+        <div className="stats-bar">
+          {[
+            { v: "10,000+", l: "Active Students",  c: "var(--primary)"   },
+            { v: "98.4%",   l: "Band Accuracy",    c: "var(--secondary)" },
+            { v: "4.9 ★",   l: "User Rating",      c: "var(--tertiary)"  },
+            { v: "150+",    l: "Countries",         c: "var(--primary)"   },
+          ].map((s, i) => (
+            <div key={i} className="stat-item">
+              <div className="stat-value" style={{ background: `linear-gradient(135deg, ${s.c}, var(--secondary))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{s.v}</div>
+              <div className="stat-label">{s.l}</div>
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* HOW IT WORKS */}
-      <section id="how-it-works">
-        <div className="section-inner">
+      {/* ── MARQUEE ── */}
+      <div className="marquee-wrap">
+        <p className="marquee-label">Trusted by learners and teams worldwide</p>
+        <div className="marquee-track">
+          {[0, 1].map(rep => (
+            <div key={rep} className="marquee-inner">
+              {brands.map(b => <span key={b} className="mq-logo">{b}</span>)}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── FEATURES BENTO ── */}
+      <section className="section" id="features">
+        <div className="container">
           <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="section-tag">Start learning smarter in just a few steps</div>
-            <h2 className="section-h2">Simple. Powerful. Personalized.</h2>
+            <span className="section-tag">Precision Core</span>
+            <h2 className="section-h2" style={{ maxWidth: 660 }}>Built for cognitive acceleration</h2>
+            <p className="section-sub" style={{ maxWidth: 520, textAlign: "center" }}>
+              Every tool is designed around how the brain acquires language — not just how it memorizes it.
+            </p>
           </R>
-          <div className="steps-grid">
+
+          <div className="bento">
+            {/* Speaking Coach — wide */}
+            <R delay={0.05} style={{ gridColumn: "span 8" }}>
+              <div className="bento-card glass bento-8" style={{ gridColumn: "span 8" }}>
+                <div className="bento-glow bento-glow-r" style={{ background: "rgba(192,193,255,.12)" }} />
+                <span className="bc-icon">🎙</span>
+                <h3>Real-time Speaking Coach</h3>
+                <p>Our AI analyzes your phonetics, cadence, and semantic accuracy as you speak — instant non-intrusive feedback, mid-sentence.</p>
+                <div className="waveform">
+                  {["rgba(192,193,255,.25)","rgba(192,193,255,.45)","rgba(192,193,255,.8)","rgba(192,193,255,.55)","rgba(192,193,255,.35)"].map((bg, i) => (
+                    <div key={i} className="wv" style={{ background: bg }} />
+                  ))}
+                </div>
+              </div>
+            </R>
+
+            {/* Band Predictor — narrow */}
+            <R delay={0.1} style={{ gridColumn: "span 4" }}>
+              <div className="bento-card glass bento-4" style={{ gridColumn: "span 4", textAlign: "center", justifyContent: "center", alignItems: "center" }}>
+                <div className="bento-glow bento-glow-l" style={{ background: "rgba(255,176,205,.1)" }} />
+                <span className="bc-icon">📊</span>
+                <h3>IELTS Predictor</h3>
+                <p>98.4% accuracy in predicting Band scores against the latest examiner criteria.</p>
+                <div className="band-score grad">8.5</div>
+              </div>
+            </R>
+
+            {/* Writing Audit — narrow */}
+            <R delay={0.15} style={{ gridColumn: "span 4" }}>
+              <div className="bento-card glass bento-4" style={{ gridColumn: "span 4" }}>
+                <div className="bento-glow bento-glow-r" style={{ background: "rgba(137,206,255,.1)" }} />
+                <span className="bc-icon">✍️</span>
+                <h3>Writing Audit</h3>
+                <p>Deep-dive analysis of grammatical cohesion, lexical resource, and task response for Task 1 & 2.</p>
+              </div>
+            </R>
+
+            {/* Roleplay Lab — wide */}
+            <R delay={0.2} style={{ gridColumn: "span 8" }}>
+              <div className="bento-card glass bento-8" style={{ gridColumn: "span 8", flexDirection: "row", gap: 40, alignItems: "center" }}>
+                <div className="bento-glow bento-glow-l" style={{ background: "rgba(192,193,255,.08)" }} />
+                <div style={{ flex: 1 }}>
+                  <span className="bc-icon">🎭</span>
+                  <h3>Situational Roleplay Lab</h3>
+                  <p>Practice IELTS Part 2 long turns, academic discussions, and professional scenarios in immersive AI-driven sessions.</p>
+                  <button style={{ marginTop: 20, background: "none", border: "none", cursor: "pointer", color: "var(--primary)", font: "700 14px/1 var(--font)", letterSpacing: ".04em", display: "flex", alignItems: "center", gap: 6 }}>
+                    Explore Scenarios →
+                  </button>
+                </div>
+                <div style={{ width: 180, background: "rgba(255,255,255,.04)", border: "1px solid var(--outline)", borderRadius: 16, padding: 16, flexShrink: 0 }}>
+                  {[100, 80, 60].map((w, i) => (
+                    <div key={i} style={{ height: 8, borderRadius: 4, marginBottom: i < 2 ? 10 : 0, background: i === 2 ? `rgba(192,193,255,.4)` : "rgba(255,255,255,.1)", width: `${w}%` }} />
+                  ))}
+                </div>
+              </div>
+            </R>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section className="section" style={{ borderTop: "1px solid var(--outline)" }}>
+        <div className="container">
+          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <span className="section-tag">Your Journey</span>
+            <h2 className="section-h2" style={{ maxWidth: 560, textAlign: "center" }}>Three steps to Band 8.0</h2>
+            <p className="section-sub" style={{ textAlign: "center", maxWidth: 480 }}>From zero to exam-ready in a structured, AI-guided path.</p>
+          </R>
+          <div className="hiw-grid">
             {[
-              { num: 1, icon: "🗂️", title: "Structured Learning Path",  desc: "Import your topic and let Lingoura AI build a structured learning curriculum for you." },
-              { num: 2, icon: "🤖", title: "Learn with AI Guidance",    desc: "Ask questions, get explanations, and receive personalized feedback from your AI tutor." },
-              { num: 3, icon: "📈", title: "Track and Improve",         desc: "Visualize your retention, consistency streaks, and mastery with detailed analytics." },
-            ].map((s, i) => (
-              <R key={i} delay={i * .12}>
-                <div className="step-card">
-                  <div className="step-num">{s.num}</div>
-                  <div className="step-icon">{s.icon}</div>
-                  <h3 className="step-title">{s.title}</h3>
-                  <p className="step-desc">{s.desc}</p>
+              { num: "01", ico: "🎯", color: "var(--primary)",   title: "Set Your Goal",       desc: "Take our 10-minute AI placement test. We map your current CEFR level and define a precise Band target for your timeline." },
+              { num: "02", ico: "🗺️",  color: "var(--secondary)", title: "Follow Your Roadmap", desc: "A day-by-day adaptive curriculum adjusts in real-time to your strengths and weaknesses across all four IELTS skills." },
+              { num: "03", ico: "🏆", color: "var(--tertiary)",  title: "Achieve Your Score",  desc: "Full AI-graded mock exams under real conditions. Get your predicted Band score before you ever walk into the exam room." },
+            ].map((step, i) => (
+              <R key={i} delay={i * 0.12}>
+                <div className="hiw-step">
+                  <div className="hiw-num" style={{ borderColor: step.color, color: step.color }}>{step.num}</div>
+                  <div className="hiw-ico">{step.ico}</div>
+                  <div className="hiw-title">{step.title}</div>
+                  <p className="hiw-desc">{step.desc}</p>
                 </div>
               </R>
             ))}
@@ -1041,185 +1098,268 @@ export default function LearnFlowLanding() {
         </div>
       </section>
 
-      {/* PRICING */}
-      <section id="pricing">
-        <div className="section-inner pricing-center">
-          <R>
-            <div className="section-tag">Simple Pricing</div>
-            <h2 className="section-h2">Simple pricing for<br />smarter learning</h2>
-            <p className="section-sub">Start for free and upgrade as you grow. No hidden fees.</p>
+      {/* ── CAPABILITIES ── */}
+      <section className="section" style={{ background: "rgba(255,255,255,.01)", borderTop: "1px solid var(--outline)", borderBottom: "1px solid var(--outline)" }}>
+        <div className="container">
+          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <span className="section-tag">Mastery Tools</span>
+            <h2 className="section-h2" style={{ maxWidth: 560, textAlign: "center" }}>Intelligent analysis at every layer</h2>
           </R>
+          <div className="cap-grid">
+            {[
+              { ico: "🎤", cls: "p", title: "Pronunciation Lab", desc: "Advanced waveform analysis that pinpoints subtle accent nuances and tonal inflections for native-level articulation." },
+              { ico: "✅", cls: "s", title: "Grammar Audit",     desc: "Goes beyond spell-check to identify structural complexities and suggest sophisticated alternatives for academic writing." },
+              { ico: "📚", cls: "t", title: "Vocabulary Engine",  desc: "Context-aware synonyms and IELTS-specific terminology recommendations to expand your Lexical Resource score." },
+            ].map((c, i) => (
+              <R key={i} delay={i * 0.1}>
+                <div className="cap-card">
+                  <div className={`cap-ico ${c.cls}`}>{c.ico}</div>
+                  <h4>{c.title}</h4>
+                  <p>{c.desc}</p>
+                </div>
+              </R>
+            ))}
+          </div>
+        </div>
+      </section>
 
+      {/* ── COMPARISON ── */}
+      <section className="section" style={{ borderTop: "1px solid var(--outline)" }}>
+        <div className="container">
+          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <span className="section-tag">Why Lingoura</span>
+            <h2 className="section-h2" style={{ maxWidth: 560, textAlign: "center" }}>The smarter choice</h2>
+            <p className="section-sub" style={{ textAlign: "center", maxWidth: 460 }}>See how we stack up against traditional prep methods.</p>
+          </R>
+          <div className="comp-wrap">
+            <table className="comp-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th className="comp-ours">✦ Lingoura AI</th>
+                  <th>Traditional Tutor</th>
+                  <th>Generic AI</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { feat: "24 / 7 Availability",          ours: true,    tutor: false,    ai: true           },
+                  { feat: "IELTS-specific Training",       ours: true,    tutor: true,     ai: false          },
+                  { feat: "Real-time Speaking Feedback",   ours: true,    tutor: false,    ai: false          },
+                  { feat: "Band Score Prediction",         ours: true,    tutor: false,    ai: false          },
+                  { feat: "Personalised Roadmap",          ours: true,    tutor: true,     ai: false          },
+                  { feat: "Full Mock Test Grading",        ours: true,    tutor: false,    ai: false          },
+                  { feat: "Starting price / month",        ours: "Free",  tutor: "$200+",  ai: "Free/Limited" },
+                ].map((row, i) => (
+                  <tr key={i}>
+                    <td>{row.feat}</td>
+                    <td className="comp-ours">{typeof row.ours === "boolean" ? (row.ours ? <span className="comp-yes">✓</span> : <span className="comp-no">—</span>) : row.ours}</td>
+                    <td>{typeof row.tutor === "boolean" ? (row.tutor ? <span className="comp-yes">✓</span> : <span className="comp-no">—</span>) : row.tutor}</td>
+                    <td>{typeof row.ai === "boolean" ? (row.ai ? <span className="comp-yes">✓</span> : <span className="comp-no">—</span>) : row.ai}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ── RESULTS ── */}
+      <section className="section" style={{ background: "rgba(255,255,255,.01)", borderTop: "1px solid var(--outline)" }}>
+        <div className="container">
+          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <span className="section-tag">Proven Results</span>
+            <h2 className="section-h2" style={{ maxWidth: 560, textAlign: "center" }}>Real scores. Real people.</h2>
+            <p className="section-sub" style={{ textAlign: "center", maxWidth: 460 }}>Our learners don&apos;t just improve — they achieve the exact score they need.</p>
+          </R>
+          <div className="results-grid">
+            {[
+              { score: "8.5", label: "Final Band", name: "Sarah Chen", role: "UK Visa Application", quote: "I jumped from 6.5 to 8.5 in 10 weeks. The Speaking Coach caught errors my human tutor never noticed.", color: "var(--primary)" },
+              { score: "9.0", label: "Final Band", name: "David Müller", role: "PhD Admission — Oxford", quote: "The Writing Audit dissected my Task 2 essays with surgical precision. Band 9 felt impossible — until it wasn't.", color: "var(--secondary)" },
+              { score: "7.5", label: "Final Band", name: "Priya Nair", role: "Canadian PR Application", quote: "I studied for 6 weeks alongside a full-time job. The adaptive roadmap made every minute count.", color: "var(--tertiary)" },
+            ].map((r, i) => (
+              <R key={i} delay={i * 0.1}>
+                <div className="result-card">
+                  <div className="result-glow" style={{ background: r.color }} />
+                  <div className="result-score grad" style={{ background: `linear-gradient(135deg, ${r.color}, var(--secondary))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{r.score}</div>
+                  <div className="result-label">{r.label}</div>
+                  <p className="result-quote">&ldquo;{r.quote}&rdquo;</p>
+                  <div className="result-name">{r.name}</div>
+                  <div className="result-role">{r.role}</div>
+                </div>
+              </R>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── ROADMAP ── */}
+      <section className="section" id="how">
+        <div className="container">
+          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <span className="section-tag">Path to Mastery</span>
+            <h2 className="section-h2" style={{ maxWidth: 560, textAlign: "center" }}>Your 4-month fluency blueprint</h2>
+            <p className="section-sub" style={{ textAlign: "center", maxWidth: 480 }}>A structured, proven roadmap — built for Band 8.0 and beyond.</p>
+          </R>
+          <div className="timeline">
+            <div className="tl-line" />
+            {[
+              { cls: "p", chip: "Month 1", title: "Foundation", desc: "Mastering core phonetic structures and high-frequency academic vocabulary.", tag: "Phonetic Integrity Check" },
+              { cls: "s", chip: "Month 2", title: "Active Speaking", desc: "Immersive roleplay labs and idiom integration for natural, confident speech.", tag: "Conversational Dynamics" },
+              { cls: "t", chip: "Month 3", title: "Writing & Grammar", desc: "Complex syntax mastery and professional writing audit for Task 1 & 2 excellence.", tag: "Syntactic Cohesion Audit" },
+            ].map((step, i) => (
+              <R key={i} delay={i * 0.12}>
+                <div className="tl-step">
+                  <div className="tl-content tl-left">
+                    {i % 2 === 0
+                      ? <><div className="tl-chip" style={{ color: `var(--${step.cls === "p" ? "primary" : step.cls === "s" ? "secondary" : "tertiary"})` }}>{step.chip}</div><div className="tl-title">{step.title}</div><div className="tl-desc">{step.desc}</div></>
+                      : <div className="tl-glass-chip" style={{ color: `var(--${step.cls === "p" ? "primary" : step.cls === "s" ? "secondary" : "tertiary"})` }}>{step.tag}</div>
+                    }
+                  </div>
+                  <div className={`tl-node ${step.cls}`} />
+                  <div className="tl-content tl-right">
+                    {i % 2 === 0
+                      ? <div className="tl-glass-chip" style={{ color: `var(--${step.cls === "p" ? "primary" : step.cls === "s" ? "secondary" : "tertiary"})` }}>{step.tag}</div>
+                      : <><div className="tl-chip" style={{ color: `var(--${step.cls === "p" ? "primary" : step.cls === "s" ? "secondary" : "tertiary"})` }}>{step.chip}</div><div className="tl-title">{step.title}</div><div className="tl-desc">{step.desc}</div></>
+                    }
+                  </div>
+                </div>
+              </R>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <section className="section" style={{ background: "rgba(255,255,255,.01)", borderTop: "1px solid var(--outline)" }}>
+        <div className="container">
+          <R style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <h2 className="section-h2" style={{ maxWidth: 600, textAlign: "center" }}>Loved by learners worldwide</h2>
+            <p className="section-sub" style={{ textAlign: "center", maxWidth: 480 }}>
+              Thousands of learners use Lingoura AI to stay focused, organized, and consistent every day.
+            </p>
+          </R>
+          <div className="testi-grid">
+            {testimonials.map((t, i) => (
+              <R key={i} delay={i * 0.1}>
+                <div className="testi-card glass">
+                  <div className="testi-user">
+                    <div className="testi-av">{t.emoji}</div>
+                    <div>
+                      <div className="testi-name">{t.name}</div>
+                      <div className="testi-role" style={{ color: t.color }}>{t.role}</div>
+                    </div>
+                  </div>
+                  <p className="testi-quote">"{t.quote}"</p>
+                  <div className="stars" style={{ color: t.color }}>★★★★★</div>
+                </div>
+              </R>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRICING ── */}
+      <section className="section" id="pricing">
+        <div className="container" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <R style={{ textAlign: "center" }}>
+            <span className="section-tag">Investment</span>
+            <h2 className="section-h2">A plan for every ambition</h2>
+            <p className="section-sub">Start free, upgrade as you grow. No hidden fees.</p>
+          </R>
           <div className="billing-toggle">
             <button className={`toggle-btn ${billing === "monthly" ? "active" : ""}`} onClick={() => setBilling("monthly")}>Monthly</button>
             <button className={`toggle-btn ${billing === "yearly"  ? "active" : ""}`} onClick={() => setBilling("yearly")}>
               Yearly <span className="save-badge">Save 17%</span>
             </button>
           </div>
-
           <div className="pricing-grid">
             {plans.map((plan, i) => (
-              <R key={i} delay={i * .1}>
-                <div className={`plan-card ${plan.featured ? "featured" : ""}`} style={{ position: "relative" }}>
-                  {plan.featured && <div className="popular-chip">🔥 Most Popular</div>}
-                  <div>
-                    <div className="plan-icon">{plan.icon}</div>
-                  </div>
+              <R key={i} delay={i * 0.1}>
+                <div className={`plan-card ${plan.featured ? "featured" : ""}`}>
+                  {plan.featured && <div className="feat-chip">Most Popular</div>}
                   <div>
                     <div className="plan-name">{plan.name}</div>
-                    <div className="plan-desc">{plan.desc}</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: "var(--muted)", marginTop: 4 }}>{plan.desc}</div>
                   </div>
-                  <div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                      <span className="plan-price">${plan.price[billing]}</span>
-                      <span className="plan-per">/ mo</span>
-                    </div>
+                  <div className="plan-price-row">
+                    <span className="plan-price">${plan.price[billing]}</span>
+                    <span className="plan-per">/ mo</span>
                   </div>
                   <div className="plan-features">
                     {plan.features.map(f => (
-                      <div className="pf-item" key={f}>
+                      <div key={f} className="pf-row">
                         <span className="pf-check">✓</span>
                         <span>{f}</span>
                       </div>
                     ))}
                   </div>
-                  <button className="plan-btn">{plan.cta}</button>
+                  <a href={plan.href} className={`plan-btn ${plan.featured ? "filled" : "outline"}`} style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}>{plan.cta}</a>
                 </div>
               </R>
             ))}
           </div>
-
-          <div style={{ marginTop: 32, display: "flex", gap: 20 }}>
+          <div style={{ marginTop: 28, display: "flex", gap: 20 }}>
             {["No credit card required", "Cancel anytime", "Free plan available"].map((t, i) => (
-              <span key={i} style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--light)" }}>
-                {i > 0 ? "• " : ""}{t}
+              <span key={i} style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--muted)", opacity: .55 }}>
+                {i > 0 ? "· " : ""}{t}
               </span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section>
-        <div className="section-inner" style={{ textAlign: "center" }}>
-          <R style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="section-tag">What Our Users Say</div>
-            <div className="stars">★★★★★</div>
-            <h2 className="section-h2" style={{ marginTop: 12 }}>Loved by learners worldwide</h2>
-            <p className="section-sub">Thousands of learners use Lingoura AI to stay focused, organized, and consistent every day.</p>
+      {/* ── FAQ ── */}
+      <section className="section" style={{ borderTop: "1px solid var(--outline)" }}>
+        <div className="container" style={{ maxWidth: 720, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <R style={{ textAlign: "center" }}>
+            <h2 className="section-h2">Curiosities answered</h2>
+            <p className="section-sub" style={{ marginBottom: 40 }}>Everything you need to know about Lingoura AI.</p>
           </R>
-          <div className="testi-grid">
-            {testimonials.map((t, i) => (
-              <R key={i} delay={i * .1}>
-                <div className="testi-card">
-                  <p className="testi-quote">"{t.quote}"</p>
-                  <div className="testi-author">
-                    <div className="testi-avatar">{t.avatar}</div>
-                    <div>
-                      <div className="testi-name">{t.name}</div>
-                      <div className="testi-role">{t.role}</div>
-                    </div>
-                  </div>
+          <div className="faq-list" style={{ width: "100%" }}>
+            {faqs.map((faq, i) => (
+              <div key={i} className={`faq-item ${openFaq === i ? "open" : ""}`}>
+                <div className="faq-trigger" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}>
+                  <span className="faq-q">{faq.q}</span>
+                  <span className="faq-ch">{openFaq === i ? "⌃" : "⌄"}</span>
                 </div>
-              </R>
+                {openFaq === i && <div className="faq-ans">{faq.a}</div>}
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section>
-        <div className="section-inner">
-          <div className="faq-split">
-            {/* Left – chat mockup */}
-            <R>
-              <div className="faq-chat">
-                <div className="chat-msg">
-                  <div className="chat-avatar">✨</div>
-                  <div className="chat-bubble">
-                    <div className="chat-name">AI Tutor</div>
-                    <div className="chat-text">Do you have any questions?</div>
-                    <div className="chat-actions">
-                      <button className="chat-action-btn">👍</button>
-                      <button className="chat-action-btn">👎</button>
-                      <button className="chat-action-btn" style={{ marginLeft: "auto" }}>📋 Save to Notes</button>
-                    </div>
-                  </div>
-                </div>
-                <div className="chat-msg right">
-                  <div className="chat-bubble">
-                    <div className="chat-name">You</div>
-                    <div className="chat-text">Yes, I have some questions!</div>
-                    <div className="chat-time">10:30 AM</div>
-                  </div>
-                </div>
-              </div>
-            </R>
-
-            {/* Right – accordion */}
-            <div>
-              <R>
-                <div className="section-tag">Frequently Asked Questions</div>
-                <h2 className="section-h2">Everything you<br />need to know</h2>
-                <p className="section-sub" style={{ marginBottom: 40 }}>Find answers to the most common questions about Lingoura AI.</p>
-              </R>
-              <div className="faq-list">
-                {faqs.map((faq, i) => (
-                  <div key={i} className={`faq-item ${openFaq === i ? "open" : ""}`}>
-                    <div className="faq-trigger" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}>
-                      <span className="faq-q">{faq.q}</span>
-                      <span className="faq-chevron">{openFaq === i ? "⌃" : "⌄"}</span>
-                    </div>
-                    {openFaq === i && <div className="faq-answer">{faq.a}</div>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="cta-section">
-        <div className="section-inner" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      {/* ── CTA ── */}
+      <section className="section">
+        <div className="container">
           <R>
-            <h2 className="cta-h2">
-              Ready to achieve<br />your dream Band<br />score?
-            </h2>
-            <p className="section-sub" style={{ textAlign: "center", marginBottom: 48, maxWidth: 520 }}>
-              Join thousands of candidates using Lingoura AI to perfect their IELTS skills and unlock their global future.
-            </p>
-            <div className="hero-ctas">
-              <button className="btn-hero">Get Started Free</button>
-              <button className="btn-ghost">Try Demo</button>
-            </div>
-            <div className="cta-small">
-              <span>No credit card required</span>
-              <span>•</span>
-              <span>Free plan available</span>
-              <span>•</span>
-              <span>Cancel anytime</span>
+            <div className="cta-box">
+              <div className="cta-orb cta-orb-1" />
+              <div className="cta-orb cta-orb-2" />
+              <h2 className="cta-h2">Ready to redefine<br />your voice?</h2>
+              <p className="cta-sub">Join the next generation of global speakers mastering English with cognitive precision and AI-powered guidance.</p>
+              <a href="/register" className="btn-cta" style={{ display: "inline-block", textDecoration: "none" }}>Start Your Free Trial</a>
             </div>
           </R>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer>
+      {/* ── FOOTER ── */}
+      <footer className="footer">
         <div className="footer-inner">
           <div className="footer-top">
             <div>
-              <a href="#" className="logo" style={{ textDecoration: "none" }}>
-                <img src="/logo-icon.png" alt="Lingoura AI" className="logo-img" />
+              <div className="footer-logo">
+                <img src="/logo-icon.png" alt="" style={{ height: 48, marginRight: 4, marginLeft: -8 }} />
                 Lingoura AI
-              </a>
-              <p className="footer-tagline">Smarter learning powered by AI.</p>
+              </div>
+              <p className="footer-tagline">Master English with Cognitive Intelligence.</p>
             </div>
             {[
-              { title: "Product",  links: ["Features", "Integrations", "Pricing", "Updates"] },
-              { title: "Company",  links: ["About Us", "Careers", "Blog"] },
-              { title: "Resources",links: ["Documentation", "Help Center", "Community"] },
-              { title: "Legal",    links: ["Privacy Policy", "Terms of Service"] },
+              { title: "Product",   links: ["Speaking Room", "Writing Audit", "Curriculum", "Pricing"] },
+              { title: "Resources", links: ["Community", "Help Center", "Case Studies", "Blog"] },
+              { title: "Legal",     links: ["Privacy Policy", "Terms of Service", "Contact"] },
             ].map(col => (
               <div key={col.title}>
                 <div className="footer-col-title">{col.title}</div>
@@ -1231,9 +1371,10 @@ export default function LearnFlowLanding() {
           </div>
           <div className="footer-bottom">
             <span className="footer-copy">© 2026 Lingoura AI. All rights reserved.</span>
+            <span className="footer-copy">Powered by Advanced AI</span>
           </div>
         </div>
-        <div className="footer-watermark">Lingoura AI</div>
+        <div className="footer-wm">LINGOURA</div>
       </footer>
     </div>
   );

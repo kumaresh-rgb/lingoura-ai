@@ -1,0 +1,68 @@
+export const API_ENDPOINTS = {
+  auth: {
+    login: '/auth/login',
+    register: '/auth/register',
+    refresh: '/auth/refresh',
+    logout: '/auth/logout',
+    google: '/auth/google',
+    me: '/auth/me',
+    forgotPassword: '/auth/forgot-password',
+    resetPassword: '/auth/reset-password',
+  },
+  dashboard: {
+    stats: '/dashboard/stats',
+    activity: '/dashboard/activity',
+    recentTests: '/dashboard/recent-tests',
+  },
+  speaking: {
+    sessions: '/speaking/sessions',
+    session: (id: string) => `/speaking/sessions/${id}`,
+    feedback: (id: string) => `/speaking/sessions/${id}/feedback`,
+  },
+  listening: {
+    tests: '/listening/tests',
+    test: (id: string) => `/listening/tests/${id}`,
+    submit: (id: string) => `/listening/tests/${id}/submit`,
+  },
+  writing: {
+    tasks: '/writing/tasks',
+    task: (id: string) => `/writing/tasks/${id}`,
+    submit: (id: string) => `/writing/tasks/${id}/submit`,
+    feedback: (id: string) => `/writing/tasks/${id}/feedback`,
+  },
+  reading: {
+    tests: '/reading/tests',
+    test: (id: string) => `/reading/tests/${id}`,
+    submit: (id: string) => `/reading/tests/${id}/submit`,
+  },
+  vocabulary: {
+    words: '/vocabulary/words',
+    review: '/vocabulary/review',
+    word: (id: string) => `/vocabulary/words/${id}`,
+  },
+  lessons: {
+    list: '/lessons',
+    lesson: (id: string) => `/lessons/${id}`,
+    complete: (id: string) => `/lessons/${id}/complete`,
+  },
+  analytics: {
+    overview: '/analytics/overview',
+    progress: '/analytics/progress',
+    cefrHistory: '/analytics/cefr-history',
+  },
+  settings: {
+    profile: '/settings/profile',
+    notifications: '/settings/notifications',
+    password: '/settings/password',
+  },
+  billing: {
+    subscription: '/billing/subscription',
+    usage: '/billing/usage',
+    createCheckout: '/billing/checkout',
+    createPortal: '/billing/portal',
+    session: (id: string) => `/billing/session/${id}`,
+    plans: '/billing/plans',
+    cancelSubscription: '/billing/subscription/cancel',
+    reactivateSubscription: '/billing/subscription/reactivate',
+  },
+} as const;

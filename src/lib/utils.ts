@@ -1,6 +1,3 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+// Re-export from the canonical shared location.
+// Existing pages importing from @/lib/utils continue to work unchanged.
+export { cn, slugify, truncate } from '@/shared/lib/utils';

@@ -1,65 +1,120 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center p-6">
-      <motion.div 
+    // Updated background to match your landing page deep dark theme
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#030712] p-6 selection:bg-indigo-500/30 dark:bg-slate-950">
+      {/* Decorative Ambient Background Glows */}
+      <div className="pointer-events-none absolute top-1/4 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 blur-[120px]" />
+
+      {/* Brand Logo - consistency with your navbar */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="z-10 mb-8"
+      >
+        <Link href="/" className="group flex items-center gap-2">
+          <span className="text-2xl font-extrabold tracking-tight text-white">
+            Lingoura{' '}
+            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              AI
+            </span>
+          </span>
+        </Link>
+      </motion.div>
+
+      {/* Main Login Card Container */}
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-white border border-slate-200 rounded-[2rem] md:rounded-[2.5rem] p-8 md:p-12 shadow-sm relative overflow-hidden"
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="relative z-10 w-full max-w-md overflow-hidden rounded-[2.5rem] border border-slate-800/80 bg-slate-900/40 p-8 shadow-2xl backdrop-blur-xl md:p-10"
       >
-        {/* Background Sparkle */}
-        <div className="absolute top-0 right-0 p-8 opacity-[0.05] pointer-events-none">
-           <Sparkles size={120} className="text-indigo-600" />
+        {/* Subtle Background Sparkle with brand glow */}
+        <div className="pointer-events-none absolute top-0 right-0 p-6 text-indigo-400 opacity-[0.08]">
+          <Sparkles size={100} />
         </div>
 
-        <div className="relative z-10">
-          <div className="mb-10 text-center">
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface">Welcome back</h1>
-            <p className="text-sm text-slate-500 mt-2 font-medium">Continue your journey with Lingoura AI</p>
+        <div>
+          {/* Header Typography tuned to match "Master English with Precision AI" */}
+          <div className="mb-8 text-center">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white md:text-3xl">
+              Welcome back
+            </h1>
+            <p className="mt-2 text-xs font-medium tracking-wide text-slate-400">
+              Continue your journey with Lingoura AI
+            </p>
           </div>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            {/* Email Input Field */}
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-4">Email Address</label>
-              <div className="relative">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input 
-                  type="email" 
+              <label className="ml-2 text-[10px] font-bold tracking-[0.15em] text-slate-400 uppercase">
+                Email Address
+              </label>
+              <div className="group relative">
+                <Mail
+                  size={16}
+                  className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-indigo-400"
+                />
+                <input
+                  type="email"
                   placeholder="name@example.com"
-                  className="w-full pl-12 pr-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none font-medium"
+                  className="w-full rounded-full border border-slate-800/60 bg-slate-950/60 py-3.5 pr-6 pl-12 text-sm font-medium text-white transition-all outline-none placeholder:text-slate-600 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10"
                 />
               </div>
             </div>
 
+            {/* Password Input Field */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center ml-4">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Password</label>
-                <Link href="/auth/forgot" className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest hover:underline">Forgot?</Link>
+              <div className="flex items-center justify-between px-2">
+                <label className="text-[10px] font-bold tracking-[0.15em] text-slate-400 uppercase">
+                  Password
+                </label>
+                <Link
+                  href="/auth/forgot"
+                  className="text-[10px] font-bold tracking-[0.15em] text-indigo-400 uppercase transition-colors hover:text-indigo-300"
+                >
+                  Forgot?
+                </Link>
               </div>
-              <div className="relative">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input 
-                  type="password" 
+              <div className="group relative">
+                <Lock
+                  size={16}
+                  className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-indigo-400"
+                />
+                <input
+                  type="password"
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none font-medium"
+                  className="w-full rounded-full border border-slate-800/60 bg-slate-950/60 py-3.5 pr-6 pl-12 text-sm font-medium text-white transition-all outline-none placeholder:text-slate-700 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10"
                 />
               </div>
             </div>
 
-            <button className="w-full primary-gradient text-white py-5 rounded-2xl font-bold text-sm shadow-xl shadow-indigo-100 hover:shadow-indigo-200 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
-              Sign In <ArrowRight size={18} />
+            {/* Action Button styled using your brand's signature CTA profile */}
+            <button className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 py-4 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-indigo-600/20 transition-all hover:opacity-95 hover:shadow-indigo-600/40 active:scale-[0.98]">
+              Sign In{' '}
+              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
             </button>
           </form>
 
-          <div className="mt-10 pt-10 border-t border-slate-50 text-center">
-            <p className="text-sm text-slate-500 font-medium">
-              Don't have an account? <Link href="/auth/signup" className="text-indigo-600 font-bold hover:underline">Sign up for free</Link>
+          {/* Footer Link section matching your capsule layout rules */}
+          <div className="mt-8 border-t border-slate-800/60 pt-6 text-center">
+            <p className="text-xs font-medium text-slate-400">
+              Don't have an account?{' '}
+              <Link
+                href="/auth/signup"
+                className="font-bold text-indigo-400 transition-colors hover:text-indigo-300"
+              >
+                Sign up for free
+              </Link>
             </p>
           </div>
         </div>
