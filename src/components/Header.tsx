@@ -41,7 +41,7 @@ export function Header({ isSidebarCollapsed }: { isSidebarCollapsed: boolean }) 
       <div className="flex items-center gap-5">
         {/* Mobile Brand */}
         <div className="flex items-center gap-3 lg:hidden">
-          <img src="/logo-icon.png" alt="Logo" className="h-8 w-auto object-contain" />
+          <img src="/logo-icon.png" alt="Lingoura AI" className="h-8 w-auto object-contain" />
           <span className="font-black text-lg tracking-tight bg-gradient-to-r from-[#4F46E5] via-[#7C3AED] to-[#EC4899] bg-clip-text text-transparent">Lingoura AI</span>
         </div>
 

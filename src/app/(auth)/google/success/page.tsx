@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useOnboardingStore } from '@/features/onboarding/store/onboarding.store';
 import { mapAuthUser, type AuthUser } from '@/shared/types/auth.types';
 import { ROUTES } from '@/shared/constants/routes';
 
@@ -41,7 +42,8 @@ export default function GoogleSuccessPage() {
     try {
       const authUser: AuthUser = JSON.parse(userRaw);
       setAuth(mapAuthUser(authUser), accessToken, refreshToken);
-      router.replace(ROUTES.DASHBOARD);
+      const { hasCompletedOnboarding } = useOnboardingStore.getState();
+      router.replace(hasCompletedOnboarding ? ROUTES.DASHBOARD : ROUTES.ONBOARDING);
     } catch {
       router.replace('/login?error=oauth_failed');
     }

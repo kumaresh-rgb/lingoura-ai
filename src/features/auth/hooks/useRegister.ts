@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../store/auth.store';
 import { authApi } from '../api/auth.api';
 import { mapAuthUser } from '@/shared/types/auth.types';
+import { useOnboardingStore } from '@/features/onboarding/store/onboarding.store';
 import { ROUTES } from '@/shared/constants/routes';
 import type { RegisterInput } from '../schemas/auth.schemas';
 
@@ -18,7 +19,9 @@ export function useRegister() {
       setAuth(mapAuthUser(res.user), res.accessToken, res.refreshToken);
     },
     onSuccess: () => {
-      router.replace(ROUTES.DASHBOARD);
+      // New users always go through onboarding; returning users skip if already done
+      const { hasCompletedOnboarding } = useOnboardingStore.getState();
+      router.replace(hasCompletedOnboarding ? ROUTES.DASHBOARD : ROUTES.ONBOARDING);
     },
   });
 }

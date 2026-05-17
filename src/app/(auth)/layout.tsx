@@ -181,8 +181,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
           {/* Logo */}
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#fff', fontWeight: 800, fontSize: 18, letterSpacing: '-0.025em', textDecoration: 'none' }}>
-              Lingoura AI
+            <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+              <img src="/logo-icon.png" alt="Lingoura AI" style={{ height: 38, width: 'auto', objectFit: 'contain' }} />
+              <span style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-0.025em' }}>
+                <span style={{ color: '#a78bfa' }}>Lingoura</span>
+                <span style={{ background: 'linear-gradient(to right, #a78bfa, #f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}> AI</span>
+              </span>
             </Link>
           </div>
 
@@ -227,17 +231,24 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* ── Right form panel ── */}
         <div className="auth-right">
           <div className="auth-mobile-bar">
-            <Link href="/" style={{ color: '#fff', fontWeight: 800, fontSize: 17, letterSpacing: '-0.025em', textDecoration: 'none' }}>
-              Lingoura AI
+            <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+              <img src="/logo-icon.png" alt="Lingoura AI" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+              <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: '-0.025em' }}>
+                <span style={{ color: '#a78bfa' }}>Lingoura</span>
+                <span style={{ background: 'linear-gradient(to right, #a78bfa, #f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}> AI</span>
+              </span>
             </Link>
           </div>
 
           <div className="auth-form-area">
             <div className="auth-form-inner">
               <div className="auth-form-logo">
-                <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#fff', fontWeight: 800, fontSize: 18, letterSpacing: '-0.025em', textDecoration: 'none', marginBottom: 0 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', fontSize: 16 }}>✦</span>
-                  Lingoura AI
+                <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 0 }}>
+                  <img src="/logo-icon.png" alt="Lingoura AI" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+                  <span style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-0.025em' }}>
+                    <span style={{ color: '#7c3aed' }}>Lingoura</span>
+                    <span style={{ background: 'linear-gradient(to right, #7c3aed, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}> AI</span>
+                  </span>
                 </Link>
               </div>
               {children}

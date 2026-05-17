@@ -13,7 +13,7 @@ const PROTECTED_PREFIXES = [
   '/review',
   '/settings',
   '/billing',
-  '/onboarding',
+  '/onboarding',  // requires auth; wizard itself handles onboarding-complete redirect
 ];
 
 const AUTH_PREFIXES = ['/login', '/register', '/forgot-password'];

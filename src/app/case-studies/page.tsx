@@ -312,8 +312,11 @@ const CaseStudiesPage = () => {
       <nav className="nav">
         <div className="nav-inner">
           <Link href="/" className="logo">
-            <img src="/logo-icon.png" alt="Logo" style={{ height: 40, width: "auto" }} />
-            Lingoura AI
+            <img src="/logo-icon.png" alt="Lingoura AI" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+            <span style={{ fontSize: 17, fontWeight: 900, letterSpacing: '-0.025em' }}>
+              <span style={{ color: '#7c3aed' }}>Lingoura</span>
+              <span style={{ background: 'linear-gradient(to right, #7c3aed, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}> AI</span>
+            </span>
           </Link>
           <div className="flex items-center gap-4">
             <button 

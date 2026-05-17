@@ -199,11 +199,8 @@ export function ProfileShareCard({ isOpen, onClose }: { isOpen: boolean; onClose
                     {/* Header */}
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "2.5rem" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                        <img src="/logo-icon.png" alt="Logo" style={{ width: 64, height: 64, objectFit: "contain" }} />
+                        <img src="/logo-icon.png" alt="Lingoura AI" style={{ height: 44, width: 'auto', objectFit: "contain" }} />
                         <div>
-                          <div className="gold-text" style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1 }}>
-                            Lingoura AI
-                          </div>
                           <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(245,208,96,0.45)", letterSpacing: "0.35em", textTransform: "uppercase", marginTop: 5 }}>
                             Certified Mastery
                           </div>

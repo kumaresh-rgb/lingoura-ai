@@ -43,7 +43,7 @@ export function Header({ isSidebarCollapsed }: HeaderProps) {
       <div className="flex items-center gap-5">
         {/* Mobile brand */}
         <div className="flex items-center gap-2.5 lg:hidden">
-          <Image src="/logo-icon.png" alt="Lingoura AI" width={32} height={32} />
+          <Image src="/logo-icon.png" alt="Lingoura AI" width={32} height={32} className="object-contain" />
           <span className="font-black text-base tracking-tight bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-500 bg-clip-text text-transparent">
             Lingoura AI
           </span>

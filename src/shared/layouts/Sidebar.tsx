@@ -50,15 +50,34 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
       className="fixed left-0 top-0 h-screen bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl z-50 flex flex-col border-r border-slate-200/60 dark:border-white/5 overflow-hidden"
     >
       {/* Brand */}
-      <div className="h-20 flex items-center justify-center px-4 shrink-0">
-        <Image
-          src="/logo-icon.png"
-          alt="Lingoura AI"
-          width={72}
-          height={72}
-          className="object-contain mix-blend-multiply dark:mix-blend-normal"
-          priority
-        />
+      <div className="h-20 flex items-center px-4 shrink-0 overflow-hidden">
+        {isCollapsed ? (
+          <div className="flex justify-center w-full">
+            <Image
+              src="/logo-icon.png"
+              alt="Lingoura AI"
+              width={36}
+              height={36}
+              className="object-contain shrink-0"
+              priority
+            />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/logo-icon.png"
+              alt="Lingoura AI"
+              width={36}
+              height={36}
+              className="object-contain shrink-0"
+              priority
+            />
+            <span className="text-[17px] font-black tracking-tight whitespace-nowrap">
+              <span className="text-violet-600 dark:text-violet-400">Lingoura</span>
+              <span className="bg-gradient-to-r from-violet-500 to-pink-500 bg-clip-text text-transparent"> AI</span>
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Pin toggle */}
