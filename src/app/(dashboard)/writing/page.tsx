@@ -1,195 +1,330 @@
-"use client";
+'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import { 
-  PenTool, 
-  Clock, 
-  Target,
-  FileText,
-  AlertCircle,
-  CheckCircle2,
-  HelpCircle,
-  BarChart2,
-  AlignLeft,
-  Sparkles
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  PenTool, Clock, Target, CheckCircle2, ChevronRight, Sparkles,
+  BarChart2, AlignLeft, FileText, AlertCircle, Brain, ArrowRight,
+  Wand2, TrendingUp, BookOpen, Edit3,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const writingTasks = [
-  {
-    id: 1,
-    title: "Task 1: Data Description",
-    description: "Summarize and explain data from a graph, table, chart, or diagram. Describe stages of a process, how something works, or describe an object or event.",
-    timing: "20 mins",
-    wordCount: "150+ Words",
-    status: "Available",
-    type: "Academic / General Training (Letter)",
-    icon: BarChart2,
-    color: "bg-amber-500"
+type TaskType = 'task1-academic' | 'task1-general' | 'task2';
+
+const TASKS: Record<TaskType, {
+  id: TaskType; label: string; sub: string; duration: string; wordCount: string;
+  icon: React.ElementType; color: string; bg: string; border: string; bar: string;
+  prompt: string; guidance: string[];
+}> = {
+  'task1-academic': {
+    id: 'task1-academic', label: 'Task 1 — Academic', sub: 'Graph, Chart or Diagram', duration: '20 min', wordCount: '150+ words',
+    icon: BarChart2, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10', border: 'border-amber-200 dark:border-amber-500/20', bar: 'bg-amber-500',
+    prompt: 'The bar chart below shows the percentage of households in owned and rented accommodation in England and Wales between 1918 and 2011.\n\nSummarize the information by selecting and reporting the main features, and make comparisons where relevant.',
+    guidance: ['Introduce what the chart shows', 'Describe the overall trend', 'Select 2–3 key data points with numbers', 'Compare the highest and lowest values', 'Do NOT give your opinion'],
   },
-  {
-    id: 2,
-    title: "Task 2: Essay Response",
-    description: "Write an essay in response to a point of view, argument, or problem. This task contributes twice as much to the final writing score.",
-    timing: "40 mins",
-    wordCount: "250+ Words",
-    status: "Available",
-    type: "Discursive / Analytical",
-    icon: AlignLeft,
-    color: "bg-rose-500"
-  }
+  'task1-general': {
+    id: 'task1-general', label: 'Task 1 — General Training', sub: 'Formal or Informal Letter', duration: '20 min', wordCount: '150+ words',
+    icon: FileText, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-500/10', border: 'border-sky-200 dark:border-sky-500/20', bar: 'bg-sky-500',
+    prompt: 'You recently had a problem with a product you bought from an online store. The product arrived damaged and the customer service team has not responded to your complaint.\n\nWrite a letter to the manager of the store. In your letter:\n• explain what you bought and when\n• describe the problem\n• say what you would like them to do',
+    guidance: ['Use the correct letter format (Dear Sir/Madam...)', 'Address all 3 bullet points clearly', 'Use appropriate formal or semi-formal tone', 'Sign off correctly (Yours faithfully/sincerely)', 'Check word count — 150 words minimum'],
+  },
+  'task2': {
+    id: 'task2', label: 'Task 2 — Essay', sub: 'Academic & General Training', duration: '40 min', wordCount: '250+ words',
+    icon: AlignLeft, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-500/10', border: 'border-rose-200 dark:border-rose-500/20', bar: 'bg-rose-500',
+    prompt: 'Some people believe that technology has made our lives more complicated. Others think that technology has simplified our lives.\n\nDiscuss both views and give your own opinion. Give reasons for your answer and include any relevant examples from your own knowledge or experience.',
+    guidance: ['Write a clear 2-sentence introduction + thesis statement', 'Body paragraph 1: First view + supporting evidence', 'Body paragraph 2: Second view + supporting evidence', 'Give YOUR opinion clearly in conclusion', 'Use discourse markers for cohesion'],
+  },
+};
+
+const CRITERIA = [
+  { name: 'Task Achievement',      key: 'task',     score: 75, color: 'bg-amber-500',   text: 'text-amber-600 dark:text-amber-400',   tip: 'Addresses all parts of the task' },
+  { name: 'Coherence & Cohesion',  key: 'cohesion', score: 60, color: 'bg-indigo-500',  text: 'text-indigo-600 dark:text-indigo-400',  tip: 'Logical flow, discourse markers' },
+  { name: 'Lexical Resource',      key: 'lexical',  score: 85, color: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', tip: 'Vocabulary range and accuracy' },
+  { name: 'Grammatical Accuracy',  key: 'grammar',  score: 70, color: 'bg-violet-500',  text: 'text-violet-600 dark:text-violet-400',   tip: 'Sentence structure variety' },
 ];
 
-const criteria = [
-  { name: "Task Achievement", score: 75 },
-  { name: "Coherence & Cohesion", score: 60 },
-  { name: "Lexical Resource", score: 85 },
-  { name: "Grammatical Accuracy", score: 70 },
-];
+function bandFromScore(score: number) {
+  if (score >= 90) return 8.5;
+  if (score >= 80) return 7.5;
+  if (score >= 70) return 7.0;
+  if (score >= 60) return 6.5;
+  if (score >= 50) return 6.0;
+  return 5.5;
+}
 
 export default function WritingPage() {
+  const [activeTask, setActiveTask] = useState<TaskType>('task2');
+  const [text, setText] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const task = TASKS[activeTask];
+  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const minWords = activeTask === 'task2' ? 250 : 150;
+  const wordPct = Math.min((wordCount / minWords) * 100, 100);
+  const avgScore = Math.round(CRITERIA.reduce((a, c) => a + c.score, 0) / CRITERIA.length);
+  const estimatedBand = bandFromScore(avgScore);
+
   return (
-    <div className="space-y-10">
-      {/* Header Section */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-bold uppercase tracking-widest">Writing Lab • IELTS Standard</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-on-surface leading-tight">
-            IELTS Writing <span className="text-rose-600 dark:text-rose-400">Excellence.</span>
-          </h1>
-          <p className="text-lg text-on-surface-variant mt-4 leading-relaxed">
-            Practice academic essay writing and data description. Get AI-driven feedback on your coherence, cohesion, and grammatical range.
-          </p>
-        </div>
-        
-        <div className="flex gap-4">
-          <div className="px-6 py-3 bg-surface-container-lowest border border-outline-variant rounded-2xl flex items-center gap-3 shadow-sm">
-            <Sparkles size={18} className="text-rose-600" />
-            <span className="text-sm font-bold text-on-surface">AI Grading Enabled</span>
-          </div>
-        </div>
-      </section>
+    <div className="space-y-8 pb-10">
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Main Tasks List */}
-        <div className="lg:col-span-8 space-y-6">
-          <h2 className="text-xl font-black text-on-surface flex items-center gap-2 mb-4">
-            <FileText size={20} className="text-rose-600" />
-            Exam Tasks
-          </h2>
-          {writingTasks.map((task, i) => (
-            <motion.div 
-              key={task.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-surface-container-lowest border border-outline-variant rounded-[2.5rem] p-8 md:p-10 hover:border-rose-500/50 transition-all group relative overflow-hidden"
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative rounded-[2rem] overflow-hidden border border-amber-200 dark:border-amber-500/20 p-7 md:p-10"
+        style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.07) 0%, rgba(217,119,6,0.04) 50%, rgba(245,158,11,0.02) 100%)' }}
+      >
+        <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
+              <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                <Wand2 size={10} /> AI Writing Lab
+              </span>
+              <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/8 text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">
+                IELTS Standard
+              </span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-on-surface leading-tight">
+              Writing<br />
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Excellence Lab</span>
+            </h1>
+            <p className="mt-3 text-sm text-on-surface-variant max-w-lg leading-relaxed">
+              Write your response to an IELTS task, then receive AI examiner feedback on task achievement, coherence, vocabulary, and grammar — with a predicted band score.
+            </p>
+          </div>
+          <div className="flex gap-3 flex-wrap">
+            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[80px]">
+              <p className="text-xl font-black text-on-surface">6.5</p>
+              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Avg Band</p>
+            </div>
+            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[80px]">
+              <p className="text-xl font-black text-on-surface">8</p>
+              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Submissions</p>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ── Task Type Selector ────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {(Object.values(TASKS) as typeof TASKS[TaskType][]).map((t, i) => {
+          const Icon = t.icon;
+          const isActive = activeTask === t.id;
+          return (
+            <motion.button
+              key={t.id}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.06 + i * 0.07, duration: 0.45 }}
+              onClick={() => { setActiveTask(t.id); setSubmitted(false); setText(''); }}
+              className={cn(
+                'text-left p-5 rounded-2xl border transition-all group',
+                isActive
+                  ? cn('border-amber-400 dark:border-amber-500/50 bg-amber-50/60 dark:bg-amber-500/8 shadow-lg shadow-amber-500/10')
+                  : 'border-outline-variant bg-surface-container-lowest hover:border-amber-300 dark:hover:border-amber-500/40 hover:shadow-md'
+              )}
             >
-              <div className="absolute top-0 right-0 p-8 text-rose-500/5 group-hover:text-rose-500/10 transition-colors">
-                 <task.icon size={120} />
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-8">
-                  <div className={cn("h-16 w-16 rounded-2xl flex items-center justify-center text-white", task.color)}>
-                    <task.icon size={32} />
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
-                    <Clock size={14} className="text-slate-400" />
-                    <span className="text-xs font-bold text-on-surface">{task.timing}</span>
-                  </div>
+              <div className="flex items-center justify-between mb-3">
+                <div className={cn('h-9 w-9 rounded-xl flex items-center justify-center', t.bg)}>
+                  <Icon size={16} className={t.color} />
                 </div>
-
-                <h3 className="text-2xl font-black text-on-surface mb-3">{task.title}</h3>
-                <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
-                  {task.description}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-6 pt-8 border-t border-outline-variant">
-                   <div className="flex items-center gap-2">
-                      <Target size={16} className="text-slate-400" />
-                      <span className="text-xs font-bold text-on-surface-variant">{task.wordCount}</span>
-                   </div>
-                   <div className="flex items-center gap-2">
-                      <HelpCircle size={16} className="text-slate-400" />
-                      <span className="text-xs font-bold text-on-surface-variant">{task.type}</span>
-                   </div>
-                   <button className={cn(
-                     "ml-auto px-6 py-3 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all",
-                     task.color
-                   )}>
-                     Start Writing
-                   </button>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-on-surface-variant">
+                  <Clock size={10} /> {t.duration}
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Sidebar: Performance & Tips */}
-        <div className="lg:col-span-4 space-y-8">
-           <div className="bg-surface-container-lowest border border-outline-variant rounded-[2.5rem] p-8 shadow-sm">
-              <h3 className="text-lg font-black text-on-surface mb-8">Assessment Criteria</h3>
-              <div className="space-y-6">
-                 {criteria.map((item) => (
-                   <div key={item.name} className="space-y-2">
-                      <div className="flex justify-between text-xs font-bold">
-                         <span className="text-on-surface-variant">{item.name}</span>
-                         <span className="text-on-surface">{item.score}%</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
-                         <motion.div 
-                           initial={{ width: 0 }}
-                           animate={{ width: `${item.score}%` }}
-                           className="h-full bg-rose-500 rounded-full" 
-                         />
-                      </div>
-                   </div>
-                 ))}
-              </div>
-              <p className="mt-8 text-[11px] text-on-surface-variant leading-relaxed">
-                Task 2 contributes twice as much to the final writing score. Allocate your time accordingly.
-              </p>
-           </div>
-
-           <div className="bg-amber-50/50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10 rounded-[2rem] p-8">
-              <div className="flex items-center gap-2 mb-4">
-                 <AlertCircle size={20} className="text-amber-600" />
-                 <h4 className="font-black text-on-surface">Critical Tip</h4>
-              </div>
-              <p className="text-sm text-on-surface-variant leading-relaxed">
-                 Spelling, grammar, and punctuation are all marked. You will lose points for each mistake. 
-                 <br/><br/>
-                 <strong className="text-on-surface">Word Limit Warning:</strong> If you write less than 150/250 words, you will be penalized.
-              </p>
-           </div>
-        </div>
+              <p className="text-sm font-black text-on-surface mb-0.5">{t.label}</p>
+              <p className="text-[11px] text-on-surface-variant mb-2">{t.sub}</p>
+              <span className={cn(
+                'inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold',
+                t.bg, t.color.replace('text-', 'text-').split(' ')[0]
+              )}>
+                {t.wordCount}
+              </span>
+            </motion.button>
+          );
+        })}
       </div>
 
-      {/* Formatting Rules */}
-      <section className="bg-surface-container-lowest border border-outline-variant rounded-[3rem] p-10">
-        <h2 className="text-2xl font-black text-on-surface mb-8">Test Rules & Guidelines</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="space-y-3">
-             <div className="h-1 w-12 bg-rose-500 rounded-full" />
-             <h4 className="font-bold text-on-surface">Drafting</h4>
-             <p className="text-sm text-on-surface-variant leading-relaxed">You may make notes on the question paper, but they will not be marked.</p>
+      {/* ── Writing Lab ───────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Main writing area */}
+        <motion.div
+          key={activeTask}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.35 }}
+          className="lg:col-span-8 space-y-5"
+        >
+          {/* Prompt */}
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
+            <div className="flex items-center gap-2 mb-4">
+              <div className={cn('h-8 w-8 rounded-xl flex items-center justify-center', task.bg)}>
+                <task.icon size={15} className={task.color} />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Task Prompt</p>
+                <p className="text-xs font-bold text-on-surface">{task.label}</p>
+              </div>
+            </div>
+            <div className={cn('p-4 rounded-xl border-l-4', task.border, task.bg)}>
+              <p className="text-sm text-on-surface leading-relaxed whitespace-pre-line">{task.prompt}</p>
+            </div>
+            <div className="mt-4">
+              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Writing Guide</p>
+              <ul className="space-y-1.5">
+                {task.guidance.map((g, i) => (
+                  <li key={i} className="flex items-start gap-2 text-[11px] text-on-surface-variant">
+                    <span className={cn('font-black mt-0.5 flex-shrink-0', task.color)}>{i + 1}.</span>
+                    {g}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="space-y-3">
-             <div className="h-1 w-12 bg-indigo-500 rounded-full" />
-             <h4 className="font-bold text-on-surface">Writing Style</h4>
-             <p className="text-sm text-on-surface-variant leading-relaxed">Must write in full paragraphs. Note form or bullet points will lose marks.</p>
+
+          {/* Editor */}
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Edit3 size={14} className="text-on-surface-variant" />
+                <h3 className="text-sm font-black text-on-surface">Your Response</h3>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={cn(
+                  'text-[11px] font-bold px-2.5 py-1 rounded-lg',
+                  wordCount >= minWords
+                    ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-slate-100 dark:bg-white/5 text-on-surface-variant'
+                )}>
+                  {wordCount} / {minWords}+ words
+                </span>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-on-surface-variant px-2.5 py-1 bg-slate-50 dark:bg-white/5 rounded-lg">
+                  <Clock size={10} /> {task.duration}
+                </div>
+              </div>
+            </div>
+
+            {/* Word count bar */}
+            <div className="h-1 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden mb-4">
+              <motion.div
+                animate={{ width: `${wordPct}%` }}
+                className={cn('h-full rounded-full transition-all', wordCount >= minWords ? 'bg-emerald-500' : 'bg-amber-500')}
+              />
+            </div>
+
+            <textarea
+              value={text}
+              onChange={e => { setText(e.target.value); setSubmitted(false); }}
+              placeholder={`Start writing your ${task.label} response here...\n\nTip: Begin with a clear introduction that paraphrases the task prompt.`}
+              className="w-full h-64 md:h-80 resize-none bg-slate-50/40 dark:bg-white/3 border border-slate-200 dark:border-white/8 rounded-xl p-4 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-amber-400 dark:focus:border-amber-500/50 transition-colors leading-relaxed font-medium"
+            />
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 mt-5">
+              <button
+                onClick={() => wordCount >= minWords && setSubmitted(true)}
+                disabled={wordCount < minWords}
+                className={cn(
+                  'flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all',
+                  wordCount >= minWords
+                    ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/25 active:scale-[0.97]'
+                    : 'bg-slate-100 dark:bg-white/5 text-on-surface-variant cursor-not-allowed'
+                )}
+              >
+                <Sparkles size={15} />
+                {wordCount < minWords ? `Need ${minWords - wordCount} more words` : 'Get AI Feedback'}
+              </button>
+              <button
+                onClick={() => { setText(''); setSubmitted(false); }}
+                className="px-5 py-3.5 border border-outline-variant hover:bg-slate-50 dark:hover:bg-white/5 text-on-surface-variant rounded-xl font-bold text-sm transition-all"
+              >
+                Clear
+              </button>
+            </div>
+
+            {/* AI feedback (shown after submission) */}
+            {submitted && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-5 space-y-3"
+              >
+                <div className="flex items-center gap-2 text-sm font-black text-on-surface">
+                  <Brain size={15} className="text-indigo-500" />
+                  AI Examiner Feedback
+                </div>
+                {[
+                  { type: 'strength', icon: '✓', color: 'bg-emerald-50 dark:bg-emerald-500/8 border-emerald-100 dark:border-emerald-500/15 text-emerald-700 dark:text-emerald-300', text: 'Strong introduction — you paraphrased the task prompt effectively without copying it directly.' },
+                  { type: 'improve',  icon: '→', color: 'bg-amber-50 dark:bg-amber-500/8 border-amber-100 dark:border-amber-500/15 text-amber-700 dark:text-amber-300',   text: 'Cohesion: Use more discourse markers. Instead of "Also", try "Furthermore" or "In addition to this".' },
+                  { type: 'grammar',  icon: '✎', color: 'bg-rose-50 dark:bg-rose-500/8 border-rose-100 dark:border-rose-500/15 text-rose-700 dark:text-rose-300',       text: 'Grammar: "There is many reasons" → "There are many reasons". Check subject-verb agreement.' },
+                ].map(fb => (
+                  <div key={fb.text} className={cn('p-3.5 rounded-xl border text-[11px] font-semibold leading-relaxed flex items-start gap-2', fb.color)}>
+                    <span className="font-black flex-shrink-0 mt-0.5">{fb.icon}</span>
+                    {fb.text}
+                  </div>
+                ))}
+              </motion.div>
+            )}
           </div>
-          <div className="space-y-3">
-             <div className="h-1 w-12 bg-emerald-500 rounded-full" />
-             <h4 className="font-bold text-on-surface">Tool Usage</h4>
-             <p className="text-sm text-on-surface-variant leading-relaxed">You may write in either pencil or pen. Capitals are allowed for everything.</p>
+        </motion.div>
+
+        {/* Scoring sidebar */}
+        <div className="lg:col-span-4 space-y-5">
+          {/* Scoring criteria */}
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <BarChart2 size={14} className="text-amber-500" />
+              <h3 className="text-sm font-black text-on-surface">Scoring Criteria</h3>
+            </div>
+            <div className="space-y-4">
+              {CRITERIA.map(c => (
+                <div key={c.key}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] font-bold text-on-surface-variant">{c.name}</span>
+                    <span className={cn('text-[11px] font-black', c.text)}>{c.score}%</span>
+                  </div>
+                  <div className="h-1.5 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${c.score}%` }}
+                      transition={{ duration: 0.9, ease: 'easeOut' }}
+                      className={cn('h-full rounded-full', c.color)}
+                    />
+                  </div>
+                  <p className="text-[10px] text-on-surface-variant mt-1">{c.tip}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 pt-4 border-t border-outline-variant">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-bold text-on-surface">Estimated Band</span>
+                <span className="text-lg font-black text-amber-500">{estimatedBand} / 9</span>
+              </div>
+              <p className="text-[10px] text-on-surface-variant">Based on your last submitted response</p>
+            </div>
+          </div>
+
+          {/* IELTS Writing tips */}
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Brain size={14} className="text-indigo-500" />
+              <h3 className="text-sm font-black text-on-surface">Expert Tips</h3>
+            </div>
+            <div className="space-y-3">
+              {[
+                { emoji: '⏱️', tip: 'Task 2 is worth double marks — always complete it before running out of time.' },
+                { emoji: '📐', tip: 'Structure: Introduction → Body 1 → Body 2 → Conclusion. Every paragraph needs a clear topic sentence.' },
+                { emoji: '🎯', tip: 'Aim for 4–5 different sentence structures. Mix simple, compound, and complex sentences.' },
+              ].map(t => (
+                <div key={t.tip} className="flex items-start gap-2.5 p-3 bg-slate-50/60 dark:bg-white/3 rounded-xl">
+                  <span className="text-base flex-shrink-0">{t.emoji}</span>
+                  <p className="text-[11px] text-on-surface-variant leading-relaxed">{t.tip}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

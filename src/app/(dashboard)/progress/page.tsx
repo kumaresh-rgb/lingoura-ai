@@ -1,289 +1,425 @@
-"use client";
+'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Calendar, 
-  Target, 
-  Award, 
-  Clock, 
-  Activity,
-  Zap,
-  Mic2,
-  Headphones,
-  PenTool,
-  BookOpen,
-  Flame,
-  ArrowUpRight,
-  Sparkles,
-  Layers
-} from "lucide-react";
-import { ProfileShareCard } from "@/components/ProfileShareCard";
-import { cn } from "@/lib/utils";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  BarChart3, TrendingUp, Calendar, Target, Award, Clock,
+  Zap, Mic2, Headphones, PenTool, BookOpen, Flame,
+  ArrowUpRight, Sparkles, Star, Trophy, CheckCircle2, Brain,
+} from 'lucide-react';
+import { ProfileShareCard } from '@/components/ProfileShareCard';
+import { cn } from '@/lib/utils';
+
+type Period = '7d' | '30d' | '90d';
+
+const BAND_HISTORY = [
+  { date: 'Week 1', listening: 5.5, reading: 5.0, writing: 4.5, speaking: 5.0 },
+  { date: 'Week 2', listening: 6.0, reading: 5.5, writing: 5.0, speaking: 5.5 },
+  { date: 'Week 3', listening: 6.0, reading: 6.0, writing: 5.0, speaking: 5.5 },
+  { date: 'Week 4', listening: 6.5, reading: 6.5, writing: 5.5, speaking: 6.0 },
+  { date: 'Week 5', listening: 7.0, reading: 6.5, writing: 5.5, speaking: 6.0 },
+  { date: 'Week 6', listening: 7.0, reading: 7.0, writing: 6.0, speaking: 6.5 },
+];
+
+const ACHIEVEMENTS = [
+  { id: 1,  title: '7-Day Streak',        desc: 'Studied 7 consecutive days',           icon: Flame,      color: 'text-amber-500',   bg: 'bg-amber-50 dark:bg-amber-500/10',     unlocked: true  },
+  { id: 2,  title: 'First Mock Test',     desc: 'Completed your first full mock test',   icon: Trophy,     color: 'text-indigo-500',  bg: 'bg-indigo-50 dark:bg-indigo-500/10',   unlocked: true  },
+  { id: 3,  title: 'Band 6 Achieved',     desc: 'Reached overall Band 6.0',              icon: Star,       color: 'text-yellow-500',  bg: 'bg-yellow-50 dark:bg-yellow-500/10',   unlocked: true  },
+  { id: 4,  title: '100 Words Mastered',  desc: 'Learned 100 vocabulary words',          icon: BookOpen,   color: 'text-violet-500',  bg: 'bg-violet-50 dark:bg-violet-500/10',   unlocked: true  },
+  { id: 5,  title: 'Speaking Champion',   desc: 'Scored 7.0 or above in Speaking',       icon: Mic2,       color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', unlocked: false },
+  { id: 6,  title: '30-Day Streak',       desc: 'Studied 30 consecutive days',           icon: Zap,        color: 'text-rose-500',    bg: 'bg-rose-50 dark:bg-rose-500/10',       unlocked: false },
+  { id: 7,  title: 'Writing Wizard',      desc: 'Scored Band 7+ in Writing Task 2',      icon: PenTool,    color: 'text-sky-500',     bg: 'bg-sky-50 dark:bg-sky-500/10',         unlocked: false },
+  { id: 8,  title: 'Target Reached',      desc: 'Achieved your target IELTS band',       icon: Target,     color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', unlocked: false },
+];
+
+const SKILLS = [
+  { skill: 'Listening', icon: Headphones, current: 7.0, start: 5.5, target: 8.0, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-500/10', bar: 'bg-sky-500'     },
+  { skill: 'Reading',   icon: BookOpen,   current: 7.0, start: 5.0, target: 7.5, color: 'text-violet-500', bg: 'bg-violet-50 dark:bg-violet-500/10', bar: 'bg-violet-500' },
+  { skill: 'Writing',   icon: PenTool,    current: 6.0, start: 4.5, target: 7.0, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10', bar: 'bg-amber-500'   },
+  { skill: 'Speaking',  icon: Mic2,       current: 6.5, start: 5.0, target: 7.5, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', bar: 'bg-emerald-500' },
+];
+
+const WEEKS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const CONSISTENCY = [
+  [true, true, false, true, true, false, true],
+  [true, true, true, true, false, true, false],
+  [false, true, true, true, true, true, true],
+  [true, true, true, false, true, true, true],
+];
 
 export default function ProgressPage() {
-  const [isShareOpen, setIsShareOpen] = React.useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [period, setPeriod] = useState<Period>('30d');
+
+  const overallCurrent = 6.5;
+  const overallStart   = 5.0;
+  const overallTarget  = 7.5;
+  const improvement    = overallCurrent - overallStart;
 
   return (
-    <div className="space-y-12 w-full pb-20">
-      <ProfileShareCard isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
-      
-      {/* Header Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto] items-end gap-6 w-full border-b border-slate-100 dark:border-white/5 pb-10">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-3">
-             <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[10px] font-bold uppercase tracking-widest">Active Growth</span>
-             <span className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Data Verified</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">Fluency Analytics</h1>
-        </div>
-        
-        <div className="flex flex-wrap items-center gap-3 lg:justify-self-end">
-          <button className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 px-5 py-3 rounded-2xl text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/10 transition-all flex items-center gap-2">
-            <Calendar size={14} /> Last 30 Days
-          </button>
-          <button 
-            onClick={() => setIsShareOpen(true)}
-            className="primary-gradient text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-indigo-100 dark:shadow-none active:scale-95 transition-all flex items-center gap-3"
-          >
-            <Sparkles size={18} /> Share My Card
-          </button>
-        </div>
-      </section>
+    <div className="space-y-8 pb-10">
+      <ProfileShareCard isOpen={shareOpen} onClose={() => setShareOpen(false)} />
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 w-full">
-        
-        {/* Main CEFR Chart Card (8 cols) */}
-        <div className="md:col-span-8 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[3rem] p-10 md:p-12 shadow-sm flex flex-col h-[550px] w-full group relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-12 opacity-[0.02] dark:opacity-[0.05] pointer-events-none group-hover:scale-110 transition-transform duration-1000 text-slate-900 dark:text-white">
-             <BarChart3 size={350} />
-          </div>
-
-          <div className="flex justify-between items-start mb-12 relative z-10">
-            <div>
-              <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">CEFR Progression</h3>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">Skill Mastery Over Time</p>
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative rounded-[2rem] overflow-hidden border border-emerald-200 dark:border-emerald-500/20 p-7 md:p-10"
+        style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.07) 0%, rgba(5,150,105,0.04) 50%, rgba(16,185,129,0.02) 100%)' }}
+      >
+        <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
+              <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider">
+                <TrendingUp size={10} /> Active Growth
+              </span>
+              <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/8 text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">
+                Data Verified
+              </span>
             </div>
-            <div className="flex gap-6">
-              <LegendItem label="Speaking" color="bg-indigo-500" />
-              <LegendItem label="Listening" color="bg-orange-500" />
-            </div>
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-on-surface leading-tight">
+              Fluency<br />
+              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">Analytics</span>
+            </h1>
+            <p className="mt-3 text-sm text-on-surface-variant leading-relaxed">
+              You&apos;ve improved by <strong className="text-emerald-600 dark:text-emerald-400">+{improvement} bands</strong> since you started.
+              Target Band <strong className="text-on-surface">{overallTarget}</strong> is within reach.
+            </p>
           </div>
+          <div className="flex gap-3 flex-wrap">
+            {(['7d', '30d', '90d'] as Period[]).map(p => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={cn(
+                  'px-4 py-2 rounded-xl text-xs font-bold border transition-all',
+                  period === p
+                    ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                    : 'bg-white/60 dark:bg-white/5 border-outline-variant text-on-surface-variant hover:border-emerald-300 dark:hover:border-emerald-500/40'
+                )}
+              >
+                {p === '7d' ? 'Last 7 Days' : p === '30d' ? 'Last 30 Days' : 'Last 90 Days'}
+              </button>
+            ))}
+            <button
+              onClick={() => setShareOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/20"
+            >
+              <Sparkles size={12} /> Share Card
+            </button>
+          </div>
+        </div>
+      </motion.section>
 
-          <div className="flex-1 flex items-end gap-3 md:gap-4 pb-4 px-2 relative z-10">
-            {[35, 45, 40, 60, 75, 78, 85, 82, 90, 88, 92, 95].map((val, i) => (
-              <div key={i} className="flex-1 group/bar relative flex flex-col items-center gap-3">
-                  <div className="absolute -top-8 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-bold px-2 py-1 rounded-md">
-                   {val}%
+      {/* ── Overall Band Stats ────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Current Band',     val: overallCurrent.toFixed(1), change: `+${improvement}`,  icon: BarChart3,  color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-500/10' },
+          { label: 'Target Band',      val: overallTarget.toFixed(1),  change: null,                icon: Target,     color: 'text-emerald-500',bg: 'bg-emerald-50 dark:bg-emerald-500/10' },
+          { label: 'Study Streak',     val: '12 days',                 change: 'Best: 18d',         icon: Flame,      color: 'text-amber-500',  bg: 'bg-amber-50 dark:bg-amber-500/10'   },
+          { label: 'Study Hours',      val: '47h',                     change: '+8h this week',     icon: Clock,      color: 'text-sky-500',    bg: 'bg-sky-50 dark:bg-sky-500/10'       },
+        ].map((stat, i) => (
+          <motion.div key={stat.label} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className={cn('h-9 w-9 rounded-xl flex items-center justify-center', stat.bg)}>
+                  <stat.icon size={16} className={stat.color} />
                 </div>
-                <motion.div 
-                  initial={{ height: 0 }}
-                  animate={{ height: `${val}%` }}
-                  transition={{ duration: 1, delay: i * 0.05 }}
-                  className="w-full bg-slate-50 dark:bg-white/5 rounded-t-xl group-hover/bar:bg-indigo-50 dark:group-hover/bar:bg-white/10 transition-colors relative"
-                >
-                  <motion.div 
-                    initial={{ height: 0 }}
-                    animate={{ height: `${val * 0.7}%` }}
-                    transition={{ duration: 1, delay: i * 0.05 + 0.2 }}
-                    className="absolute bottom-0 w-full primary-gradient rounded-t-xl shadow-lg shadow-indigo-100 dark:shadow-none" 
-                  />
-                </motion.div>
-                <span className="text-[8px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-tighter">W{i + 1}</span>
+                {stat.change && (
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{stat.change}</span>
+                )}
               </div>
+              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-0.5">{stat.label}</p>
+              <p className="text-2xl font-black text-on-surface">{stat.val}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* ── Band Progress by Skill + Chart ───────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Skill progress */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-5">
+          <div className="h-full bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
+            <h2 className="text-lg font-black text-on-surface mb-6">Skill Band Progress</h2>
+            <div className="space-y-6">
+              {SKILLS.map(skill => {
+                const progress = ((skill.current - skill.start) / (skill.target - skill.start)) * 100;
+                return (
+                  <div key={skill.skill}>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className={cn('h-7 w-7 rounded-lg flex items-center justify-center', skill.bg)}>
+                          <skill.icon size={13} className={skill.color} />
+                        </div>
+                        <span className="text-sm font-bold text-on-surface">{skill.skill}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-on-surface-variant">{skill.start}</span>
+                        <span className="text-xs font-black text-on-surface">{skill.current}</span>
+                        <span className="text-xs text-on-surface-variant">/ {skill.target}</span>
+                      </div>
+                    </div>
+                    <div className="relative h-3 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress}%` }}
+                        transition={{ duration: 1, ease: 'easeOut' }}
+                        className={cn('h-full rounded-full', skill.bar)}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-end pr-2">
+                        {progress >= 80 && <span className="text-[9px] font-black text-white">🎯</span>}
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-[9px] font-bold text-on-surface-variant mt-1">
+                      <span>Start: {skill.start}</span>
+                      <span>+{(skill.current - skill.start).toFixed(1)} bands gained</span>
+                      <span>Goal: {skill.target}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Band timeline chart */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="lg:col-span-7">
+          <div className="h-full bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-lg font-black text-on-surface">Band Score Timeline</h2>
+                <p className="text-xs text-on-surface-variant">6-week progression across all skills</p>
+              </div>
+              <div className="flex gap-3 text-[10px] font-bold">
+                {[
+                  { label: 'Listen', color: 'bg-sky-500'    },
+                  { label: 'Read',   color: 'bg-violet-500' },
+                  { label: 'Write',  color: 'bg-amber-500'  },
+                  { label: 'Speak',  color: 'bg-emerald-500'},
+                ].map(l => (
+                  <div key={l.label} className="flex items-center gap-1">
+                    <div className={cn('h-2 w-4 rounded-full', l.color)} />
+                    <span className="text-on-surface-variant">{l.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative h-52">
+              {/* Y-axis labels */}
+              <div className="absolute left-0 inset-y-0 flex flex-col justify-between pointer-events-none py-1">
+                {[9, 8, 7, 6, 5, 4].map(v => (
+                  <span key={v} className="text-[9px] font-bold text-slate-400 dark:text-slate-600 w-4 text-right">{v}</span>
+                ))}
+              </div>
+
+              {/* Grid lines */}
+              <div className="absolute left-6 right-0 inset-y-0 flex flex-col justify-between pointer-events-none py-1">
+                {[9, 8, 7, 6, 5, 4].map(v => (
+                  <div key={v} className="w-full border-t border-dashed border-slate-100 dark:border-white/5" />
+                ))}
+              </div>
+
+              {/* Bars per week */}
+              <div className="absolute left-8 right-0 inset-y-0 flex items-end justify-between gap-1 pb-0">
+                {BAND_HISTORY.map((week, wi) => (
+                  <div key={week.date} className="flex items-end gap-0.5 flex-1">
+                    {[
+                      { val: week.listening, color: 'bg-sky-500'    },
+                      { val: week.reading,   color: 'bg-violet-500' },
+                      { val: week.writing,   color: 'bg-amber-500'  },
+                      { val: week.speaking,  color: 'bg-emerald-500'},
+                    ].map((bar, bi) => (
+                      <motion.div
+                        key={bi}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${((bar.val - 4) / 5) * 100}%` }}
+                        transition={{ duration: 0.7, delay: wi * 0.08 + bi * 0.04, ease: 'easeOut' }}
+                        className={cn('flex-1 rounded-t-sm min-w-[4px]', bar.color)}
+                        title={`${bar.val}`}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              {/* X-axis labels */}
+              <div className="absolute left-8 right-0 bottom-0 flex justify-between -mb-5">
+                {BAND_HISTORY.map(week => (
+                  <span key={week.date} className="text-[9px] font-bold text-slate-400 dark:text-slate-600 flex-1 text-center">{week.date}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ── Consistency Calendar + AI Insight ────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-7">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-lg font-black text-on-surface">Study Consistency</h2>
+                <p className="text-xs text-on-surface-variant">Last 4 weeks — green = studied</p>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl">
+                <Flame size={12} className="text-amber-500" />
+                <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">12 day streak</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="grid grid-cols-7 gap-1.5 mb-1">
+                {WEEKS.map(d => (
+                  <div key={d} className="text-center text-[9px] font-bold text-on-surface-variant">{d}</div>
+                ))}
+              </div>
+              {CONSISTENCY.map((week, wi) => (
+                <div key={wi} className="grid grid-cols-7 gap-1.5">
+                  {week.map((active, di) => (
+                    <motion.div
+                      key={di}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: (wi * 7 + di) * 0.02 }}
+                      className={cn(
+                        'h-8 rounded-lg border transition-all',
+                        active
+                          ? 'bg-emerald-400 dark:bg-emerald-500 border-emerald-400 dark:border-emerald-500'
+                          : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/8'
+                      )}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-center justify-between pt-4 border-t border-outline-variant">
+              <div className="text-center">
+                <p className="text-lg font-black text-on-surface">22/28</p>
+                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Days Active</p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg font-black text-on-surface">78%</p>
+                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Consistency Rate</p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg font-black text-on-surface">47h</p>
+                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Total Study Time</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="lg:col-span-5 space-y-5">
+          {/* AI coach insight */}
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }}>
+            <div className="bg-indigo-600 rounded-[2rem] p-6 text-white relative overflow-hidden">
+              <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/8" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-3">
+                  <Brain size={13} className="text-indigo-300" />
+                  <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider">AI Coach Analysis</span>
+                </div>
+                <h3 className="text-lg font-black mb-3 leading-snug">You&apos;re on track for Band 7 by August 2026</h3>
+                <ul className="space-y-2 mb-4">
+                  {[
+                    { text: 'Listening improved +1.5 bands in 6 weeks', ok: true  },
+                    { text: 'Writing still below Band 6 — needs daily focus', ok: false },
+                    { text: 'Consistency rate of 78% is excellent', ok: true  },
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-white/85">
+                      <span className={cn('font-black flex-shrink-0', item.ok ? 'text-emerald-300' : 'text-amber-300')}>{item.ok ? '↑' : '→'}</span>
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Exam readiness */}
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.26 }}>
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Target size={14} className="text-emerald-500" />
+                <h3 className="text-sm font-black text-on-surface">Exam Readiness</h3>
+              </div>
+              <div className="space-y-3">
+                {SKILLS.map(skill => {
+                  const readiness = Math.min(Math.round(((skill.current - skill.start) / (skill.target - skill.start)) * 100), 100);
+                  return (
+                    <div key={skill.skill}>
+                      <div className="flex justify-between text-xs font-bold mb-1">
+                        <span className="text-on-surface-variant">{skill.skill}</span>
+                        <span className={cn(readiness >= 80 ? 'text-emerald-600 dark:text-emerald-400' : readiness >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400')}>{readiness}%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${readiness}%` }}
+                          transition={{ duration: 0.9, ease: 'easeOut' }}
+                          className={cn('h-full rounded-full', readiness >= 80 ? 'bg-emerald-500' : readiness >= 50 ? 'bg-amber-500' : 'bg-rose-500')}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 pt-4 border-t border-outline-variant">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-on-surface">Overall Readiness</span>
+                  <span className="text-base font-black text-indigo-600 dark:text-indigo-400">74%</span>
+                </div>
+                <p className="text-[10px] text-on-surface-variant mt-1">Predicted exam date readiness: ~45 days from now</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ── Achievements ──────────────────────────────────────────────────── */}
+      <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-black text-on-surface">Achievements</h2>
+              <p className="text-xs text-on-surface-variant">{ACHIEVEMENTS.filter(a => a.unlocked).length} of {ACHIEVEMENTS.length} unlocked</p>
+            </div>
+            <div className="h-2 w-32 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${(ACHIEVEMENTS.filter(a => a.unlocked).length / ACHIEVEMENTS.length) * 100}%` }} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {ACHIEVEMENTS.map((ach, i) => (
+              <motion.div key={ach.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 + i * 0.05 }}>
+                <div className={cn(
+                  'p-4 rounded-2xl border text-center transition-all',
+                  ach.unlocked
+                    ? 'bg-surface-container-lowest border-outline-variant hover:shadow-md'
+                    : 'bg-slate-50/40 dark:bg-white/2 border-dashed border-outline-variant opacity-50'
+                )}>
+                  <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center mx-auto mb-3', ach.unlocked ? ach.bg : 'bg-slate-100 dark:bg-white/5')}>
+                    <ach.icon size={18} className={ach.unlocked ? ach.color : 'text-on-surface-variant'} />
+                  </div>
+                  <p className="text-[11px] font-black text-on-surface leading-tight mb-1">{ach.title}</p>
+                  <p className="text-[10px] text-on-surface-variant leading-snug">{ach.desc}</p>
+                  {ach.unlocked && (
+                    <div className="mt-2 flex items-center justify-center gap-1">
+                      <CheckCircle2 size={11} className="text-emerald-500" />
+                      <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">Unlocked</span>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             ))}
           </div>
-          
-          <div className="mt-8 pt-8 border-t border-slate-50 dark:border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 relative z-10">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-              You are currently <span className="text-indigo-600 dark:text-indigo-400 font-bold">12% faster</span> than the average learner.
-            </p>
-            <div className="flex items-center gap-4">
-               <div className="flex items-center gap-2 text-emerald-500 font-bold text-xs bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-full">
-                  <TrendingUp size={14} /> +4.2% Growth
-               </div>
-               <div className="flex items-center gap-2 text-indigo-500 font-bold text-xs bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-full">
-                  <Activity size={14} /> High Velocity
-               </div>
-            </div>
-          </div>
         </div>
-
-        {/* Skill Breakdown Card (4 cols) */}
-        <div className="md:col-span-4 bg-slate-900 rounded-[3rem] p-10 md:p-12 shadow-2xl shadow-slate-200 flex flex-col justify-between w-full text-white relative overflow-hidden">
-           <div className="absolute bottom-0 left-0 p-12 opacity-[0.05] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
-              <Layers size={250} />
-           </div>
-           
-           <div className="relative z-10">
-             <h3 className="text-2xl font-black tracking-tight mb-2 text-white">Skill Balance</h3>
-             <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Holistic Fluency Score</p>
-           </div>
-           
-           <div className="space-y-10 my-12 relative z-10">
-              <SkillProgressDark icon={<Mic2 size={16} />} label="Speaking" score={72} color="bg-indigo-400" />
-              <SkillProgressDark icon={<Headphones size={16} />} label="Listening" score={88} color="bg-orange-400" />
-              <SkillProgressDark icon={<PenTool size={16} />} label="Writing" score={64} color="bg-blue-400" />
-              <SkillProgressDark icon={<BookOpen size={16} />} label="Reading" score={94} color="bg-emerald-400" />
-           </div>
-
-           <div className="p-6 bg-white/5 rounded-3xl border border-white/10 relative z-10 backdrop-blur-xl">
-             <div className="flex items-center gap-2 text-indigo-400 mb-3">
-               <Target size={18} />
-               <span className="text-[10px] font-bold uppercase tracking-widest">Primary Objective</span>
-             </div>
-             <p className="text-sm font-bold text-white leading-tight">C1 Advanced Certification</p>
-             <p className="text-[10px] text-white/50 mt-2 font-medium">Estimated arrival in <span className="text-white font-bold">42 days</span></p>
-           </div>
-        </div>
-
-        {/* Overall Fluency Hero (12 cols) */}
-        <motion.div 
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           className="md:col-span-12 bg-indigo-600 rounded-[3.5rem] p-12 md:p-16 text-white relative overflow-hidden group shadow-2xl shadow-indigo-100 dark:shadow-none w-full"
-         >
-           <div className="absolute top-0 right-0 p-16 opacity-[0.08] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
-             <Sparkles size={400} />
-           </div>
-           
-           <div className="relative z-10 flex flex-col lg:flex-row justify-between gap-16 w-full items-center">
-             <div className="flex-1 min-w-0">
-               <div className="flex items-center gap-3 mb-8">
-                 <div className="h-12 w-12 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/10">
-                    <Award size={24} className="text-emerald-300" />
-                 </div>
-                 <span className="text-xs font-bold uppercase tracking-[0.3em] opacity-80 text-indigo-100">Milestone Achievement</span>
-               </div>
-               <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-6 leading-tight">You're evolving <br/>into a <span className="text-emerald-300 italic">native speaker.</span></h2>
-               <p className="text-indigo-100/80 text-xl leading-relaxed max-w-2xl font-medium">
-                 Your speaking confidence has increased by 14% this month. At this rate, you'll reach 
-                 <span className="font-bold text-white underline underline-offset-8 decoration-emerald-400/50"> C1 Advanced</span> proficiency by late October.
-               </p>
-             </div>
-             
-             <div className="flex flex-col justify-center gap-6 w-full lg:w-96 flex-shrink-0">
-               <div className="bg-white/10 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/10 shadow-2xl">
-                 <div className="flex justify-between items-center mb-4">
-                   <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Learning Velocity</span>
-                   <span className="text-xs font-bold text-emerald-300">+18%</span>
-                 </div>
-                 <div className="text-4xl font-black mb-6 tracking-tighter">Ultra Fast</div>
-                 <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
-                   <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: "85%" }}
-                      transition={{ duration: 2, ease: "easeOut" }}
-                      className="h-full bg-emerald-400 rounded-full shadow-[0_0_20px_rgba(52,211,153,0.5)]" 
-                   />
-                 </div>
-                 <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-4 text-center">Top 2% of Global Learners</p>
-               </div>
-             </div>
-           </div>
-         </motion.div>
-
-        {/* Heatmap & Calendar Analysis (12 cols) */}
-        <div className="md:col-span-12 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[3rem] p-10 md:p-12 shadow-sm w-full relative overflow-hidden">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-4">
-            <div>
-              <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Consistency Heatmap</h3>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">Daily Activity Visualization</p>
-            </div>
-            <div className="flex items-center gap-4 bg-slate-50 dark:bg-white/5 px-4 py-2 rounded-2xl border border-slate-100 dark:border-white/10">
-               <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Less</span>
-               <div className="flex gap-1.5">
-                 <div className="h-4 w-4 rounded-[4px] bg-white dark:bg-white/10 border border-slate-100 dark:border-white/20" />
-                 <div className="h-4 w-4 rounded-[4px] bg-indigo-100" />
-                 <div className="h-4 w-4 rounded-[4px] bg-indigo-300" />
-                 <div className="h-4 w-4 rounded-[4px] bg-indigo-500" />
-                 <div className="h-4 w-4 rounded-[4px] bg-indigo-700" />
-               </div>
-               <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">More</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-7 md:grid-cols-[repeat(26,1fr)] gap-2.5">
-             {[...Array(182)].map((_, i) => (
-                <motion.div 
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.002 }}
-                  className={cn(
-                    "aspect-square rounded-[4px] transition-all cursor-pointer hover:ring-2 hover:ring-indigo-300 hover:scale-125 relative z-10",
-                    i % 15 === 0 ? "bg-indigo-700" : 
-                    i % 7 === 0 ? "bg-indigo-500" : 
-                    i % 3 === 0 ? "bg-indigo-300" : i % 2 === 0 ? "bg-indigo-100" : "bg-slate-50 dark:bg-white/5"
-                  )}
-                  title={`Day ${i}: Activity Level ${i % 5}`}
-                />
-             ))}
-          </div>
-          
-          <div className="flex justify-between mt-8 text-[10px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-[0.3em] px-2">
-            <span>January</span>
-            <span>February</span>
-            <span>March</span>
-            <span>April</span>
-            <span>May</span>
-            <span>June</span>
-          </div>
-        </div>
-
-      </div>
+      </motion.section>
     </div>
-  );
-}
-
-function LegendItem({ label, color }: { label: string; color: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className={cn("h-3 w-3 rounded-full", color)} />
-      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</span>
-    </div>
-  );
-}
-
-function SkillProgressDark({ icon, label, score, color }: { icon: React.ReactNode; label: string; score: number; color: string }) {
-  return (
-    <div className="space-y-3 group cursor-pointer">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3 text-white/80 font-bold text-sm group-hover:text-white transition-colors">
-          <div className={cn("h-8 w-8 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 group-hover:border-white/20", color.replace('bg-', 'text-'))}>
-             {icon}
-          </div>
-          <span>{label}</span>
-        </div>
-        <span className={cn("text-xs font-black", color.replace('bg-', 'text-'))}>{score}%</span>
-      </div>
-      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10">
-        <motion.div 
-          initial={{ width: 0 }}
-          animate={{ width: `${score}%` }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          className={cn("h-full rounded-full shadow-[0_0_15px_rgba(255,255,255,0.1)]", color)} 
-        />
-      </div>
-    </div>
-  );
-}
-
-function BadgeCard({ icon, label, date }: { icon: React.ReactNode; label: string; date: string }) {
-  return (
-    <motion.div 
-      whileHover={{ y: -8, scale: 1.02 }}
-      className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm flex flex-col items-center text-center group w-full transition-all hover:shadow-xl hover:shadow-indigo-100/20"
-    >
-      <div className="h-24 w-24 rounded-full bg-slate-50 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-indigo-50 transition-all duration-500 relative">
-        <div className="absolute inset-0 rounded-full border-2 border-dashed border-indigo-100 group-hover:rotate-180 transition-transform duration-1000 opacity-0 group-hover:opacity-100" />
-        {React.cloneElement(icon as any, { size: 48 })}
-      </div>
-      <h4 className="text-lg font-black text-slate-900 mb-2">{label}</h4>
-      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{date}</p>
-    </motion.div>
   );
 }
