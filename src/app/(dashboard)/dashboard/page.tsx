@@ -30,6 +30,7 @@ import {
   useCefrScores,
 } from '@/features/dashboard/hooks/useDashboardStats';
 import { ProfileShareCard } from '@/components/ProfileShareCard';
+import { UsageQuotaCard } from '@/features/billing/components/UsageQuotaCard';
 
 const STAT_CONFIG = [
   {
@@ -297,6 +298,8 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
+
+          <UsageQuotaCard />
         </div>
       </div>
 

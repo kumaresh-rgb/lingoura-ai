@@ -9,7 +9,7 @@ import {
   TrendingUp, Shield, MessageSquare, Sparkles, ChevronDown,
   Menu, X, GraduationCap, Briefcase, Building2, Plane, Code2,
   Moon, Sun, Flame, Cpu, Eye, Bot, Wand2, Clock, LineChart,
-  FileText, RefreshCw, Volume2, ChevronRight, Award, Layers,
+  FileText, RefreshCw, Volume2, ChevronRight, Award, Layers, Crown,
 } from 'lucide-react';
 
 // ─── Animation Helpers ────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
 const NAV_LINKS = [
   { label: 'Features', href: '#features' },
   { label: 'How It Works', href: '#how' },
-  { label: 'Pricing', href: '/pricing' },
+  { label: 'Pricing', href: '#pricing' },
   { label: 'Blog', href: '/blog' },
   { label: 'Changelog', href: '/changelog' },
 ];
@@ -199,32 +199,139 @@ const TESTIMONIALS = [
 
 const PLANS = [
   {
-    name: 'Free', price: '$0', period: 'forever',
-    cta: 'Start Free', href: '/register',
-    features: ['5 AI conversations / day', '2 speaking sessions / month', '1 mock test / month', 'Basic progress dashboard', 'Community access'],
+    id: 'FREE',
+    name: 'Free',
+    tagline: 'Explore the platform',
+    monthlyPrice: 0,
+    annualPrice: 0,
+    badge: null as string | null,
+    icon: 'zap' as const,
+    features: [
+      '5 AI conversations / day',
+      '2 speaking sessions / month',
+      '1 mock IELTS test / month',
+      '10 vocabulary words / day',
+      'Basic progress dashboard',
+      'Community forum access',
+      'Gemini Flash AI model',
+    ],
+    notIncluded: ['Writing corrections', 'Advanced analytics', 'Personalized learning path'],
+    cta: 'Start Free Forever',
+    href: '/register',
     popular: false,
+    ctaType: 'ghost' as const,
   },
   {
-    name: 'Pro', price: '$19', period: '/month',
-    cta: 'Start 14-Day Free Trial', href: '/register?plan=pro',
-    features: ['100 AI conversations / day', '30 speaking sessions / month', '10 mock tests / month', '20 writing corrections / month', 'Advanced analytics & insights', 'Personalized AI learning path', 'Priority email support'],
+    id: 'PRO',
+    name: 'Pro',
+    tagline: 'For serious learners',
+    monthlyPrice: 19,
+    annualPrice: 15,
+    badge: 'Most Popular' as string | null,
+    icon: 'crown' as const,
+    features: [
+      '100 AI conversations / day',
+      '30 speaking sessions / month',
+      '10 full mock tests / month',
+      '20 AI writing corrections / month',
+      '50 vocabulary words / day',
+      'Advanced analytics & insights',
+      'Personalized AI learning path',
+      'Priority email support',
+      'GPT-4.1 + Claude Sonnet models',
+      'Secure checkout via Stripe',
+    ],
+    notIncluded: [] as string[],
+    cta: 'Get Started with Pro',
+    href: '/register?plan=pro',
     popular: true,
+    ctaType: 'primary' as const,
   },
   {
-    name: 'Enterprise', price: 'Custom', period: 'pricing',
-    cta: 'Contact Sales', href: 'mailto:sales@lingoura.ai',
-    features: ['Unlimited members', 'Unlimited AI usage', 'Custom learning paths', 'SSO & LDAP integration', 'Dedicated account manager', 'SLA guarantee', 'Custom branding'],
+    id: 'ELITE',
+    name: 'Elite',
+    tagline: 'For intensive fluency transformation',
+    monthlyPrice: 39,
+    annualPrice: 29,
+    badge: null as string | null,
+    icon: 'flame' as const,
+    features: [
+      '300 AI conversations / day',
+      '100 speaking sessions / month',
+      '30 full mock IELTS tests / month',
+      '100 AI writing corrections / month',
+      'Unlimited vocabulary practice',
+      'Advanced pronunciation scoring',
+      'AI interview simulations',
+      'AI career English coaching',
+      'Full analytics suite',
+      'Premium AI models + faster response',
+      'Early access to new AI features',
+      'Priority support',
+      'Personalized weekly fluency reports',
+    ],
+    notIncluded: [] as string[],
+    cta: 'Get Started with Elite',
+    href: '/register?plan=elite',
     popular: false,
+    ctaType: 'elite' as const,
+  },
+  {
+    id: 'ENTERPRISE',
+    name: 'Enterprise',
+    tagline: 'For teams & institutions',
+    monthlyPrice: null as number | null,
+    annualPrice: null as number | null,
+    badge: null as string | null,
+    icon: 'building' as const,
+    features: [
+      'Everything in Pro',
+      'Unlimited team members',
+      'High-volume AI usage (fair use)',
+      'Custom learning paths per team',
+      'Admin dashboard & team analytics',
+      'SSO & LDAP integration',
+      'Dedicated account manager',
+      'SLA & priority infrastructure',
+      'Custom branding',
+    ],
+    notIncluded: [] as string[],
+    cta: 'Contact Sales',
+    href: 'mailto:sales@lingoura.ai',
+    popular: false,
+    ctaType: 'outline' as const,
   },
 ];
 
+const COMPARE_ROWS = [
+  { label: 'AI Conversations / day',      free: '5',    pro: '100',   ent: 'Custom' },
+  { label: 'Speaking Sessions / month',   free: '2',    pro: '30',    ent: 'High-volume' },
+  { label: 'Mock IELTS Tests / month',    free: '1',    pro: '10',    ent: 'Custom' },
+  { label: 'Writing Corrections / month', free: '—',    pro: '20',    ent: 'Custom' },
+  { label: 'Vocabulary Words / day',      free: '10',   pro: '50',    ent: 'Unlimited' },
+  { label: 'AI Model Quality',            free: 'Flash',pro: 'Premium',ent: 'Premium' },
+  { label: 'Advanced Analytics',          free: false,  pro: true,    ent: true },
+  { label: 'Personalized Learning Path',  free: false,  pro: true,    ent: true },
+  { label: 'Priority Support',            free: false,  pro: 'Email', ent: 'Dedicated' },
+  { label: 'Team Management',             free: false,  pro: false,   ent: true },
+  { label: 'SSO / LDAP',                  free: false,  pro: false,   ent: true },
+  { label: 'Custom Branding',             free: false,  pro: false,   ent: true },
+];
+
+const TRUST_NUMBERS = [
+  { val: '10,000+', label: 'Active Learners' },
+  { val: '4.9★',    label: 'Average Rating' },
+  { val: '97%',     label: 'Satisfaction Rate' },
+  { val: '+1.2 Bands', label: 'Avg. IELTS Improvement' },
+];
+
 const FAQS = [
-  { q: 'Is Lingoura AI just for IELTS preparation?', a: 'No. While we have a world-class IELTS preparation system, Lingoura AI is a complete English fluency platform — coaching Speaking, Listening, Reading, and Writing for professionals, students, immigrants, and global communicators.' },
-  { q: 'How does the AI evaluate my speaking?', a: 'Our AI analyzes pronunciation accuracy at the phoneme level, fluency (speaking speed, pauses, hesitation), vocabulary range, grammar, and coherence — aligned with official IELTS descriptors and Cambridge English standards.' },
-  { q: 'Can beginners use Lingoura AI?', a: 'Yes. Our smart assessment identifies your current level (A1–C2) and builds a plan starting exactly where you are. The AI adapts difficulty in real time — it is never too hard or too easy.' },
-  { q: 'How accurate is the IELTS Band prediction?', a: 'Our scoring model is trained on official IELTS criteria and predicts within ±0.5 of your actual band score for 94% of users. It evaluates all four skills independently and combines them into an overall band.' },
-  { q: 'Is there a free trial?', a: 'Yes — 14-day free trial on Pro and Team plans, no credit card required. We also offer a 14-day money-back guarantee if you are not satisfied.' },
-  { q: 'What payment methods are accepted?', a: 'All major credit/debit cards via Stripe. India users can also pay via Razorpay (UPI, NetBanking).' },
+  { q: 'Can I cancel my plan anytime?', a: 'Yes — cancel from your account settings with one click. You keep full access until the end of your current billing period. No questions asked, no lock-in, no cancellation fees.' },
+  { q: 'What AI models do I get on each plan?', a: 'Free users get Gemini Flash. Pro users access GPT-4.1 and Claude Sonnet. Elite users get Premium+ priority models — faster responses and the latest AI capabilities including advanced pronunciation scoring.' },
+  { q: 'Is Lingoura AI only for IELTS preparation?', a: 'No. While IELTS prep is a core use case, Lingoura AI is a complete English fluency platform for professionals, students, and global communicators — covering Speaking, Listening, Reading, Writing, and Vocabulary.' },
+  { q: 'How does the AI evaluate my speaking?', a: 'Our AI analyzes pronunciation at the phoneme level, fluency (speaking speed, pauses, hesitation), vocabulary range, grammar, and coherence — aligned with official IELTS Band descriptors and Cambridge English standards.' },
+  { q: 'What happens when I hit my usage limit?', a: 'You\'ll see a clear notification when you\'re close and when you\'ve reached the limit. You can wait for the monthly reset or upgrade instantly. We never cut off access mid-session.' },
+  { q: 'What payment methods are accepted?', a: 'All major credit/debit cards via Stripe. India users can also pay via Razorpay (UPI, NetBanking, cards). Annual plans save you 21% compared to monthly billing.' },
 ];
 
 // ─── Global CSS ───────────────────────────────────────────────────────────────
@@ -550,7 +657,7 @@ function Navbar({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () => v
             }}>
               {isDark ? <Sun size={15} /> : <Moon size={15} />}
             </button>
-            <Link href="/auth/login" className="nav-link hide-mobile" style={{ padding: '8px 14px', borderRadius: 10 }}>Sign In</Link>
+            <Link href="/login" className="nav-link hide-mobile" style={{ padding: '8px 14px', borderRadius: 10 }}>Sign In</Link>
             {/* Premium CTA — matches pricing gradient */}
             <Link href="/register" className="hide-mobile" style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -616,7 +723,7 @@ function Navbar({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () => v
                 ))}
               </nav>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 24, borderTop: `1px solid ${borderColor}` }}>
-                <Link href="/auth/login" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, border: `1.5px solid ${borderColor}`, color: isDark ? '#cbd5e1' : '#374151', fontWeight: 700, textDecoration: 'none', fontSize: 15 }}>Sign In</Link>
+                <Link href="/login" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, border: `1.5px solid ${borderColor}`, color: isDark ? '#cbd5e1' : '#374151', fontWeight: 700, textDecoration: 'none', fontSize: 15 }}>Sign In</Link>
                 <Link href="/register" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', fontWeight: 800, textDecoration: 'none', fontSize: 15, boxShadow: '0 4px 20px rgba(99,102,241,0.4)' }}>
                   Get Pro Access
                 </Link>
@@ -737,7 +844,7 @@ function Hero({ isDark }: { isDark: boolean }) {
               {[
                 { icon: <Users size={13} />, text: '10,000+ Active Learners' },
                 { icon: <Award size={13} />, text: '97% Satisfaction Rate' },
-                { icon: <Shield size={13} />, text: '14-Day Money Back' },
+                { icon: <Shield size={13} />, text: 'Cancel Anytime' },
               ].map(b => (
                 <div key={b.text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ color: '#6366f1' }}>{b.icon}</span>
@@ -1148,70 +1255,301 @@ function Testimonials({ isDark }: { isDark: boolean }) {
 
 // ─── Pricing ──────────────────────────────────────────────────────────────────
 
+function PlanIcon({ icon }: { icon: string }) {
+  const map: Record<string, { bg: string; color: string; el: React.ReactNode }> = {
+    zap:      { bg: 'rgba(100,116,139,0.15)', color: '#64748b',  el: <Zap size={17} /> },
+    crown:    { bg: 'rgba(99,102,241,0.15)',  color: '#818cf8',  el: <Crown size={17} /> },
+    flame:    { bg: 'rgba(139,92,246,0.15)',  color: '#a78bfa',  el: <Flame size={17} /> },
+    building: { bg: 'rgba(245,158,11,0.15)',  color: '#f59e0b',  el: <Building2 size={17} /> },
+  };
+  const { bg, color, el } = map[icon] ?? map.zap;
+  return (
+    <div style={{ width: 36, height: 36, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>
+      {el}
+    </div>
+  );
+}
+
 function PricingSection({ isDark }: { isDark: boolean }) {
+  const [interval, setIntervalVal] = useState<'monthly' | 'annual'>('monthly');
+
+  const ink  = isDark ? '#f1f5f9' : '#0f172a';
+  const ink2 = isDark ? '#94a3b8' : '#475569';
+  const ink3 = isDark ? '#64748b' : '#94a3b8';
+  const cardBg = isDark ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.88)';
+  const cardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.1)';
+  const tableBg = isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.6)';
+  const rowHover = isDark ? 'rgba(255,255,255,0.02)' : 'rgba(99,102,241,0.02)';
+  const divider = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(99,102,241,0.08)';
+
+  const COMPARE_DATA = [
+    { label: 'AI Conversations / day',      free: '5',    pro: '100',    elite: '300',       ent: 'Custom' },
+    { label: 'Speaking Sessions / month',   free: '2',    pro: '30',     elite: '100',       ent: 'High-volume' },
+    { label: 'Mock IELTS Tests / month',    free: '1',    pro: '10',     elite: '30',        ent: 'Custom' },
+    { label: 'Writing Corrections / month', free: '—',    pro: '20',     elite: '100',       ent: 'Custom' },
+    { label: 'Vocabulary Words / day',      free: '10',   pro: '50',     elite: 'Unlimited', ent: 'Unlimited' },
+    { label: 'AI Model Quality',            free: 'Flash',pro: 'Premium',elite: 'Premium+',  ent: 'Premium' },
+    { label: 'Pronunciation Scoring',       free: false,  pro: false,    elite: true,        ent: true },
+    { label: 'AI Interview Simulations',    free: false,  pro: false,    elite: true,        ent: true },
+    { label: 'Advanced Analytics',          free: false,  pro: true,     elite: true,        ent: true },
+    { label: 'Personalized Learning Path',  free: false,  pro: true,     elite: true,        ent: true },
+    { label: 'Weekly Fluency Reports',      free: false,  pro: false,    elite: true,        ent: true },
+    { label: 'Priority Support',            free: false,  pro: 'Email',  elite: 'Priority',  ent: 'Dedicated' },
+    { label: 'Team Management',             free: false,  pro: false,    elite: false,       ent: true },
+    { label: 'SSO / LDAP',                  free: false,  pro: false,    elite: false,       ent: true },
+    { label: 'Custom Branding',             free: false,  pro: false,    elite: false,       ent: true },
+  ];
+
+  function CellVal({ v }: { v: string | boolean }) {
+    if (v === true)  return <Check size={15} style={{ color: '#818cf8', margin: '0 auto' }} />;
+    if (v === false) return <span style={{ color: ink3, fontSize: 16, lineHeight: 1 }}>—</span>;
+    return <span style={{ fontSize: 12, fontWeight: 700, color: ink2 }}>{v}</span>;
+  }
+
   return (
     <section className="section" id="pricing" style={{ position: 'relative', zIndex: 1 }}>
       <div className="container">
+
+        {/* ── Header ──────────────────────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <div style={{ textAlign: 'center', marginBottom: 44 }}>
             <span className="section-label">Pricing</span>
-            <h2 className="section-h">Simple,<br /><span className="grad-text">Honest Pricing</span></h2>
-            <p className="section-sub">Start free forever. Upgrade when your practice demands it. No surprise charges.</p>
+            <h2 className="section-h">Invest in Your<br /><span className="grad-text">English Career</span></h2>
+            <p className="section-sub">Start free. Upgrade when your ambition demands it. No hidden fees, no surprise charges.</p>
           </div>
         </FadeIn>
-        <StaggerChildren>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
-            {PLANS.map((plan, i) => (
-              <AnimChild key={plan.name}>
-                <div className={`card-lg plan-card ${plan.popular ? 'plan-popular' : ''}`}
+
+        {/* ── Interval Toggle ─────────────────────────────────────────────── */}
+        <FadeIn delay={0.08}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 48 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: 4, borderRadius: 14, background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(99,102,241,0.05)', border: `1px solid ${cardBorder}` }}>
+              {(['monthly', 'annual'] as const).map(v => (
+                <button
+                  key={v}
+                  onClick={() => setIntervalVal(v)}
                   style={{
-                    padding: 32, height: '100%', display: 'flex', flexDirection: 'column', position: 'relative',
-                    border: `1px solid ${plan.popular ? 'rgba(99,102,241,0.4)' : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(99,102,241,0.1)')}`,
-                    background: plan.popular ? (isDark ? 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.06))' : 'linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.03))') : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.85)'),
-                    backdropFilter: 'blur(16px)',
-                    boxShadow: plan.popular ? '0 0 0 1px rgba(99,102,241,0.3), 0 20px 60px -20px rgba(99,102,241,0.25)' : (isDark ? 'none' : '0 4px 24px rgba(99,102,241,0.06)'),
-                    borderRadius: 24,
-                  }}>
-                  {plan.popular && (
-                    <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)' }}>
-                      <span style={{ display: 'inline-block', padding: '4px 14px', borderRadius: 999, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', fontSize: 11, fontWeight: 900, color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase', boxShadow: '0 4px 16px rgba(99,102,241,0.4)' }}>
-                        Most Popular
-                      </span>
-                    </div>
+                    position: 'relative', padding: '8px 20px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                    fontSize: 13, fontWeight: 800, background: 'transparent',
+                    color: interval === v ? '#fff' : ink3,
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {interval === v && (
+                    <motion.div
+                      layoutId="lp-interval-pill"
+                      style={{ position: 'absolute', inset: 0, borderRadius: 10, background: '#6366f1', zIndex: 0 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    />
                   )}
-                  <h3 style={{ fontSize: 20, fontWeight: 900, color: isDark ? '#f1f5f9' : '#0f172a', marginBottom: 8 }}>{plan.name}</h3>
-                  <div style={{ marginBottom: 24 }}>
-                    <span style={{ fontSize: 38, fontWeight: 900, color: isDark ? '#f1f5f9' : '#0f172a', letterSpacing: '-0.04em' }}>{plan.price}</span>
-                    <span style={{ fontSize: 15, color: isDark ? '#64748b' : '#94a3b8', fontWeight: 600, marginLeft: 4 }}>{plan.period}</span>
-                  </div>
-                  <Link href={plan.href} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                    padding: '13px 20px', borderRadius: 12, textDecoration: 'none',
-                    fontSize: 14, fontWeight: 800, marginBottom: 28, transition: 'all 0.2s',
-                    ...(plan.popular
-                      ? { background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', boxShadow: '0 8px 28px rgba(99,102,241,0.4)' }
-                      : { border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(99,102,241,0.2)'}`, color: isDark ? '#94a3b8' : '#6366f1', background: 'transparent' }),
-                  }}>
-                    {plan.cta} <ArrowRight size={14} />
-                  </Link>
-                  <ul style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {plan.features.map(f => (
-                      <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                        <Check size={14} style={{ color: plan.popular ? '#818cf8' : '#10b981', flexShrink: 0, marginTop: 2 }} />
-                        <span style={{ fontSize: 13, fontWeight: 500, color: isDark ? '#94a3b8' : '#475569' }}>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </AnimChild>
-            ))}
+                  <span style={{ position: 'relative', zIndex: 1, textTransform: 'capitalize' }}>{v}</span>
+                  {v === 'annual' && (
+                    <span style={{
+                      position: 'relative', zIndex: 1, marginLeft: 6,
+                      fontSize: 10, fontWeight: 900, padding: '2px 6px', borderRadius: 6,
+                      background: interval === 'annual' ? 'rgba(255,255,255,0.2)' : 'rgba(16,185,129,0.15)',
+                      color: interval === 'annual' ? '#fff' : '#10b981',
+                    }}>−21%</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* ── Plan Cards ──────────────────────────────────────────────────── */}
+        <StaggerChildren>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 20, alignItems: 'start' }}>
+            {PLANS.map((plan) => {
+              const price = interval === 'annual' ? plan.annualPrice : plan.monthlyPrice;
+              const isFree = plan.id === 'FREE';
+              const isEnt = plan.id === 'ENTERPRISE';
+              const isElite = plan.id === 'ELITE';
+
+              return (
+                <AnimChild key={plan.id}>
+                  <motion.div
+                    whileHover={{ y: plan.popular ? -6 : isElite ? -5 : -3 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      padding: 28, display: 'flex', flexDirection: 'column', position: 'relative',
+                      borderRadius: 22,
+                      border: `1px solid ${plan.popular ? 'rgba(99,102,241,0.45)' : isElite ? 'rgba(139,92,246,0.35)' : cardBorder}`,
+                      background: plan.popular
+                        ? (isDark ? 'linear-gradient(145deg,rgba(99,102,241,0.12),rgba(139,92,246,0.07))' : 'linear-gradient(145deg,rgba(99,102,241,0.06),rgba(139,92,246,0.03))')
+                        : isElite
+                          ? (isDark ? 'linear-gradient(145deg,rgba(139,92,246,0.1),rgba(167,139,250,0.05))' : 'linear-gradient(145deg,rgba(139,92,246,0.06),rgba(167,139,250,0.02))')
+                          : cardBg,
+                      backdropFilter: 'blur(16px)',
+                      boxShadow: plan.popular
+                        ? '0 0 0 1px rgba(99,102,241,0.3),0 24px 64px -20px rgba(99,102,241,0.3)'
+                        : isElite
+                          ? '0 0 0 1px rgba(139,92,246,0.2),0 16px 48px -16px rgba(139,92,246,0.25)'
+                          : (isDark ? 'none' : '0 4px 28px rgba(99,102,241,0.07)'),
+                    }}
+                  >
+                    {/* Badge */}
+                    {plan.badge && (
+                      <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 14px', borderRadius: 999, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', fontSize: 11, fontWeight: 900, color: '#fff', letterSpacing: '0.07em', textTransform: 'uppercase', boxShadow: '0 4px 16px rgba(99,102,241,0.45)', whiteSpace: 'nowrap' }}>
+                          <Star size={9} fill="#fff" /> {plan.badge}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Icon + name */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+                      <PlanIcon icon={plan.icon} />
+                      <div>
+                        <p style={{ fontSize: 16, fontWeight: 900, color: ink, margin: 0 }}>{plan.name}</p>
+                        <p style={{ fontSize: 11, color: ink3, margin: 0, marginTop: 1 }}>{plan.tagline}</p>
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    <div style={{ marginBottom: 22 }}>
+                      {isEnt ? (
+                        <>
+                          <span style={{ fontSize: 34, fontWeight: 900, color: ink, letterSpacing: '-0.03em' }}>Custom</span>
+                          <p style={{ fontSize: 12, color: ink3, marginTop: 4 }}>Volume-based pricing</p>
+                        </>
+                      ) : isFree ? (
+                        <>
+                          <span style={{ fontSize: 34, fontWeight: 900, color: ink, letterSpacing: '-0.03em' }}>$0</span>
+                          <span style={{ fontSize: 14, color: ink3, marginLeft: 6, fontWeight: 600 }}>forever</span>
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4 }}>
+                            <span style={{ fontSize: 34, fontWeight: 900, color: ink, letterSpacing: '-0.03em' }}>${price}</span>
+                            <span style={{ fontSize: 13, color: ink3, marginBottom: 4, fontWeight: 600 }}>/month</span>
+                          </div>
+                          {interval === 'annual' && (
+                            <p style={{ fontSize: 11, color: '#10b981', fontWeight: 700, marginTop: 3 }}>
+                              Billed ${price! * 12}/yr — save ${(plan.monthlyPrice! - price!) * 12}
+                            </p>
+                          )}
+                          {interval === 'monthly' && (
+                            <p style={{ fontSize: 11, color: ink3, marginTop: 3 }}>
+                              or ${plan.annualPrice}/mo billed annually
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </div>
+
+                    {/* CTA */}
+                    <Link
+                      href={plan.href}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                        padding: '12px 18px', borderRadius: 12, textDecoration: 'none',
+                        fontSize: 13, fontWeight: 800, marginBottom: 22, transition: 'all 0.2s',
+                        ...(plan.ctaType === 'primary'
+                          ? { background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', boxShadow: '0 8px 24px rgba(99,102,241,0.38)' }
+                          : plan.ctaType === 'elite'
+                            ? { background: 'linear-gradient(135deg,#7c3aed,#a78bfa)', color: '#fff', boxShadow: '0 8px 24px rgba(139,92,246,0.38)' }
+                            : plan.ctaType === 'outline'
+                              ? { border: '1.5px solid rgba(245,158,11,0.35)', color: isDark ? '#f59e0b' : '#d97706', background: 'transparent' }
+                              : { border: `1.5px solid ${cardBorder}`, color: isDark ? '#94a3b8' : '#6366f1', background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(99,102,241,0.04)' }),
+                      }}
+                    >
+                      {(plan.ctaType === 'primary' || plan.ctaType === 'elite') && <Sparkles size={13} />}
+                      {plan.cta}
+                      <ArrowRight size={13} />
+                    </Link>
+
+                    {plan.popular && (
+                      <p style={{ textAlign: 'center', fontSize: 10, color: ink3, marginTop: -14, marginBottom: 16 }}>
+                        Cancel anytime · Secure checkout
+                      </p>
+                    )}
+
+                    {/* Features */}
+                    <ul style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 9 }}>
+                      {plan.features.map(f => (
+                        <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                          <Check size={13} style={{ color: plan.popular ? '#818cf8' : isElite ? '#a78bfa' : '#10b981', flexShrink: 0, marginTop: 2 }} />
+                          <span style={{ fontSize: 12, fontWeight: 500, color: ink2, lineHeight: 1.45 }}>{f}</span>
+                        </li>
+                      ))}
+                      {plan.notIncluded.map(f => (
+                        <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                          <X size={13} style={{ color: isDark ? '#334155' : '#cbd5e1', flexShrink: 0, marginTop: 2 }} />
+                          <span style={{ fontSize: 12, fontWeight: 500, color: ink3, lineHeight: 1.45 }}>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </AnimChild>
+              );
+            })}
           </div>
         </StaggerChildren>
+
+        {/* ── Money-back ──────────────────────────────────────────────────── */}
         <FadeIn delay={0.2}>
-          <p style={{ textAlign: 'center', marginTop: 28, fontSize: 13, color: isDark ? '#334155' : '#94a3b8' }}>
-            All plans include a <strong style={{ color: isDark ? '#64748b' : '#6b7280' }}>14-day money-back guarantee</strong>. Secure payments via Stripe.
+          <p style={{ textAlign: 'center', marginTop: 24, fontSize: 12, color: ink3 }}>
+            Cancel anytime from your account settings. <strong style={{ color: isDark ? '#64748b' : '#6b7280' }}>Secure payments via Stripe.</strong>
           </p>
         </FadeIn>
+
+        {/* ── Trust Stats ─────────────────────────────────────────────────── */}
+        <FadeIn delay={0.1}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 40, flexWrap: 'wrap', marginTop: 52, paddingTop: 40, borderTop: `1px solid ${divider}` }}>
+            {TRUST_NUMBERS.map(s => (
+              <div key={s.label} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 26, fontWeight: 900, background: 'linear-gradient(135deg,#818cf8,#a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.03em' }}>{s.val}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: ink3, marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* ── Comparison Table ────────────────────────────────────────────── */}
+        <FadeIn delay={0.15}>
+          <div style={{ marginTop: 64 }}>
+            <div style={{ textAlign: 'center', marginBottom: 28 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, color: '#818cf8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Compare Plans</p>
+              <h3 style={{ fontSize: 22, fontWeight: 900, color: ink, margin: 0 }}>Everything in one view</h3>
+            </div>
+
+            <div style={{ borderRadius: 18, border: `1px solid ${cardBorder}`, background: tableBg, backdropFilter: 'blur(12px)', overflow: 'hidden' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${divider}` }}>
+                      <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: 11, fontWeight: 800, color: ink3, textTransform: 'uppercase', letterSpacing: '0.08em', width: '34%' }}>Feature</th>
+                      <th style={{ textAlign: 'center', padding: '14px 12px', fontSize: 11, fontWeight: 800, color: ink3, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Free</th>
+                      <th style={{ textAlign: 'center', padding: '14px 12px', fontSize: 11, fontWeight: 800, color: '#818cf8', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'rgba(99,102,241,0.06)', borderLeft: '1px solid rgba(99,102,241,0.12)', borderRight: '1px solid rgba(99,102,241,0.12)' }}>Pro</th>
+                      <th style={{ textAlign: 'center', padding: '14px 12px', fontSize: 11, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'rgba(139,92,246,0.06)', borderLeft: '1px solid rgba(139,92,246,0.12)', borderRight: '1px solid rgba(139,92,246,0.12)' }}>Elite</th>
+                      <th style={{ textAlign: 'center', padding: '14px 12px', fontSize: 11, fontWeight: 800, color: isDark ? '#f59e0b' : '#d97706', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Enterprise</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {COMPARE_DATA.map((row, i) => (
+                      <tr key={row.label} style={{ borderBottom: i < COMPARE_DATA.length - 1 ? `1px solid ${divider}` : 'none', background: i % 2 === 0 ? 'transparent' : rowHover }}>
+                        <td style={{ padding: '12px 20px', color: ink2, fontWeight: 600 }}>{row.label}</td>
+                        <td style={{ padding: '12px 12px', textAlign: 'center' }}>
+                          {row.free === false ? <span style={{ color: ink3, fontSize: 17, lineHeight: 1 }}>—</span> : <span style={{ fontSize: 12, fontWeight: 700, color: ink2 }}>{row.free}</span>}
+                        </td>
+                        <td style={{ padding: '12px 12px', textAlign: 'center', background: 'rgba(99,102,241,0.04)', borderLeft: '1px solid rgba(99,102,241,0.1)', borderRight: '1px solid rgba(99,102,241,0.1)' }}>
+                          {row.pro === true ? <Check size={15} style={{ color: '#818cf8', margin: '0 auto', display: 'block' }} /> : row.pro === false ? <span style={{ color: ink3, fontSize: 17, lineHeight: 1 }}>—</span> : <span style={{ fontSize: 12, fontWeight: 700, color: ink2 }}>{row.pro}</span>}
+                        </td>
+                        <td style={{ padding: '12px 12px', textAlign: 'center', background: 'rgba(139,92,246,0.04)', borderLeft: '1px solid rgba(139,92,246,0.1)', borderRight: '1px solid rgba(139,92,246,0.1)' }}>
+                          {row.elite === true ? <Check size={15} style={{ color: '#a78bfa', margin: '0 auto', display: 'block' }} /> : row.elite === false ? <span style={{ color: ink3, fontSize: 17, lineHeight: 1 }}>—</span> : <span style={{ fontSize: 12, fontWeight: 700, color: ink2 }}>{row.elite}</span>}
+                        </td>
+                        <td style={{ padding: '12px 12px', textAlign: 'center' }}>
+                          {row.ent === true ? <Check size={15} style={{ color: '#10b981', margin: '0 auto', display: 'block' }} /> : row.ent === false ? <span style={{ color: ink3, fontSize: 17, lineHeight: 1 }}>—</span> : <span style={{ fontSize: 12, fontWeight: 700, color: ink2 }}>{row.ent}</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
       </div>
     </section>
   );
@@ -1285,7 +1623,7 @@ function CTABanner({ isDark }: { isDark: boolean }) {
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="/register" className="btn-primary" style={{ fontSize: 15 }}>Start Free — No Card Needed <ArrowRight size={15} /></Link>
-              <Link href="/pricing" className="btn-ghost" style={{ fontSize: 15 }}>View Pricing</Link>
+              <Link href="#pricing" className="btn-ghost" style={{ fontSize: 15 }}>View Pricing</Link>
             </div>
           </div>
         </FadeIn>
@@ -1299,7 +1637,7 @@ function CTABanner({ isDark }: { isDark: boolean }) {
 function Footer({ isDark }: { isDark: boolean }) {
   const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(99,102,241,0.1)';
   const cols = [
-    { title: 'Platform', links: [{ label: 'Features', href: '#features' }, { label: 'How It Works', href: '#how' }, { label: 'Pricing', href: '/pricing' }, { label: 'Case Studies', href: '/case-studies' }] },
+    { title: 'Platform', links: [{ label: 'Features', href: '#features' }, { label: 'How It Works', href: '#how' }, { label: 'Pricing', href: '#pricing' }, { label: 'Case Studies', href: '/case-studies' }] },
     { title: 'Resources', links: [{ label: 'Blog', href: '/blog' }, { label: 'Changelog', href: '/changelog' }, { label: 'IELTS Guide', href: '/blog' }, { label: 'Vocabulary Lists', href: '/blog' }] },
     { title: 'Company', links: [{ label: 'About', href: '#' }, { label: 'Careers', href: '#' }, { label: 'Privacy Policy', href: '#' }, { label: 'Terms of Service', href: '#' }] },
   ];

@@ -38,6 +38,18 @@ export const PLAN_LIMITS: Record<SubscriptionPlan, PlanLimits> = {
     hasOfflineAccess: false,
     hasPrioritySupport: false,
   },
+  ELITE: {
+    speakingSessionsPerMonth: 100,
+    writingSubmissionsPerMonth: 100,
+    aiAnalysisPerMonth: 300,
+    mockTestsPerMonth: 30,
+    vocabularyWordsPerDay: Infinity,
+    maxTeamMembers: 1,
+    hasAdvancedAnalytics: true,
+    hasCustomLearningPath: true,
+    hasOfflineAccess: true,
+    hasPrioritySupport: true,
+  },
   TEAM: {
     speakingSessionsPerMonth: 100,
     writingSubmissionsPerMonth: 80,
@@ -67,6 +79,7 @@ export const PLAN_LIMITS: Record<SubscriptionPlan, PlanLimits> = {
 export const PLAN_DISPLAY_NAMES: Record<SubscriptionPlan, string> = {
   FREE: 'Free',
   PRO: 'Pro',
+  ELITE: 'Elite',
   TEAM: 'Team',
   ENTERPRISE: 'Enterprise',
 };
@@ -74,11 +87,12 @@ export const PLAN_DISPLAY_NAMES: Record<SubscriptionPlan, string> = {
 export const PLAN_PRICES_USD: Record<SubscriptionPlan, { monthly: number; annual: number }> = {
   FREE: { monthly: 0, annual: 0 },
   PRO: { monthly: 19, annual: 15 },
+  ELITE: { monthly: 39, annual: 29 },
   TEAM: { monthly: 49, annual: 39 },
   ENTERPRISE: { monthly: 0, annual: 0 }, // custom pricing
 };
 
-export const PREMIUM_PLANS: SubscriptionPlan[] = ['PRO', 'TEAM', 'ENTERPRISE'];
+export const PREMIUM_PLANS: SubscriptionPlan[] = ['PRO', 'ELITE', 'TEAM', 'ENTERPRISE'];
 
 export function isPremiumPlan(plan: SubscriptionPlan): boolean {
   return PREMIUM_PLANS.includes(plan);

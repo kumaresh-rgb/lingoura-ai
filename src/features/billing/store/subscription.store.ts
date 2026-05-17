@@ -21,7 +21,7 @@ interface SubscriptionState {
   canAccess: (requiredPlan: SubscriptionPlan) => boolean;
 }
 
-const PLAN_ORDER: SubscriptionPlan[] = ['FREE', 'PRO', 'TEAM', 'ENTERPRISE'];
+const PLAN_ORDER: SubscriptionPlan[] = ['FREE', 'PRO', 'ELITE', 'TEAM', 'ENTERPRISE'];
 
 export const useSubscriptionStore = create<SubscriptionState>()(
   devtools(

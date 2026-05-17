@@ -13,7 +13,7 @@ export const ROUTES = {
   BILLING: '/billing',
   BILLING_SUCCESS: '/billing/success',
   BILLING_CANCEL: '/billing/cancel',
-  PRICING: '/pricing',
+  PRICING: '/#pricing',
 
   // Protected — Dashboard
   DASHBOARD: '/dashboard',

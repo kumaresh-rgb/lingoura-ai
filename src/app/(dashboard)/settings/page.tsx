@@ -10,7 +10,10 @@ import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useSubscriptionStore } from '@/features/billing/store/subscription.store';
 import { useOnboardingStore } from '@/features/onboarding/store/onboarding.store';
 import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useUsage } from '@/features/billing/hooks/useSubscription';
+import { useUpgradeModalStore } from '@/features/billing/store/upgrade-modal.store';
 import { PLAN_LIMITS, PLAN_DISPLAY_NAMES } from '@/shared/constants/plan-limits';
+import type { UsageFeature } from '@/features/billing/types/billing.types';
 import { cn } from '@/shared/lib/utils';
 import { ROUTES } from '@/shared/constants/routes';
 import Link from 'next/link';
@@ -101,7 +104,8 @@ function SettingsRow({ icon, label, desc, value, onClick }: {
 const PLAN_COLORS: Record<string, string> = {
   FREE: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
   PRO: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
-  TEAM: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
+  ELITE: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
+  TEAM: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
   ENTERPRISE: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
 };
 
@@ -134,16 +138,21 @@ export default function SettingsPage() {
   const { plan, status, periodEnd } = useSubscriptionStore();
   const onboarding = useOnboardingStore();
   const logout = useLogout();
+  const { data: usageData } = useUsage();
+  const openUpgradeModal = useUpgradeModalStore((s) => s.openModal);
 
   const limits = PLAN_LIMITS[plan];
   const isPro = plan !== 'FREE';
 
-  // Mock current-month usage (replace with real API data)
-  const mockUsage = {
-    speakingSessions: isPro ? 14 : 2,
-    writingSubmissions: isPro ? 9 : 1,
-    aiAnalysis: isPro ? 52 : 3,
-    mockTests: isPro ? 4 : 0,
+  function getUsed(feature: UsageFeature): number {
+    return usageData?.records.find((r) => r.feature === feature)?.used ?? 0;
+  }
+
+  const usage = {
+    speakingSessions: getUsed('speaking_sessions'),
+    writingSubmissions: getUsed('writing_submissions'),
+    aiAnalysis: getUsed('ai_analysis'),
+    mockTests: getUsed('mock_tests'),
   };
 
   const [editingName, setEditingName] = useState(false);
@@ -250,19 +259,19 @@ export default function SettingsPage() {
               <Zap size={12} /> Upgrade
             </Link>
           ) : (
-            <button className="text-xs text-slate-600 hover:text-slate-400 font-medium transition-colors">
-              Cancel subscription
-            </button>
+            <Link href={ROUTES.PRICING} className="text-xs text-slate-600 hover:text-slate-400 font-medium transition-colors">
+              Manage plan →
+            </Link>
           )}
         </div>
 
         {/* Usage meters */}
         <div className="space-y-4">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">This month's usage</p>
-          <UsageMeter label="Speaking Sessions"   icon="🎤" used={mockUsage.speakingSessions}   total={limits.speakingSessionsPerMonth} />
-          <UsageMeter label="Writing Submissions" icon="✍️" used={mockUsage.writingSubmissions}  total={limits.writingSubmissionsPerMonth} />
-          <UsageMeter label="AI Analysis"         icon="🧠" used={mockUsage.aiAnalysis}         total={limits.aiAnalysisPerMonth} />
-          <UsageMeter label="Mock Tests"          icon="📝" used={mockUsage.mockTests}           total={limits.mockTestsPerMonth} />
+          <UsageMeter label="Speaking Sessions"   icon="🎤" used={usage.speakingSessions}   total={limits.speakingSessionsPerMonth} />
+          <UsageMeter label="Writing Submissions" icon="✍️" used={usage.writingSubmissions}  total={limits.writingSubmissionsPerMonth} />
+          <UsageMeter label="AI Analysis"         icon="🧠" used={usage.aiAnalysis}         total={limits.aiAnalysisPerMonth} />
+          <UsageMeter label="Mock Tests"          icon="📝" used={usage.mockTests}           total={limits.mockTestsPerMonth} />
         </div>
 
         {!isPro && (

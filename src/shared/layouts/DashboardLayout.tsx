@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { useUiStore } from '@/shared/store/ui.store';
+import { UpgradeModal } from '@/features/billing/components/UpgradeModal';
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { sidebarPinned } = useUiStore();
@@ -36,6 +37,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
         </motion.main>
       </div>
+
+      <UpgradeModal />
     </div>
   );
 }

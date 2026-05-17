@@ -34,7 +34,7 @@ export function mapAuthUser(dto: AuthUser): User {
 
 export type UserRole = 'student' | 'premium' | 'admin';
 export type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
-export type SubscriptionPlan = 'FREE' | 'PRO' | 'TEAM' | 'ENTERPRISE';
+export type SubscriptionPlan = 'FREE' | 'PRO' | 'ELITE' | 'TEAM' | 'ENTERPRISE';
 export type SubscriptionStatus = 'ACTIVE' | 'TRIALING' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE';
 
 export interface SubscriptionClaims {
