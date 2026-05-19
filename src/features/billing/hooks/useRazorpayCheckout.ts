@@ -9,7 +9,10 @@ import { queryKeys } from '@/shared/constants/query-keys';
 import type { RazorpayOrderResponse } from '../types/billing.types';
 
 interface UseRazorpayCheckoutOptions {
-  onSuccess?: (payload: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void;
+  onSuccess?: (
+    payload: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string },
+    order?: RazorpayOrderResponse
+  ) => void;
   onDismiss?: () => void;
 }
 
@@ -39,11 +42,9 @@ export function useRazorpayCheckout({ onSuccess, onDismiss }: UseRazorpayCheckou
         description: 'Lingoura AI Subscription',
         onSuccess: (payload) => {
           console.debug('[Billing] Razorpay payment success', payload.razorpay_payment_id);
-          // Explicitly refresh billing data after successful payment.
-          // refetchOnWindowFocus is disabled so we must invalidate manually here.
           void queryClient.invalidateQueries({ queryKey: queryKeys.billing.subscription() });
           void queryClient.invalidateQueries({ queryKey: queryKeys.billing.usage() });
-          onSuccess?.(payload);
+          onSuccess?.(payload, order); // pass order so caller knows the plan
         },
         onDismiss: () => {
           console.debug('[Billing] Razorpay modal closed — no charge made');

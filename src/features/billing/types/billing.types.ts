@@ -13,6 +13,8 @@ export interface RazorpayOrderResponse {
   keyId: string; // public Razorpay key — safe to expose
   subscriptionId: string; // our internal subscription record id
   notes: Record<string, string>;
+  /** Plan being purchased — used for optimistic store update on success */
+  plan?: string;
 }
 
 export interface RazorpayPaymentSuccessPayload {

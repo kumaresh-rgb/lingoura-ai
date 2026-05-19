@@ -223,7 +223,7 @@ export default function ListeningPage() {
 
                   {/* Waveform visualization */}
                   <div className="flex items-center justify-center gap-0.5 h-14 mb-5 px-2 overflow-hidden">
-                    {Array.from({ length: 32 }).map((_, i) => (
+                    {Array.from({ length: 28 }).map((_, i) => (
                       <motion.div
                         key={i}
                         animate={playing ? { height: [4, Math.random() * 40 + 4, 4] } : { height: 4 }}
@@ -276,7 +276,7 @@ export default function ListeningPage() {
                 </div>
 
                 {/* Questions */}
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
+                <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-5 sm:p-7">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-base font-black text-on-surface">Answer the Questions</h3>
                     <span className="text-[10px] font-bold text-on-surface-variant px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-lg border border-outline-variant">

@@ -65,7 +65,7 @@ function WordCard({
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-5 sm:p-7 md:p-10">
       {/* Navigation + band */}
-      <div className="flex items-center justify-between mb-5 md:mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 md:mb-8">
         <div className="flex items-center gap-2">
           <button onClick={handlePrev} className="h-9 w-9 rounded-xl border border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-all">
             <ChevronLeft size={18} />
@@ -75,7 +75,7 @@ function WordCard({
             <ChevronRight size={18} />
           </button>
         </div>
-        <div className="flex items-center gap-2 flex-wrap justify-end">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className={cn('text-[10px] font-bold px-2.5 py-1 rounded-full border', bandCfg.bg, bandCfg.text, bandCfg.border)}>
             Band {word.ieltsBandMin}
           </span>
@@ -92,7 +92,7 @@ function WordCard({
 
       {/* Word + pronunciation */}
       <div className="text-center mb-5 md:mb-8">
-        <h2 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight text-on-surface mb-3" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
+        <h2 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight text-on-surface mb-3" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
           {word.word}
         </h2>
         <div className="flex items-center justify-center gap-3 flex-wrap">
@@ -337,16 +337,16 @@ export default function VocabularyPage() {
               Band-targeted IELTS vocabulary with collocations, pronunciation, and AI-powered spaced repetition. Learn words that actually appear in the IELTS exam.
             </p>
           </div>
-          <div className="flex gap-3 flex-wrap">
-            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[80px]">
+          <div className="flex gap-3 overflow-x-auto pb-1 flex-shrink-0">
+            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[76px] flex-shrink-0">
               <p className="text-xl font-black text-on-surface">{feed.totalInDeck}</p>
               <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">In Deck</p>
             </div>
-            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[80px]">
+            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[76px] flex-shrink-0">
               <p className="text-xl font-black text-amber-500">{feed.dueCount}</p>
               <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Due Today</p>
             </div>
-            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[80px]">
+            <div className="p-4 bg-white/60 dark:bg-white/5 border border-white/80 dark:border-white/8 rounded-2xl text-center min-w-[76px] flex-shrink-0">
               <p className="text-xl font-black text-emerald-500">{feed.masteredCount}</p>
               <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Mastered</p>
             </div>
@@ -374,7 +374,7 @@ export default function VocabularyPage() {
       )}
 
       {/* ── Filter tabs ───────────────────────────────────────────────────── */}
-      <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+      <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar w-full min-w-0">
         {([
           { id: 'all',         label: 'All Words',    count: feed.dueForReview.length + feed.recommended.length },
           { id: 'due',         label: 'Due for Review', count: feed.dueForReview.length },

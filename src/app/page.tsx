@@ -751,10 +751,10 @@ function SkillBar({ label, score, color, delay }: { label: string; score: number
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
   return (
-    <div ref={ref} style={{ marginBottom: 14 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{label}</span>
-        <span style={{ fontSize: 12, fontWeight: 700, color }}>{score}%</span>
+    <div ref={ref} style={{ marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8' }}>{label}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color }}>{score}%</span>
       </div>
       <div className="skill-bar-bg">
         <motion.div
@@ -770,106 +770,170 @@ function SkillBar({ label, score, color, delay }: { label: string; score: number
 
 function HeroDashboard() {
   return (
-    <div className="float" style={{ position: 'relative', maxWidth: 400, width: '100%' }}>
-      <div style={{ position: 'absolute', inset: -1, borderRadius: 28, background: 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2), rgba(236,72,153,0.15))', filter: 'blur(24px)', opacity: 0.6 }} className="glow-pulse" />
-      <div style={{ background: 'rgba(12,16,30,0.88)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(24px)', borderRadius: 24, padding: 24, position: 'relative', overflow: 'hidden' }}>
-        {/* shimmer overlay */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100%', overflow: 'hidden', borderRadius: 24, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100%', background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%)', animation: 'shimmer 3s ease-in-out infinite' }} />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900, color: '#fff' }}>PS</div>
+    <div className="float" style={{ position: 'relative', width: '100%', maxWidth: 420 }}>
+      {/* Glow halo */}
+      <div style={{ position: 'absolute', inset: -24, borderRadius: 40, background: 'radial-gradient(ellipse at 60% 40%, rgba(99,102,241,0.28) 0%, rgba(139,92,246,0.16) 45%, transparent 70%)', filter: 'blur(28px)', pointerEvents: 'none' }} className="glow-pulse" />
+
+      {/* Main card */}
+      <div style={{ background: 'rgba(9,13,26,0.92)', border: '1px solid rgba(255,255,255,0.09)', backdropFilter: 'blur(28px)', borderRadius: 22, padding: 22, position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100%', background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 50%, transparent 100%)', animation: 'shimmer 4s ease-in-out infinite', pointerEvents: 'none' }} />
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 900, color: '#fff' }}>PS</div>
             <div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Priya S.</p>
-              <p style={{ fontSize: 11, color: '#64748b', margin: 0 }}>IELTS Target: Band 8.0</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Priya S.</p>
+              <p style={{ fontSize: 10, color: '#475569', margin: 0 }}>IELTS Target: Band 8.0</p>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 999, padding: '3px 9px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.22)', borderRadius: 999, padding: '3px 8px' }}>
             <span className="pulse-dot" style={{ width: 5, height: 5, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
             <span style={{ fontSize: 10, fontWeight: 700, color: '#10b981' }}>Live AI Session</span>
           </div>
         </div>
-        <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#475569', marginBottom: 14 }}>Skill Assessment</p>
+
+        <p style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#334155', marginBottom: 12 }}>Skill Assessment</p>
         <SkillBar label="Speaking" score={78} color="#6366f1" delay={0.1} />
         <SkillBar label="Listening" score={84} color="#8b5cf6" delay={0.2} />
         <SkillBar label="Reading" score={91} color="#0ea5e9" delay={0.3} />
         <SkillBar label="Writing" score={67} color="#ec4899" delay={0.4} />
-        <div style={{ marginTop: 18, padding: '11px 14px', background: 'rgba(236,72,153,0.08)', border: '1px solid rgba(236,72,153,0.2)', borderRadius: 12 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#f472b6', margin: '0 0 3px' }}>⚡ AI Insight</p>
-          <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>Writing is your weakest skill. Focus: Task 2 essay coherence will add +0.5 bands.</p>
+
+        <div style={{ marginTop: 14, padding: '10px 13px', background: 'rgba(236,72,153,0.07)', border: '1px solid rgba(236,72,153,0.18)', borderRadius: 11 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: '#f472b6', margin: '0 0 2px' }}>AI Insight</p>
+          <p style={{ fontSize: 11, color: '#94a3b8', margin: 0, lineHeight: 1.45 }}>Writing needs focus — Task 2 coherence will add +0.5 bands.</p>
         </div>
-        <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08))', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 12 }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>Predicted IELTS Band</span>
-          <span style={{ fontSize: 22, fontWeight: 900, background: 'linear-gradient(135deg,#818cf8,#f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>7.5</span>
+        <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 13px', background: 'linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.06))', border: '1px solid rgba(99,102,241,0.18)', borderRadius: 11 }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>Predicted IELTS Band</span>
+          <span style={{ fontSize: 20, fontWeight: 900, background: 'linear-gradient(135deg,#818cf8,#f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>7.5</span>
         </div>
       </div>
-      {/* Floating badges */}
-      <div style={{ position: 'absolute', top: -18, right: -20, background: 'rgba(12,16,30,0.85)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)', borderRadius: 12, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-        <Flame size={13} style={{ color: '#f59e0b' }} />
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#f1f5f9', whiteSpace: 'nowrap' }}>21-day streak 🔥</span>
-      </div>
-      <div style={{ position: 'absolute', bottom: -18, left: -20, background: 'rgba(12,16,30,0.85)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)', borderRadius: 12, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-        <TrendingUp size={13} style={{ color: '#10b981' }} />
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#f1f5f9', whiteSpace: 'nowrap' }}>+0.5 Band this week</span>
-      </div>
+
+      {/* Floating stat chips */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+        style={{ position: 'absolute', top: -16, right: -14, background: 'rgba(9,13,26,0.88)', border: '1px solid rgba(255,255,255,0.09)', backdropFilter: 'blur(16px)', borderRadius: 11, padding: '7px 11px', display: 'flex', alignItems: 'center', gap: 5, boxShadow: '0 8px 28px rgba(0,0,0,0.35)' }}>
+        <Flame size={12} style={{ color: '#f59e0b' }} />
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#f1f5f9', whiteSpace: 'nowrap' }}>21-day streak</span>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.85, duration: 0.5 }}
+        style={{ position: 'absolute', bottom: -16, left: -14, background: 'rgba(9,13,26,0.88)', border: '1px solid rgba(255,255,255,0.09)', backdropFilter: 'blur(16px)', borderRadius: 11, padding: '7px 11px', display: 'flex', alignItems: 'center', gap: 5, boxShadow: '0 8px 28px rgba(0,0,0,0.35)' }}>
+        <TrendingUp size={12} style={{ color: '#10b981' }} />
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#f1f5f9', whiteSpace: 'nowrap' }}>+0.5 Band this week</span>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1.0, duration: 0.5 }}
+        style={{ position: 'absolute', top: '35%', left: -22, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.28)', backdropFilter: 'blur(12px)', borderRadius: 10, padding: '6px 10px', display: 'flex', alignItems: 'center', gap: 5 }}>
+        <span style={{ fontSize: 9, fontWeight: 800, color: '#818cf8', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>BAND 8 TARGET</span>
+      </motion.div>
     </div>
   );
 }
 
 function Hero({ isDark }: { isDark: boolean }) {
+  const headColor = isDark ? '#f1f5f9' : '#0a0f1e';
+  const mutedColor = isDark ? '#475569' : '#64748b';
+  const borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(99,102,241,0.1)';
+
   return (
-    <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', paddingTop: 88, paddingBottom: 64, position: 'relative', zIndex: 1 }}>
-      <div className="container-lg">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))', gap: 'clamp(40px, 6vw, 96px)', alignItems: 'center' }}>
-          {/* Left */}
-          <div>
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 999, padding: '5px 14px', marginBottom: 24 }}>
+    <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', paddingTop: 80, paddingBottom: 48, position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+      {/* Subtle dot-grid background */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, backgroundImage: `radial-gradient(${isDark ? 'rgba(99,102,241,0.12)' : 'rgba(99,102,241,0.08)'} 1px, transparent 1px)`, backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)' }} />
+
+      <div className="container-lg" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: 'clamp(40px, 5vw, 72px)', alignItems: 'center' }} className="hero-grid">
+          {/* ── Left — editorial text ── */}
+          <div style={{ maxWidth: 680 }}>
+            {/* Platform badge */}
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: isDark ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.07)', border: `1px solid ${isDark ? 'rgba(99,102,241,0.28)' : 'rgba(99,102,241,0.2)'}`, borderRadius: 999, padding: '5px 14px', marginBottom: 28 }}>
                 <span className="pulse-dot" style={{ width: 6, height: 6, borderRadius: '50%', background: '#818cf8', display: 'inline-block' }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#818cf8', letterSpacing: '0.04em' }}>AI-Powered English Fluency Platform</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#818cf8' : '#6366f1', letterSpacing: '0.06em', textTransform: 'uppercase' }}>AI-Powered English Fluency Platform</span>
               </div>
             </motion.div>
+
+            {/* Main heading — large, left-anchored */}
             <motion.h1
-              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.9rem)', fontWeight: 900, lineHeight: 1.07, letterSpacing: '-0.035em', marginBottom: 22, color: isDark ? '#f1f5f9' : '#0f172a' }}
+              initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontSize: 'clamp(2.6rem, 6.5vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 0, color: headColor }}
             >
-              Master Real English<br />
-              <span className="grad-text">Fluency With Your</span><br />
-              Personal AI Mentor
+              Master Real
             </motion.h1>
-            <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.22 }}
-              style={{ fontSize: 'clamp(15px, 2vw, 17px)', color: isDark ? '#64748b' : '#6b7280', lineHeight: 1.75, marginBottom: 32, maxWidth: 480 }}>
-              Improve <strong style={{ color: isDark ? '#94a3b8' : '#374151' }}>Speaking, Listening, Writing, and Reading</strong> with adaptive AI coaching — built for IELTS learners, professionals, and global communicators.
+            <motion.h1
+              initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontSize: 'clamp(2.6rem, 6.5vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 0 }}
+            >
+              <span className="grad-text">English Fluency</span>
+            </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontSize: 'clamp(2.6rem, 6.5vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 28, color: headColor }}
+            >
+              With Your AI Mentor
+            </motion.h1>
+
+            {/* Sub-copy */}
+            <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.3 }}
+              style={{ fontSize: 'clamp(15px, 1.8vw, 17px)', color: mutedColor, lineHeight: 1.75, marginBottom: 36, maxWidth: 520 }}>
+              Improve <strong style={{ color: isDark ? '#94a3b8' : '#374151', fontWeight: 700 }}>Speaking, Listening, Writing, and Reading</strong> with adaptive AI coaching — built for IELTS learners, professionals, and global communicators.
             </motion.p>
-            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.32 }}
-              style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 40 }}>
-              <Link href="/register" className="btn-primary">Start Free — No Card Needed <ArrowRight size={15} /></Link>
-              <a href="#demo" className="btn-ghost"><Play size={14} style={{ fill: 'currentColor' }} /> Watch 90s Demo</a>
+
+            {/* CTAs */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.38 }}
+              style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 36, alignItems: 'center' }}>
+              <Link href="/register" className="btn-primary" style={{ fontSize: 15, padding: '14px 28px' }}>
+                Start Free — No Card Needed <ArrowRight size={16} />
+              </Link>
+              <a href="#demo" className="btn-ghost" style={{ fontSize: 14 }}>
+                <Play size={14} style={{ fill: 'currentColor' }} /> Watch 90s Demo
+              </a>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.5 }}
-              style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
+
+            {/* Trust row */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.52 }}
+              style={{ display: 'flex', gap: 0, flexWrap: 'wrap', alignItems: 'center' }}>
               {[
-                { icon: <Users size={13} />, text: '10,000+ Active Learners' },
-                { icon: <Award size={13} />, text: '97% Satisfaction Rate' },
-                { icon: <Shield size={13} />, text: 'Cancel Anytime' },
-              ].map(b => (
-                <div key={b.text} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                { icon: <Users size={12} />, text: '10,000+ Learners' },
+                { icon: <Award size={12} />, text: '97% Satisfaction' },
+                { icon: <Shield size={12} />, text: 'Cancel Anytime' },
+              ].map((b, i) => (
+                <div key={b.text} style={{ display: 'flex', alignItems: 'center', gap: 5, paddingRight: 20, marginRight: i < 2 ? 0 : 0, borderRight: i < 2 ? `1px solid ${borderColor}` : 'none', paddingLeft: i > 0 ? 20 : 0 }}>
                   <span style={{ color: '#6366f1' }}>{b.icon}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: isDark ? '#475569' : '#6b7280' }}>{b.text}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: mutedColor }}>{b.text}</span>
                 </div>
               ))}
             </motion.div>
           </div>
-          {/* Right — dashboard preview */}
-          <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '32px 0' }}
-            className="hide-mobile">
+
+          {/* ── Right — dashboard visual ── */}
+          <motion.div
+            initial={{ opacity: 0, x: 48, scale: 0.96 }} animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 1, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '40px 20px 40px 0' }}
+            className="hero-visual"
+          >
             <HeroDashboard />
           </motion.div>
         </div>
       </div>
+
+      <style>{`
+        @media (min-width: 900px) {
+          .hero-grid { grid-template-columns: 1fr 440px !important; }
+        }
+        @media (max-width: 899px) {
+          .hero-visual { display: none !important; }
+          .hero-grid { gap: 0 !important; }
+        }
+      `}</style>
     </section>
   );
 }

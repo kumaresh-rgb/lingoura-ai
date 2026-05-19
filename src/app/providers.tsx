@@ -12,6 +12,8 @@ import { STORAGE_KEYS } from '@/shared/constants/app.constants';
 import { mapAuthUser } from '@/shared/types/auth.types';
 import { useRazorpayCheckout } from '@/features/billing/hooks/useRazorpayCheckout';
 import { useSubscriptionStore } from '@/features/billing/store/subscription.store';
+import type { SubscriptionPlan } from '@/shared/types/auth.types';
+import type { RazorpayOrderResponse } from '@/features/billing/types/billing.types';
 import { ROUTES } from '@/shared/constants/routes';
 
 function RazorpayCheckoutHandler() {
@@ -19,14 +21,12 @@ function RazorpayCheckoutHandler() {
   const setPlan = useSubscriptionStore((s) => s.setPlan);
 
   useRazorpayCheckout({
-    onSuccess: () => {
-      // Optimistically mark the user as PRO immediately so every component
-      // that reads useSubscriptionStore reflects the upgrade without waiting
-      // for a network round-trip. The background re-fetch (triggered by
-      // invalidateQueries in useRazorpayCheckout) will confirm the real value.
-      setPlan('PRO', 'ACTIVE', new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
-
-      // Navigate to dashboard so the user sees their upgraded experience
+    onSuccess: (_, order) => {
+      // Optimistically upgrade the store for the purchased plan so every
+      // component reflects the change without waiting for a network round-trip.
+      // The invalidateQueries in useRazorpayCheckout will confirm the real value.
+      const planId = ((order as RazorpayOrderResponse | null)?.plan ?? 'PRO') as SubscriptionPlan;
+      setPlan(planId, 'ACTIVE', new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
       router.push(ROUTES.DASHBOARD);
     },
   });

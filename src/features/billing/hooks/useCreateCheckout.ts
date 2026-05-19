@@ -17,7 +17,7 @@ export function useCreateCheckout() {
         cancelUrl: `${env.NEXT_PUBLIC_APP_URL}${ROUTES.BILLING_CANCEL}`,
         providerHint,
       }),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       if (data.provider === 'stripe' && data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else if (data.provider === 'razorpay' && data.orderId) {
@@ -30,6 +30,7 @@ export function useCreateCheckout() {
               keyId: data.keyId ?? env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
               subscriptionId: data.sessionId,
               notes: {},
+              plan: variables.plan,              // pass plan so providers.tsx can do optimistic update
             },
           })
         );

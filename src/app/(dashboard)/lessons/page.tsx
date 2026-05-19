@@ -104,7 +104,7 @@ export default function LessonsPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative rounded-[2rem] overflow-hidden border border-violet-200 dark:border-violet-500/20 p-7 md:p-10"
+        className="relative rounded-[2rem] overflow-hidden border border-violet-200 dark:border-violet-500/20 p-5 sm:p-7 md:p-10"
         style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.07) 0%, rgba(109,40,217,0.04) 50%, rgba(139,92,246,0.02) 100%)' }}
       >
         <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-violet-500/10 blur-3xl pointer-events-none" />
@@ -141,7 +141,7 @@ export default function LessonsPage() {
 
       {/* ── Featured Continue Lesson ──────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <div className="relative bg-indigo-600 rounded-[2rem] p-7 text-white overflow-hidden">
+        <div className="relative bg-indigo-600 rounded-[2rem] p-5 sm:p-7 text-white overflow-hidden">
           <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-white/8 pointer-events-none" />
           <div className="absolute -left-6 -bottom-6 h-24 w-24 rounded-full bg-white/5 pointer-events-none" />
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -158,7 +158,7 @@ export default function LessonsPage() {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col items-start md:items-end gap-3 flex-shrink-0">
+            <div className="flex flex-col items-start md:items-end gap-3 w-full md:w-auto flex-shrink-0">
               <div className="flex gap-4 text-center">
                 <div>
                   <p className="text-lg font-black">{FEATURED_LESSON.duration}</p>
@@ -169,7 +169,7 @@ export default function LessonsPage() {
                   <p className="text-[10px] text-indigo-300 uppercase tracking-wider">Level</p>
                 </div>
               </div>
-              <button className="flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold text-sm hover:bg-indigo-50 transition-all">
+              <button className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold text-sm hover:bg-indigo-50 transition-all">
                 <Play size={14} fill="currentColor" /> Continue Lesson
               </button>
             </div>
@@ -178,7 +178,7 @@ export default function LessonsPage() {
       </motion.div>
 
       {/* ── Goal Filter ───────────────────────────────────────────────────── */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide w-full min-w-0">
         {GOAL_TABS.map(tab => (
           <button
             key={tab.id}

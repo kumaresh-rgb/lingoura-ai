@@ -55,6 +55,154 @@ const QUICK_MODULES = [
   { label: 'Reading',   sub: 'Academic & General',     icon: BookOpen,   colorCls: 'text-violet-500',  bg: 'from-violet-500/8 to-violet-500/3',   border: 'border-violet-200 dark:border-violet-500/20',   href: '/reading'   },
 ];
 
+// ─── GitHub-style Study Heatmap ───────────────────────────────────────────────
+
+type HeatCell = { date: Date; count: number };
+
+function buildHeatmapData(): HeatCell[][] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  // Go back to the most recent Sunday, then back 15 more weeks = 16 weeks total
+  const startDay = new Date(today);
+  startDay.setDate(today.getDate() - today.getDay() - 15 * 7);
+
+  const weeks: HeatCell[][] = [];
+  let cursor = new Date(startDay);
+
+  // Deterministic pseudo-random based on date — so the heatmap looks
+  // consistent on every render without real API data.
+  function dayActivity(d: Date): number {
+    const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+    const r = Math.sin(seed * 9301 + 49297) * 233280;
+    const n = r - Math.floor(r); // 0–1
+    if (n < 0.22) return 0;
+    if (n < 0.48) return 1;
+    if (n < 0.70) return 2;
+    if (n < 0.88) return 3;
+    return 4;
+  }
+
+  for (let w = 0; w < 17; w++) {
+    const week: HeatCell[] = [];
+    for (let d = 0; d < 7; d++) {
+      const date = new Date(cursor);
+      const isFuture = date > today;
+      week.push({ date, count: isFuture ? -1 : dayActivity(date) });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    weeks.push(week);
+  }
+  return weeks;
+}
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY_LABELS = ['','Mon','','Wed','','Fri',''];
+
+function StudyHeatmap({ streak }: { streak: number }) {
+  const weeks = buildHeatmapData();
+
+  // Month labels: show month name when the first day of the week is in a new month
+  const monthLabels: Array<{ col: number; label: string }> = [];
+  weeks.forEach((week, wi) => {
+    const first = week[0]?.date;
+    if (first && (wi === 0 || first.getDate() <= 7)) {
+      monthLabels.push({ col: wi, label: MONTH_NAMES[first.getMonth()] });
+    }
+  });
+
+  const totalActive = weeks.flat().filter(c => c.count > 0).length;
+
+  const cellBg = (count: number) => {
+    if (count < 0) return 'transparent';
+    if (count === 0) return 'rgba(255,255,255,0.04)';
+    const alpha = [0, 0.2, 0.4, 0.65, 0.9][count] ?? 0.9;
+    return `rgba(99,102,241,${alpha})`;
+  };
+
+  return (
+    <motion.section {...fadeUp(0.28)}>
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7 md:p-9">
+        <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+          <div>
+            <h2 className="text-lg font-black text-on-surface flex items-center gap-2">
+              <Calendar size={15} className="text-indigo-500" /> Study Consistency
+            </h2>
+            <p className="text-xs text-on-surface-variant mt-0.5">{totalActive} active days in the last 4 months</p>
+          </div>
+          <div className="flex items-center gap-3 flex-shrink-0 flex-wrap">
+            {streak > 0 && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20">
+                <Flame size={12} className="text-amber-500" />
+                <span className="text-xs font-bold text-amber-700 dark:text-amber-400">{streak} day streak</span>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-on-surface-variant">
+              <span>Less</span>
+              {[0,1,2,3,4].map(v => (
+                <div key={v} style={{ width: 10, height: 10, borderRadius: 2, background: cellBg(v), border: v === 0 ? '1px solid rgba(255,255,255,0.08)' : 'none' }} />
+              ))}
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Heatmap grid */}
+        <div style={{ overflowX: 'auto' }}>
+          <div style={{ minWidth: 'max-content' }}>
+            {/* Month labels */}
+            <div style={{ display: 'flex', gap: 2, marginBottom: 4, paddingLeft: 28 }}>
+              {weeks.map((week, wi) => {
+                const first = week[0]?.date;
+                const showMonth = first && (wi === 0 || first.getDate() <= 7);
+                return (
+                  <div key={wi} style={{ width: 12, fontSize: 9, fontWeight: 700, color: 'var(--on-surface-variant, #64748b)', whiteSpace: 'nowrap', opacity: 0.6 }}>
+                    {showMonth ? MONTH_NAMES[first!.getMonth()] : ''}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Day rows */}
+            <div style={{ display: 'flex', gap: 4 }}>
+              {/* Day-of-week labels */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingTop: 0 }}>
+                {DAY_LABELS.map((label, i) => (
+                  <div key={i} style={{ height: 12, fontSize: 9, fontWeight: 600, color: 'var(--on-surface-variant, #64748b)', display: 'flex', alignItems: 'center', opacity: 0.5, width: 22 }}>
+                    {label}
+                  </div>
+                ))}
+              </div>
+
+              {/* Week columns */}
+              <div style={{ display: 'flex', gap: 2 }}>
+                {weeks.map((week, wi) => (
+                  <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {week.map((cell, di) => (
+                      <div
+                        key={di}
+                        title={cell.count >= 0 ? `${cell.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${cell.count === 0 ? 'No sessions' : `${cell.count} session${cell.count !== 1 ? 's' : ''}` }` : ''}
+                        style={{
+                          width: 12, height: 12, borderRadius: 2,
+                          background: cellBg(cell.count),
+                          border: cell.count === 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                          cursor: cell.count > 0 ? 'pointer' : 'default',
+                          transition: 'transform 0.1s',
+                        }}
+                        onMouseEnter={e => { if (cell.count > 0) (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.3)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 export default function DashboardPage() {
   const [shareOpen, setShareOpen] = useState(false);
   const [tasks, setTasks] = useState(TODAY_TASKS);
@@ -518,6 +666,9 @@ export default function DashboardPage() {
           )}
         </div>
       </motion.section>
+
+      {/* ── Study Consistency Heatmap ─────────────────────────────────────── */}
+      <StudyHeatmap streak={streak} />
 
       {/* ── IELTS Expert Tips ─────────────────────────────────────────────── */}
       <motion.section {...fadeUp(0.3)}>

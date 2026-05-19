@@ -18,6 +18,7 @@ import {
   Pin,
   PinOff,
   Sparkles,
+  ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { useUiStore } from '@/shared/store/ui.store';
@@ -166,45 +167,48 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
       <div className="p-2.5 border-t border-slate-100 dark:border-white/5 flex flex-col gap-1 shrink-0">
         <AnimatePresence>
           {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="p-3 mb-1 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200/60 dark:border-white/5 overflow-hidden"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                  Plan Status
-                </span>
-                <span className={cn(
-                  'text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase',
-                  isPro
-                    ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10'
-                    : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5'
-                )}>
-                  {PLAN_DISPLAY_NAMES[plan as keyof typeof PLAN_DISPLAY_NAMES] ?? plan}
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <div className={cn(
-                  'h-8 w-8 rounded-lg border flex items-center justify-center',
-                  isPro
-                    ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-indigo-600 dark:text-indigo-400'
-                    : 'bg-slate-50 dark:bg-white/3 border-slate-200 dark:border-white/5 text-slate-400'
-                )}>
-                  <Sparkles size={13} />
+            <Link href={ROUTES.SETTINGS}>
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="p-3 mb-1 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/8 rounded-xl border border-slate-200/60 dark:border-white/5 overflow-hidden transition-colors cursor-pointer group/plan"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                    Plan Status
+                  </span>
+                  <span className={cn(
+                    'text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase',
+                    isPro
+                      ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10'
+                      : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5'
+                  )}>
+                    {PLAN_DISPLAY_NAMES[plan as keyof typeof PLAN_DISPLAY_NAMES] ?? plan}
+                  </span>
                 </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 dark:text-white leading-none mb-0.5">
-                    {isPro ? `${PLAN_DISPLAY_NAMES[plan as keyof typeof PLAN_DISPLAY_NAMES] ?? plan} Plan` : 'Free Plan'}
-                  </p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                    {isPro && renewalDate ? `Renews ${renewalDate}` : isPro ? 'Active' : 'Upgrade for more'}
-                  </p>
+                <div className="flex items-center gap-2.5">
+                  <div className={cn(
+                    'h-8 w-8 rounded-lg border flex items-center justify-center flex-shrink-0',
+                    isPro
+                      ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-indigo-600 dark:text-indigo-400'
+                      : 'bg-slate-50 dark:bg-white/3 border-slate-200 dark:border-white/5 text-slate-400'
+                  )}>
+                    <Sparkles size={13} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white leading-none mb-0.5">
+                      {isPro ? `${PLAN_DISPLAY_NAMES[plan as keyof typeof PLAN_DISPLAY_NAMES] ?? plan} Plan` : 'Free Plan'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                      {isPro && renewalDate ? `Renews ${renewalDate}` : isPro ? 'Active' : 'Upgrade for more'}
+                    </p>
+                  </div>
+                  <ChevronRight size={12} className="text-slate-300 dark:text-slate-600 group-hover/plan:text-slate-500 dark:group-hover/plan:text-slate-400 transition-colors flex-shrink-0" />
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           )}
         </AnimatePresence>
 

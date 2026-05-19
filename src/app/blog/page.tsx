@@ -29,16 +29,16 @@ interface Post {
 // ─── Static Data ─────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { id: 'all', label: 'All Posts', icon: <BookOpen size={14} /> },
-  { id: 'IELTS', label: 'IELTS', icon: <Star size={14} /> },
-  { id: 'Speaking', label: 'Speaking', icon: '🎙' },
-  { id: 'Writing', label: 'Writing', icon: '✍️' },
-  { id: 'Listening', label: 'Listening', icon: '🎧' },
-  { id: 'Reading', label: 'Reading', icon: '📖' },
-  { id: 'Vocabulary', label: 'Vocabulary', icon: '📚' },
-  { id: 'Career English', label: 'Career English', icon: <Zap size={14} /> },
-  { id: 'AI Learning', label: 'AI Learning', icon: '🤖' },
-  { id: 'Productivity', label: 'Productivity', icon: <TrendingUp size={14} /> },
+  { id: 'all', label: 'All Posts', icon: <BookOpen size={13} /> },
+  { id: 'IELTS', label: 'IELTS', icon: <Star size={13} /> },
+  { id: 'Speaking', label: 'Speaking', icon: <Users size={13} /> },
+  { id: 'Writing', label: 'Writing', icon: <Filter size={13} /> },
+  { id: 'Listening', label: 'Listening', icon: <TrendingUp size={13} /> },
+  { id: 'Reading', label: 'Reading', icon: <BookOpen size={13} /> },
+  { id: 'Vocabulary', label: 'Vocabulary', icon: <Tag size={13} /> },
+  { id: 'Career English', label: 'Career English', icon: <Zap size={13} /> },
+  { id: 'AI Learning', label: 'AI Learning', icon: <Flame size={13} /> },
+  { id: 'Productivity', label: 'Productivity', icon: <TrendingUp size={13} /> },
 ];
 
 const POSTS: Post[] = [
@@ -249,15 +249,16 @@ function FadeIn({ children, delay = 0, className = '' }: { children: React.React
 
 // ─── Image Placeholder ────────────────────────────────────────────────────────
 
-const IMAGE_ICONS: Record<string, string> = {
-  speaking: '🎙️', ai: '🤖', writing: '✍️', vocab: '📚',
-  listening: '🎧', reading: '📖', career: '💼', productivity: '⚡',
+const IMAGE_LABELS: Record<string, string> = {
+  speaking: 'Speaking', ai: 'AI', writing: 'Writing', vocab: 'Vocabulary',
+  listening: 'Listening', reading: 'Reading', career: 'Career', productivity: 'Productivity',
 };
 
 function PostImage({ image, colorClass, size = 'full' }: { image: string; colorClass: string; size?: 'full' | 'thumb' }) {
+  const label = IMAGE_LABELS[image] ?? 'Article';
   return (
     <div className={`bg-gradient-to-br ${colorClass} flex items-center justify-center ${size === 'full' ? 'h-52' : 'h-32 w-32 rounded-xl shrink-0'}`}>
-      <span style={{ fontSize: size === 'full' ? 52 : 32 }}>{IMAGE_ICONS[image] ?? '📄'}</span>
+      <span style={{ fontSize: size === 'full' ? 13 : 11, fontWeight: 800, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{label}</span>
     </div>
   );
 }
@@ -419,15 +420,23 @@ export default function BlogPage() {
         .hero-gradient {
           background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.15) 0%, transparent 70%);
         }
+        .blog-layout { display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: start; }
+        .blog-sidebar { display: flex; flex-direction: column; gap: 28px; position: sticky; top: 148px; }
+        @media (max-width: 900px) {
+          .blog-layout { grid-template-columns: 1fr !important; gap: 32px; }
+          .blog-sidebar { display: none !important; }
+          .blog-nav-pill { width: calc(100% - 32px) !important; max-width: 600px; }
+          .blog-hero { padding-top: 96px !important; padding-left: 20px !important; padding-right: 20px !important; }
+        }
       `}</style>
 
       {/* ── Navbar ── */}
-      <nav style={{
-        position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)',
-        width: 'calc(100% - 40px)', maxWidth: 1200, zIndex: 1000,
-        height: 68, display: 'flex', alignItems: 'center', padding: '0 28px',
+      <nav className="blog-nav-pill" style={{
+        position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)',
+        width: 'calc(100% - 32px)', maxWidth: 1200, zIndex: 1000,
+        height: 60, display: 'flex', alignItems: 'center', padding: '0 20px',
         background: navBg, backdropFilter: 'blur(24px) saturate(180%)',
-        border: `1px solid ${border}`, borderRadius: 24,
+        border: `1px solid ${border}`, borderRadius: 20,
         boxShadow: isDark ? 'none' : '0 8px 32px rgba(0,0,0,0.06)',
       }}>
         <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -486,7 +495,7 @@ export default function BlogPage() {
       </nav>
 
       {/* ── Hero ── */}
-      <div className="hero-gradient" style={{ paddingTop: 120, paddingBottom: 56, textAlign: 'center' }}>
+      <div className="hero-gradient blog-hero" style={{ paddingTop: 112, paddingBottom: 56, textAlign: 'center' }}>
         <FadeIn>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 16px', borderRadius: 9999, background: isDark ? 'rgba(99,102,241,0.12)' : '#eef2ff', border: `1px solid ${isDark ? 'rgba(99,102,241,0.25)' : '#c7d2fe'}`, marginBottom: 24 }}>
             <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: isDark ? '#818cf8' : '#4f46e5' }}>Lingoura Blog</span>
@@ -544,7 +553,7 @@ export default function BlogPage() {
                   border: active ? 'none' : `1px solid ${border}`,
                 }}
               >
-                {typeof cat.icon === 'string' ? <span style={{ fontSize: 13 }}>{cat.icon}</span> : cat.icon}
+                {cat.icon}
                 {cat.label}
               </button>
             );
@@ -552,7 +561,7 @@ export default function BlogPage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px 96px', display: 'grid', gridTemplateColumns: '1fr 320px', gap: 48, alignItems: 'start' }}>
+      <div className="blog-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '48px 24px 96px' }}>
 
         {/* ── Main Column ── */}
         <main>
@@ -604,7 +613,7 @@ export default function BlogPage() {
 
             {filteredPosts.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '80px 24px', color: muted }}>
-                <p style={{ fontSize: 48, marginBottom: 16 }}>🔍</p>
+                <Search size={36} style={{ margin: '0 auto 16px', opacity: 0.3 }} />
                 <p style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: ink }}>No articles found</p>
                 <p style={{ fontSize: 14 }}>Try adjusting your search or filters</p>
               </div>
@@ -628,7 +637,7 @@ export default function BlogPage() {
         </main>
 
         {/* ── Sidebar ── */}
-        <aside style={{ display: 'flex', flexDirection: 'column', gap: 28, position: 'sticky', top: 148 }}>
+        <aside className="blog-sidebar">
 
           {/* Trending posts */}
           <FadeIn delay={0.15}>
@@ -687,7 +696,6 @@ export default function BlogPage() {
           {/* Newsletter CTA */}
           <FadeIn delay={0.25}>
             <div style={{ padding: 24, borderRadius: 20, background: 'linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(236,72,153,0.08) 100%)', border: `1px solid ${isDark ? 'rgba(99,102,241,0.25)' : '#c7d2fe'}` }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>📬</div>
               <h3 style={{ fontSize: 15, fontWeight: 800, color: ink, marginBottom: 6 }}>Weekly IELTS tips</h3>
               <p style={{ fontSize: 13, color: muted, lineHeight: 1.5, marginBottom: 16 }}>
                 Join 8,000+ learners getting expert strategies every week.
@@ -731,7 +739,7 @@ export default function BlogPage() {
                       }}
                     >
                       <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        {typeof cat.icon === 'string' ? <span>{cat.icon}</span> : cat.icon}
+                        {cat.icon}
                         {cat.label}
                       </span>
                       <span style={{ fontSize: 11, fontWeight: 800, opacity: 0.6 }}>{count}</span>

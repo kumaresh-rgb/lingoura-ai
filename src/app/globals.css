@@ -79,6 +79,10 @@
 }
 
 @layer base {
+  html,
+  body {
+    overflow-x: hidden;
+  }
   body {
     @apply bg-surface text-on-surface font-sans antialiased transition-colors duration-500;
   }
