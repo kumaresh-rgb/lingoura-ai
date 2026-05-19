@@ -20,8 +20,8 @@ const apiOrigin = (() => {
 const CSP_DIRECTIVES = [
   "default-src 'self'",
 
-  // Next.js inline scripts + payment SDKs (Razorpay uses eval internally) + Google Identity Services
-  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://checkout.razorpay.com https://api.razorpay.com https://cdn.razorpay.com https://accounts.google.com",
+  // Next.js inline scripts + payment SDKs (Razorpay uses eval internally) + Google Identity Services + Supademo
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://checkout.razorpay.com https://api.razorpay.com https://cdn.razorpay.com https://accounts.google.com https://script.supademo.com",
 
   // CSS — Tailwind inline styles; Google Fonts; Google Identity Services stylesheet
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
@@ -39,10 +39,12 @@ const CSP_DIRECTIVES = [
     'https://api.stripe.com',
     'https://api.razorpay.com',
     'https://lumberjack.razorpay.com', // Razorpay analytics endpoint
+    'https://app.supademo.com',
+    'https://script.supademo.com',
   ].join(' '),
 
-  // Stripe 3DS / Razorpay payment iframes + Google One Tap iframe
-  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://api.razorpay.com https://checkout.razorpay.com https://accounts.google.com",
+  // Stripe 3DS / Razorpay payment iframes + Google One Tap iframe + Supademo embed
+  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://api.razorpay.com https://checkout.razorpay.com https://accounts.google.com https://app.supademo.com",
 
   // Block all clickjacking — even from our own domain
   "frame-ancestors 'none'",

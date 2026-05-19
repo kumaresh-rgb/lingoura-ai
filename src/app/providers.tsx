@@ -70,7 +70,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+      <Script src="https://script.supademo.com/supademo.js" strategy="lazyOnload" />
       <ThemeProvider
         attribute="class"
         defaultTheme="light"

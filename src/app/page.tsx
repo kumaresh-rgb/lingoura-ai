@@ -617,6 +617,7 @@ function GlobalBackground({ isDark }: { isDark: boolean }) {
 function Navbar({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, isAuthenticated, isInitializing } = useAuthStore();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 24);
@@ -630,6 +631,7 @@ function Navbar({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () => v
   }, [mobileOpen]);
 
   const borderColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(99,102,241,0.1)';
+  const initial = user?.displayName?.charAt(0).toUpperCase() ?? user?.email?.charAt(0).toUpperCase() ?? 'U';
 
   return (
     <>
@@ -666,23 +668,48 @@ function Navbar({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () => v
             }}>
               {isDark ? <Sun size={15} /> : <Moon size={15} />}
             </button>
-            <Link href="/login" className="nav-link hide-mobile" style={{ padding: '8px 14px', borderRadius: 10 }}>Sign In</Link>
-            {/* Premium CTA — matches pricing gradient */}
-            <Link href="/register" className="hide-mobile" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              fontSize: 13, fontWeight: 800,
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 60%, #a855f7 100%)',
-              color: '#fff', textDecoration: 'none',
-              padding: '9px 20px', borderRadius: 12,
-              boxShadow: '0 4px 20px rgba(99,102,241,0.4)',
-              transition: 'transform 0.15s, box-shadow 0.15s',
-              whiteSpace: 'nowrap',
-            }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 28px rgba(99,102,241,0.5)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(99,102,241,0.4)'; }}
-            >
-              <Zap size={13} style={{ fill: 'currentColor' }} /> Get Pro Access
-            </Link>
+            {!isInitializing && isAuthenticated ? (
+              <div className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {/* Avatar */}
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
+                  {initial}
+                </div>
+                <Link href="/dashboard" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  fontSize: 13, fontWeight: 800,
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 60%, #a855f7 100%)',
+                  color: '#fff', textDecoration: 'none',
+                  padding: '9px 18px', borderRadius: 12,
+                  boxShadow: '0 4px 20px rgba(99,102,241,0.4)',
+                  transition: 'transform 0.15s, box-shadow 0.15s',
+                  whiteSpace: 'nowrap',
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 28px rgba(99,102,241,0.5)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(99,102,241,0.4)'; }}
+                >
+                  Go to Dashboard <ChevronRight size={13} />
+                </Link>
+              </div>
+            ) : !isInitializing ? (
+              <>
+                <Link href="/login" className="nav-link hide-mobile" style={{ padding: '8px 14px', borderRadius: 10 }}>Sign In</Link>
+                <Link href="/register" className="hide-mobile" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  fontSize: 13, fontWeight: 800,
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 60%, #a855f7 100%)',
+                  color: '#fff', textDecoration: 'none',
+                  padding: '9px 20px', borderRadius: 12,
+                  boxShadow: '0 4px 20px rgba(99,102,241,0.4)',
+                  transition: 'transform 0.15s, box-shadow 0.15s',
+                  whiteSpace: 'nowrap',
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 28px rgba(99,102,241,0.5)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(99,102,241,0.4)'; }}
+                >
+                  <Zap size={13} style={{ fill: 'currentColor' }} /> Get Pro Access
+                </Link>
+              </>
+            ) : null}
             {/* Mobile hamburger */}
             <button
               className="show-mobile"
@@ -732,10 +759,29 @@ function Navbar({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () => v
                 ))}
               </nav>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 24, borderTop: `1px solid ${borderColor}` }}>
-                <Link href="/login" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, border: `1.5px solid ${borderColor}`, color: isDark ? '#cbd5e1' : '#374151', fontWeight: 700, textDecoration: 'none', fontSize: 15 }}>Sign In</Link>
-                <Link href="/register" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', fontWeight: 800, textDecoration: 'none', fontSize: 15, boxShadow: '0 4px 20px rgba(99,102,241,0.4)' }}>
-                  Get Pro Access
-                </Link>
+                {!isInitializing && isAuthenticated ? (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 12, background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(99,102,241,0.05)', border: `1px solid ${borderColor}` }}>
+                      <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
+                        {initial}
+                      </div>
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#f1f5f9' : '#111', margin: 0 }}>{user?.displayName ?? 'User'}</p>
+                        <p style={{ fontSize: 11, color: isDark ? '#64748b' : '#94a3b8', margin: 0 }}>{user?.email}</p>
+                      </div>
+                    </div>
+                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', fontWeight: 800, textDecoration: 'none', fontSize: 15, boxShadow: '0 4px 20px rgba(99,102,241,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                      Go to Dashboard <ChevronRight size={15} />
+                    </Link>
+                  </>
+                ) : !isInitializing ? (
+                  <>
+                    <Link href="/login" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, border: `1.5px solid ${borderColor}`, color: isDark ? '#cbd5e1' : '#374151', fontWeight: 700, textDecoration: 'none', fontSize: 15 }}>Sign In</Link>
+                    <Link href="/register" onClick={() => setMobileOpen(false)} style={{ width: '100%', textAlign: 'center', padding: '13px', borderRadius: 12, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', fontWeight: 800, textDecoration: 'none', fontSize: 15, boxShadow: '0 4px 20px rgba(99,102,241,0.4)' }}>
+                      Get Pro Access
+                    </Link>
+                  </>
+                ) : null}
               </div>
             </motion.div>
           </>
@@ -892,9 +938,12 @@ function Hero({ isDark }: { isDark: boolean }) {
               <Link href="/register" className="btn-primary" style={{ fontSize: 15, padding: '14px 28px' }}>
                 Start Free — No Card Needed <ArrowRight size={16} />
               </Link>
-              <a href="#demo" className="btn-ghost" style={{ fontSize: 14 }}>
-                <Play size={14} style={{ fill: 'currentColor' }} /> Watch 90s Demo
-              </a>
+              <button
+                onClick={() => (window as Window & { Supademo?: { open: (id: string) => void } }).Supademo?.open('cmpcvz1na7gncqmq6eapzoday')}
+                className="btn-ghost" style={{ fontSize: 14, cursor: 'pointer' }}
+              >
+                <Play size={14} style={{ fill: 'currentColor' }} /> Try Interactive Tour
+              </button>
             </motion.div>
 
             {/* Trust row */}
@@ -1145,55 +1194,71 @@ function FeaturesSection({ isDark }: { isDark: boolean }) {
 // ─── Demo Video ───────────────────────────────────────────────────────────────
 
 function DemoVideo({ isDark }: { isDark: boolean }) {
-  const [playing, setPlaying] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
   return (
     <section className="section" id="demo" style={{ position: 'relative', zIndex: 1 }}>
-      <div className="container" style={{ maxWidth: 900 }}>
+      <div className="container" style={{ maxWidth: 960 }}>
         <FadeIn>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <span className="section-label"><Play size={11} style={{ fill: 'currentColor' }} /> Watch Demo</span>
+            <span className="section-label"><Play size={11} style={{ fill: 'currentColor' }} /> Interactive Demo</span>
             <h2 className="section-h">See How AI Builds<br /><span className="grad-text">Your English Fluency</span></h2>
             <p className="section-sub">Watch how learners improve speaking, writing, listening, and confidence using adaptive AI coaching.</p>
           </div>
         </FadeIn>
         <FadeIn delay={0.15}>
-          <div style={{ position: 'relative', borderRadius: 24, overflow: 'hidden' }}>
+          <div style={{
+            position: 'relative',
+            borderRadius: 20,
+            overflow: 'hidden',
+            aspectRatio: '2.01',
+            border: '1px solid rgba(99,102,241,0.28)',
+            boxShadow: '0 0 0 1px rgba(99,102,241,0.12), 0 32px 80px rgba(0,0,0,0.55)',
+            background: '#0a0f1e',
+          }}>
             <div className="video-glow" />
-            <div style={{ position: 'relative', paddingBottom: '56.25%', background: isDark ? '#0c1120' : '#1a1f35', borderRadius: 22, border: `1px solid ${isDark ? 'rgba(99,102,241,0.25)' : 'rgba(99,102,241,0.3)'}`, overflow: 'hidden' }}>
-              {!playing ? (
-                <button
-                  onClick={() => setPlaying(true)}
-                  style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', gap: 20 }}
+
+            {/* Loading skeleton — hidden once Supademo has had time to paint */}
+            <AnimatePresence>
+              {!loaded && (
+                <motion.div
+                  key="skeleton"
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  style={{
+                    position: 'absolute', inset: 0, zIndex: 2,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14,
+                    background: '#0a0f1e',
+                  }}
                 >
-                  {/* thumbnail gradient */}
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.06) 50%, rgba(236,72,153,0.05) 100%)' }} />
-                  <div style={{ position: 'absolute', inset: 0, backgroundImage: "radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)", backgroundSize: '32px 32px' }} />
-                  {/* Floating UI mockup */}
-                  <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-                    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
-                      {[{ l: 'Speaking', v: '78%', c: '#6366f1' }, { l: 'Writing', v: '91%', c: '#10b981' }, { l: 'Band Pred.', v: '7.5', c: '#8b5cf6' }].map(m => (
-                        <div key={m.l} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '12px 20px', textAlign: 'center', backdropFilter: 'blur(12px)' }}>
-                          <div style={{ fontSize: 22, fontWeight: 900, color: m.c }}>{m.v}</div>
-                          <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginTop: 2 }}>{m.l}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.96 }}
-                      style={{ width: 72, height: 72, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 0 12px rgba(99,102,241,0.15), 0 0 0 24px rgba(99,102,241,0.07)', cursor: 'pointer' }}>
-                      <Play size={28} style={{ fill: '#fff', color: '#fff', marginLeft: 4 }} />
-                    </motion.div>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.6)' }}>Click to watch the 90-second demo</p>
-                  </div>
-                </button>
-              ) : (
-                <iframe
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+                    style={{ width: 36, height: 36, borderRadius: '50%', border: '3px solid transparent', borderTopColor: '#6366f1', borderRightColor: 'rgba(99,102,241,0.3)' }}
+                  />
+                  <span style={{ fontSize: 13, color: isDark ? '#475569' : '#94a3b8', fontWeight: 600 }}>Loading demo…</span>
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
+
+            <iframe
+              src="https://app.supademo.com/embed/cmpcvz1na7gncqmq6eapzoday?embed_v=2&utm_source=embed"
+              title="Master IELTS Exam Skills with Lingoura AI"
+              allow="clipboard-write"
+              frameBorder={0}
+              allowFullScreen
+              onLoad={() => setTimeout(() => setLoaded(true), 500)}
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                border: 'none',
+                background: '#0a0f1e',
+                colorScheme: 'dark',
+                opacity: loaded ? 1 : 0,
+                transition: 'opacity 0.5s ease',
+              }}
+            />
           </div>
         </FadeIn>
       </div>

@@ -19,7 +19,7 @@ export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
       sidebarCollapsed: false,
-      sidebarPinned: true,
+      sidebarPinned: false,
       mobileSidebarOpen: false,
       activeModal: null,
 

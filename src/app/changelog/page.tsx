@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
@@ -260,9 +260,15 @@ function ReleaseCard({ release, isDark, activeFilter }: { release: Release; isDa
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ChangelogPage() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<ReleaseType | 'all'>('all');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('landing-theme');
+    if (saved === 'light') setIsDark(false);
+    else setIsDark(true);
+  }, []);
 
   const toggleTheme = () => {
     const next = !isDark;

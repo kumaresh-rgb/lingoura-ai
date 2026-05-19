@@ -44,6 +44,24 @@ export function detectPaymentProvider(): PaymentProvider {
  * forwarded to the backend for server-side HMAC verification — they are
  * NEVER trusted directly by the frontend.
  */
+type RazorpayWindow = Window & { Razorpay?: new (opts: Record<string, unknown>) => { open(): void } };
+
+function ensureRazorpayScript(callback: () => void): void {
+  const w = window as RazorpayWindow;
+  if (w.Razorpay) { callback(); return; }
+  if (document.getElementById('razorpay-sdk')) {
+    // Script tag exists but not yet loaded — wait for it
+    document.getElementById('razorpay-sdk')!.addEventListener('load', callback, { once: true });
+    return;
+  }
+  const script = document.createElement('script');
+  script.id = 'razorpay-sdk';
+  script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+  script.onload = callback;
+  script.onerror = () => console.error('[payment] Failed to load Razorpay SDK');
+  document.head.appendChild(script);
+}
+
 export function openRazorpayCheckout(options: {
   orderId: string;
   amount: number;
@@ -55,11 +73,13 @@ export function openRazorpayCheckout(options: {
   onSuccess: (payload: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void;
   onDismiss: () => void;
 }): void {
+  ensureRazorpayScript(() => _openRazorpayModal(options));
+}
+
+function _openRazorpayModal(options: Parameters<typeof openRazorpayCheckout>[0]): void {
   const { orderId, amount, currency, keyId, userName, userEmail, description, onSuccess, onDismiss } = options;
 
-  // The Razorpay SDK is loaded via a <Script> tag in the checkout page.
-  // We access it through the global window object.
-  const RazorpayConstructor = (window as Window & { Razorpay?: new (opts: Record<string, unknown>) => { open(): void } }).Razorpay;
+  const RazorpayConstructor = (window as RazorpayWindow).Razorpay;
 
   if (!RazorpayConstructor) {
     console.error('[payment] Razorpay SDK not loaded');
