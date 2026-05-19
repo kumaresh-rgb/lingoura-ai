@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { useUiStore } from '@/shared/store/ui.store';
+import { useSubscriptionStore } from '@/features/billing/store/subscription.store';
+import { PLAN_DISPLAY_NAMES } from '@/shared/constants/plan-limits';
 import { ROUTES } from '@/shared/constants/routes';
 
 const navItems = [
@@ -42,6 +44,9 @@ interface SidebarProps {
 export function Sidebar({ isCollapsed }: SidebarProps) {
   const pathname = usePathname();
   const { sidebarPinned, setSidebarPinned } = useUiStore();
+  const { plan, periodEnd } = useSubscriptionStore();
+  const isPro = plan !== 'FREE';
+  const renewalDate = periodEnd ? new Date(periodEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : null;
 
   return (
     <motion.aside
@@ -172,19 +177,31 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
                   Plan Status
                 </span>
-                <span className="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-1.5 py-0.5 rounded-md">
-                  PRO
+                <span className={cn(
+                  'text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase',
+                  isPro
+                    ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10'
+                    : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5'
+                )}>
+                  {PLAN_DISPLAY_NAMES[plan as keyof typeof PLAN_DISPLAY_NAMES] ?? plan}
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <div className={cn(
+                  'h-8 w-8 rounded-lg border flex items-center justify-center',
+                  isPro
+                    ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/10 text-indigo-600 dark:text-indigo-400'
+                    : 'bg-slate-50 dark:bg-white/3 border-slate-200 dark:border-white/5 text-slate-400'
+                )}>
                   <Sparkles size={13} />
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-900 dark:text-white leading-none mb-0.5">
-                    Advanced AI
+                    {isPro ? `${PLAN_DISPLAY_NAMES[plan as keyof typeof PLAN_DISPLAY_NAMES] ?? plan} Plan` : 'Free Plan'}
                   </p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Unlimited practice</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                    {isPro && renewalDate ? `Renews ${renewalDate}` : isPro ? 'Active' : 'Upgrade for more'}
+                  </p>
                 </div>
               </div>
             </motion.div>

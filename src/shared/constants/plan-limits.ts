@@ -99,6 +99,6 @@ export function isPremiumPlan(plan: SubscriptionPlan): boolean {
 }
 
 export function canUpgradeTo(current: SubscriptionPlan, target: SubscriptionPlan): boolean {
-  const order: SubscriptionPlan[] = ['FREE', 'PRO', 'TEAM', 'ENTERPRISE'];
+  const order: SubscriptionPlan[] = ['FREE', 'PRO', 'ELITE', 'TEAM', 'ENTERPRISE'];
   return order.indexOf(target) > order.indexOf(current);
 }

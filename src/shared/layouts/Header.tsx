@@ -12,11 +12,13 @@ import {
   Sun,
   Moon,
   LogOut,
+  Menu,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/shared/lib/utils';
 import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser';
 import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useUiStore } from '@/shared/store/ui.store';
 
 interface HeaderProps {
   isSidebarCollapsed: boolean;
@@ -26,8 +28,18 @@ export function Header({ isSidebarCollapsed }: HeaderProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const user = useCurrentUser();
   const logout = useLogout();
+  const { setMobileSidebarOpen } = useUiStore();
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -35,12 +47,21 @@ export function Header({ isSidebarCollapsed }: HeaderProps) {
 
   return (
     <motion.header
-      animate={{ left: isSidebarCollapsed ? 80 : 288 }}
+      animate={{ left: isDesktop ? (isSidebarCollapsed ? 80 : 288) : 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 right-0 h-20 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border-b border-slate-200/40 dark:border-white/5 z-40 px-6 md:px-8 flex items-center justify-between"
+      className="fixed top-0 right-0 h-20 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border-b border-slate-200/40 dark:border-white/5 z-40 px-4 md:px-8 flex items-center justify-between"
     >
       {/* Left */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-3 lg:gap-5">
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setMobileSidebarOpen(true)}
+          className="lg:hidden h-9 w-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-all"
+          aria-label="Open navigation"
+        >
+          <Menu size={20} />
+        </button>
+
         {/* Mobile brand */}
         <div className="flex items-center gap-2.5 lg:hidden">
           <Image src="/logo-icon.png" alt="Lingoura AI" width={32} height={32} className="object-contain" />

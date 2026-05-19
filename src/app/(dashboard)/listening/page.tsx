@@ -76,7 +76,7 @@ export default function ListeningPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative rounded-[2rem] overflow-hidden border border-sky-200 dark:border-sky-500/20 p-7 md:p-10"
+        className="relative rounded-[2rem] overflow-hidden border border-sky-200 dark:border-sky-500/20 p-5 sm:p-7 md:p-10"
         style={{ background: 'linear-gradient(135deg, rgba(14,165,233,0.07) 0%, rgba(2,132,199,0.04) 50%, rgba(14,165,233,0.02) 100%)' }}
       >
         <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-sky-500/10 blur-3xl pointer-events-none" />
@@ -209,9 +209,9 @@ export default function ListeningPage() {
               {/* Audio player + questions */}
               <div className="lg:col-span-8 space-y-5">
                 {/* Audio Player */}
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-7">
-                  <div className="flex items-center justify-between mb-5">
-                    <div>
+                <div className="bg-surface-container-lowest border border-outline-variant rounded-[2rem] p-5 sm:p-7">
+                  <div className="flex items-center justify-between mb-5 gap-3">
+                    <div className="min-w-0">
                       <p className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider mb-0.5">Now Playing</p>
                       <h2 className="text-lg font-black text-on-surface">{section.title}: {section.sub}</h2>
                       <p className="text-xs text-on-surface-variant">{section.accent} Accent · {section.duration}</p>
@@ -222,8 +222,8 @@ export default function ListeningPage() {
                   </div>
 
                   {/* Waveform visualization */}
-                  <div className="flex items-center justify-center gap-0.5 h-14 mb-5 px-2">
-                    {Array.from({ length: 48 }).map((_, i) => (
+                  <div className="flex items-center justify-center gap-0.5 h-14 mb-5 px-2 overflow-hidden">
+                    {Array.from({ length: 32 }).map((_, i) => (
                       <motion.div
                         key={i}
                         animate={playing ? { height: [4, Math.random() * 40 + 4, 4] } : { height: 4 }}
@@ -311,7 +311,7 @@ export default function ListeningPage() {
                             placeholder="Write your answer..."
                             value={answers[q.id] ?? ''}
                             onChange={e => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
-                            className="ml-9 w-full px-4 py-2.5 bg-slate-50/40 dark:bg-white/3 border border-slate-200 dark:border-white/8 rounded-xl text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-sky-400 dark:focus:border-sky-500/50 transition-colors"
+                            className="mt-2 w-full px-4 py-2.5 bg-slate-50/40 dark:bg-white/3 border border-slate-200 dark:border-white/8 rounded-xl text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-sky-400 dark:focus:border-sky-500/50 transition-colors"
                           />
                         )}
                       </div>

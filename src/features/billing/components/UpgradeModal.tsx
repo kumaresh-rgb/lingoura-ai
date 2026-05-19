@@ -111,10 +111,11 @@ export function UpgradeModal() {
 
                 {/* Price callout */}
                 <div className="flex items-baseline gap-1.5 mb-5">
-                  <span className="text-3xl font-black text-white">$19</span>
+                  <span className="text-3xl font-black text-white">₹2,277</span>
                   <span className="text-sm text-slate-500">/month</span>
-                  <span className="ml-2 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-                    14-day free trial
+                  <span className="ml-2 text-xs font-bold text-slate-500 line-through">$20</span>
+                  <span className="ml-1 text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full">
+                    incl. 18% GST
                   </span>
                 </div>
 
@@ -125,7 +126,7 @@ export function UpgradeModal() {
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold transition-colors disabled:opacity-60 mb-3"
                 >
                   <Sparkles size={14} />
-                  {checkout.isPending ? 'Redirecting…' : 'Start Free Trial — No Card Needed'}
+                  {checkout.isPending ? 'Opening checkout…' : 'Upgrade to Pro'}
                   <ArrowRight size={14} />
                 </button>
 

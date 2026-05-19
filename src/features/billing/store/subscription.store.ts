@@ -1,18 +1,18 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { SubscriptionPlan, SubscriptionStatus } from '@/shared/types/auth.types';
-import type { UsageSummary } from '../types/billing.types';
+import type { UsageRecord } from '../types/billing.types';
 import { isPremiumPlan } from '@/shared/constants/plan-limits';
 
 interface SubscriptionState {
   plan: SubscriptionPlan;
   status: SubscriptionStatus;
   periodEnd: string | null;
-  usage: UsageSummary | null;
+  usage: UsageRecord[] | null;
   isLoaded: boolean;
 
   setPlan: (plan: SubscriptionPlan, status: SubscriptionStatus, periodEnd: string | null) => void;
-  setUsage: (usage: UsageSummary) => void;
+  setUsage: (usage: UsageRecord[]) => void;
   reset: () => void;
 
   // Derived selectors (called as methods to keep store self-contained)

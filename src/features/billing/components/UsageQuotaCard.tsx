@@ -81,8 +81,10 @@ export function UsageQuotaCard() {
   const limits = PLAN_LIMITS[plan];
   const isPro = plan !== 'FREE';
 
+  if (!isLoaded) return null;
+
   function getUsed(feature: UsageFeature) {
-    return usage?.records.find((r) => r.feature === feature)?.used ?? 0;
+    return usage?.find((r) => r.feature === feature)?.used ?? 0;
   }
 
   const isNearAnyLimit = QUOTA_ITEMS.some(({ feature, limitKey }) => {
@@ -92,14 +94,12 @@ export function UsageQuotaCard() {
     return pct >= 75;
   });
 
-  const resetAt = usage?.billingPeriodEnd
-    ? new Date(usage.billingPeriodEnd).toLocaleDateString('en-US', {
+  const resetAt = usage?.[0]?.resetAt
+    ? new Date(usage[0].resetAt).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
       })
     : null;
-
-  if (!isLoaded) return null;
 
   return (
     <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-5">

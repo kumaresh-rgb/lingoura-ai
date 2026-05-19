@@ -1,5 +1,26 @@
 import type { SubscriptionPlan, SubscriptionStatus } from '@/shared/types/auth.types';
 
+// ── Payment provider ──────────────────────────────────────────────────────────
+// Razorpay is used for Indian users (INR); Stripe for all international users.
+export type PaymentProvider = 'stripe' | 'razorpay';
+
+export interface RazorpayOrderResponse {
+  /** Razorpay order id (order_XXXXXX) — pass to Razorpay.js open() */
+  orderId: string;
+  /** Amount in paise (INR smallest unit) */
+  amount: number;
+  currency: 'INR';
+  keyId: string; // public Razorpay key — safe to expose
+  subscriptionId: string; // our internal subscription record id
+  notes: Record<string, string>;
+}
+
+export interface RazorpayPaymentSuccessPayload {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+
 export interface Subscription {
   id: string;
   plan: SubscriptionPlan;
@@ -50,11 +71,20 @@ export interface CreateCheckoutRequest {
   interval: BillingInterval;
   successUrl: string;
   cancelUrl: string;
+  /** Client-detected provider hint. Backend MUST verify geo-IP; this is convenience only. */
+  providerHint?: PaymentProvider;
 }
 
 export interface CreateCheckoutResponse {
-  checkoutUrl: string;
+  provider: PaymentProvider;
   sessionId: string;
+  // Stripe
+  checkoutUrl: string | null;
+  // Razorpay (flat — matches backend CheckoutResult serialization)
+  orderId: string | null;
+  amountPaise: number | null;
+  currency: string | null;
+  keyId: string | null;
 }
 
 export interface CreatePortalResponse {

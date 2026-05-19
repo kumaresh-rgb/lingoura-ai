@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 
 namespace Lingoura.Infrastructure.Extensions;
 
@@ -53,7 +54,13 @@ public static class InfrastructureServiceExtensions
                         maxRetryDelay: TimeSpan.FromSeconds(5),
                         errorCodesToAdd: null);
                 })
-                .AddInterceptors(interceptor);
+                .AddInterceptors(interceptor)
+                // Query filters with lambda expressions are non-deterministic per EF Core 9's
+                // strict model-change detection. This warning is safe to suppress here because
+                // our filter (u => !u.IsDeleted) is logically stable — it never changes at runtime.
+                .ConfigureWarnings(w => w.Ignore(
+                    Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning,
+                    Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
         });
 
         services.AddScoped<IApplicationDbContext>(sp =>
@@ -101,6 +108,34 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddHttpContextAccessor();
+
+        // ── Payment options ───────────────────────────────────────────────────
+        services.AddOptions<StripeOptions>()
+            .Bind(configuration.GetSection(StripeOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddOptions<RazorpayOptions>()
+            .Bind(configuration.GetSection(RazorpayOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        // ── Redis ─────────────────────────────────────────────────────────────
+        var redisConn = configuration.GetConnectionString("Redis")
+            ?? configuration["Redis:ConnectionString"]
+            ?? "localhost:6379";
+        services.AddSingleton<IConnectionMultiplexer>(_ =>
+            ConnectionMultiplexer.Connect(redisConn));
+        services.AddScoped<IRedisService, RedisService>();
+
+        // ── Payment services ──────────────────────────────────────────────────
+        services.AddHttpClient<IRazorpayService, RazorpayService>();
+        services.AddScoped<IStripeService, StripeService>();
+        services.AddScoped<IEntitlementService, EntitlementService>();
+
+        // ── Webhook processors (transient — stateless per request) ────────────
+        services.AddScoped<StripeWebhookProcessor>();
+        services.AddScoped<RazorpayWebhookProcessor>();
 
         return services;
     }

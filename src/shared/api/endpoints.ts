@@ -36,9 +36,11 @@ export const API_ENDPOINTS = {
     submit: (id: string) => `/reading/tests/${id}/submit`,
   },
   vocabulary: {
-    words: '/vocabulary/words',
-    review: '/vocabulary/review',
-    word: (id: string) => `/vocabulary/words/${id}`,
+    feed: '/vocabulary/feed',
+    packs: '/vocabulary/packs',
+    pack: (slug: string) => `/vocabulary/packs/${slug}`,
+    addToDeck: (wordId: string) => `/vocabulary/words/${wordId}/deck`,
+    review: (wordId: string) => `/vocabulary/words/${wordId}/review`,
   },
   lessons: {
     list: '/lessons',

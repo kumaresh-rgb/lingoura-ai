@@ -19,9 +19,9 @@ export function useRegister() {
       setAuth(mapAuthUser(res.user), res.accessToken, res.refreshToken);
     },
     onSuccess: () => {
-      // New users always go through onboarding; returning users skip if already done
-      const { hasCompletedOnboarding } = useOnboardingStore.getState();
-      router.replace(hasCompletedOnboarding ? ROUTES.DASHBOARD : ROUTES.ONBOARDING);
+      // New registrations always start onboarding — reset any stale localStorage state
+      useOnboardingStore.getState().resetOnboarding();
+      router.replace(ROUTES.ONBOARDING);
     },
   });
 }

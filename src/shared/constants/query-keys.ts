@@ -19,8 +19,9 @@ export const queryKeys = {
     task: (id: string) => ['writing', 'tasks', id] as const,
   },
   vocabulary: {
-    words: (page: number) => ['vocabulary', 'words', page] as const,
-    review: () => ['vocabulary', 'review'] as const,
+    feed: () => ['vocabulary', 'feed'] as const,
+    packs: () => ['vocabulary', 'packs'] as const,
+    pack: (slug: string) => ['vocabulary', 'packs', slug] as const,
   },
   lessons: {
     list: () => ['lessons'] as const,

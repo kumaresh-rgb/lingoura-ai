@@ -145,7 +145,7 @@ export default function SettingsPage() {
   const isPro = plan !== 'FREE';
 
   function getUsed(feature: UsageFeature): number {
-    return usageData?.records.find((r) => r.feature === feature)?.used ?? 0;
+    return usageData?.find((r) => r.feature === feature)?.used ?? 0;
   }
 
   const usage = {

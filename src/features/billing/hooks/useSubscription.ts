@@ -32,7 +32,7 @@ export function useUsage() {
     queryKey: queryKeys.billing.usage(),
     queryFn: billingApi.getUsage,
     staleTime: 60 * 1000, // 1 min — usage updates frequently
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false, // prevent refetch when Razorpay/Stripe modal closes and window regains focus
   });
 
   useEffect(() => {

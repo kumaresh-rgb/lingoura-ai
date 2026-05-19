@@ -143,6 +143,520 @@ namespace Lingoura.Infrastructure.Persistence.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("Lingoura.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CorrelationId")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("NewValueJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldValueJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResourceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ResourceType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Action");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AuditLogs", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.DailyWord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("FetchedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MwRawJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasDefaultValue("internal");
+
+                    b.Property<Guid>("WordId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Date")
+                        .IsUnique();
+
+                    b.HasIndex("WordId");
+
+                    b.ToTable("DailyWords", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.FeatureEntitlement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Feature")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("LimitValue")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PlanId")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("ResetPeriod")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId", "Feature")
+                        .IsUnique();
+
+                    b.ToTable("FeatureEntitlements", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("10000001-0000-0000-0000-000000000001"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(8091),
+                            Feature = "ai_chats",
+                            LimitValue = 5,
+                            PlanId = "FREE",
+                            ResetPeriod = "daily"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000001-0000-0000-0000-000000000002"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9464),
+                            Feature = "speaking_sessions",
+                            LimitValue = 2,
+                            PlanId = "FREE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000001-0000-0000-0000-000000000003"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9469),
+                            Feature = "writing_submissions",
+                            LimitValue = 2,
+                            PlanId = "FREE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000001-0000-0000-0000-000000000004"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9471),
+                            Feature = "mock_tests",
+                            LimitValue = 1,
+                            PlanId = "FREE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000001-0000-0000-0000-000000000005"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9482),
+                            Feature = "vocabulary_words",
+                            LimitValue = 10,
+                            PlanId = "FREE",
+                            ResetPeriod = "daily"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000002-0000-0000-0000-000000000001"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9484),
+                            Feature = "ai_chats",
+                            LimitValue = 100,
+                            PlanId = "PRO",
+                            ResetPeriod = "daily"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000002-0000-0000-0000-000000000002"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9486),
+                            Feature = "speaking_sessions",
+                            LimitValue = 30,
+                            PlanId = "PRO",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000002-0000-0000-0000-000000000003"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9488),
+                            Feature = "writing_submissions",
+                            LimitValue = 20,
+                            PlanId = "PRO",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000002-0000-0000-0000-000000000004"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9490),
+                            Feature = "mock_tests",
+                            LimitValue = 10,
+                            PlanId = "PRO",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000002-0000-0000-0000-000000000005"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9493),
+                            Feature = "vocabulary_words",
+                            LimitValue = 50,
+                            PlanId = "PRO",
+                            ResetPeriod = "daily"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000003-0000-0000-0000-000000000001"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9495),
+                            Feature = "ai_chats",
+                            LimitValue = 300,
+                            PlanId = "ELITE",
+                            ResetPeriod = "daily"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000003-0000-0000-0000-000000000002"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9497),
+                            Feature = "speaking_sessions",
+                            LimitValue = 100,
+                            PlanId = "ELITE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000003-0000-0000-0000-000000000003"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9502),
+                            Feature = "writing_submissions",
+                            LimitValue = 100,
+                            PlanId = "ELITE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000003-0000-0000-0000-000000000004"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9504),
+                            Feature = "mock_tests",
+                            LimitValue = 30,
+                            PlanId = "ELITE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000003-0000-0000-0000-000000000005"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9506),
+                            Feature = "vocabulary_words",
+                            LimitValue = -1,
+                            PlanId = "ELITE",
+                            ResetPeriod = "daily"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000004-0000-0000-0000-000000000001"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9509),
+                            Feature = "ai_chats",
+                            LimitValue = -1,
+                            PlanId = "ENTERPRISE",
+                            ResetPeriod = "daily"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000004-0000-0000-0000-000000000002"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9511),
+                            Feature = "speaking_sessions",
+                            LimitValue = -1,
+                            PlanId = "ENTERPRISE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000004-0000-0000-0000-000000000003"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9513),
+                            Feature = "writing_submissions",
+                            LimitValue = -1,
+                            PlanId = "ENTERPRISE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000004-0000-0000-0000-000000000004"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9515),
+                            Feature = "mock_tests",
+                            LimitValue = -1,
+                            PlanId = "ENTERPRISE",
+                            ResetPeriod = "monthly"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000004-0000-0000-0000-000000000005"),
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 378, DateTimeKind.Utc).AddTicks(9518),
+                            Feature = "vocabulary_words",
+                            LimitValue = -1,
+                            PlanId = "ENTERPRISE",
+                            ResetPeriod = "daily"
+                        });
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<DateTime?>("PaidAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PdfUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid?>("SubscriptionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Invoices", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.PackWord", b =>
+                {
+                    b.Property<Guid>("PackId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("WordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PackId", "WordId");
+
+                    b.HasIndex("WordId");
+
+                    b.ToTable("PackWords", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("ProviderOrderId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ProviderPaymentId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<Guid?>("SubscriptionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("ProviderPaymentId");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.PaymentAttempt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("PlanId")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.HasIndex("IpAddress");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PaymentAttempts", (string)null);
+                });
+
             modelBuilder.Entity("Lingoura.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -190,6 +704,254 @@ namespace Lingoura.Infrastructure.Persistence.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("Lingoura.Domain.Entities.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("CancelAtPeriodEnd")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("CanceledAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CurrentPeriodEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CurrentPeriodStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("GracePeriodEndUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Interval")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("PlanId")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Provider")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("RazorpayCustomerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RazorpayPlanId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RazorpaySubscriptionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("StripePriceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("RazorpaySubscriptionId")
+                        .IsUnique()
+                        .HasFilter("\"RazorpaySubscriptionId\" IS NOT NULL");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("StripeSubscriptionId")
+                        .IsUnique()
+                        .HasFilter("\"StripeSubscriptionId\" IS NOT NULL");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.SubscriptionPlan", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("AnnualPriceInr")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<decimal>("AnnualPriceUsd")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("MonthlyPriceInr")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<decimal>("MonthlyPriceUsd")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<string>("RazorpayPlanIdAnnual")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RazorpayPlanIdMonthly")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StripePriceIdAnnual")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("StripePriceIdMonthly")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubscriptionPlans", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "FREE",
+                            AnnualPriceInr = 0m,
+                            AnnualPriceUsd = 0m,
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 392, DateTimeKind.Utc).AddTicks(8639),
+                            DisplayName = "Free",
+                            IsActive = true,
+                            MonthlyPriceInr = 0m,
+                            MonthlyPriceUsd = 0m,
+                            SortOrder = 0,
+                            UpdatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 392, DateTimeKind.Utc).AddTicks(8642)
+                        },
+                        new
+                        {
+                            Id = "PRO",
+                            AnnualPriceInr = 1708m,
+                            AnnualPriceUsd = 15m,
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 393, DateTimeKind.Utc).AddTicks(520),
+                            DisplayName = "Pro",
+                            IsActive = true,
+                            MonthlyPriceInr = 2277m,
+                            MonthlyPriceUsd = 20m,
+                            SortOrder = 1,
+                            UpdatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 393, DateTimeKind.Utc).AddTicks(520)
+                        },
+                        new
+                        {
+                            Id = "ELITE",
+                            AnnualPriceInr = 3301m,
+                            AnnualPriceUsd = 29m,
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 393, DateTimeKind.Utc).AddTicks(541),
+                            DisplayName = "Elite",
+                            IsActive = true,
+                            MonthlyPriceInr = 4439m,
+                            MonthlyPriceUsd = 39m,
+                            SortOrder = 2,
+                            UpdatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 393, DateTimeKind.Utc).AddTicks(542)
+                        },
+                        new
+                        {
+                            Id = "ENTERPRISE",
+                            AnnualPriceInr = 0m,
+                            AnnualPriceUsd = 0m,
+                            CreatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 393, DateTimeKind.Utc).AddTicks(544),
+                            DisplayName = "Enterprise",
+                            IsActive = true,
+                            MonthlyPriceInr = 0m,
+                            MonthlyPriceUsd = 0m,
+                            SortOrder = 3,
+                            UpdatedAtUtc = new DateTime(2026, 5, 19, 8, 58, 18, 393, DateTimeKind.Utc).AddTicks(544)
+                        });
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.UsageRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Feature")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("LimitSnapshot")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UsedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PeriodEnd");
+
+                    b.HasIndex("UserId", "Feature", "PeriodStart")
+                        .IsUnique();
+
+                    b.ToTable("UsageRecords", (string)null);
+                });
+
             modelBuilder.Entity("Lingoura.Domain.Entities.UserExternalLogin", b =>
                 {
                     b.Property<Guid>("Id")
@@ -222,6 +984,361 @@ namespace Lingoura.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("UserExternalLogins");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.UserProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CefrLevel")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("CountryCode")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("OnboardingCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PreferredPaymentProvider")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("TargetBand")
+                        .HasPrecision(3, 1)
+                        .HasColumnType("numeric(3,1)");
+
+                    b.Property<string>("Timezone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.UserWordProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CorrectReviews")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CorrectStreak")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<float>("EaseFactor")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("real")
+                        .HasDefaultValue(2.5f);
+
+                    b.Property<int>("IntervalDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.Property<DateTime?>("LastReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LearnedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("NextReviewAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Repetitions")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("new");
+
+                    b.Property<int>("TotalReviews")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("WordId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WordId");
+
+                    b.HasIndex("UserId", "NextReviewAt");
+
+                    b.HasIndex("UserId", "Status");
+
+                    b.HasIndex("UserId", "WordId")
+                        .IsUnique();
+
+                    b.ToTable("UserWordProgress", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.VocabularyPack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("BandTarget")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("CoverEmoji")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("IeltsTopicLabel")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("WordCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsFeatured");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("VocabularyPacks", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.VocabularyWord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.PrimitiveCollection<string[]>("Antonyms")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("AudioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("general");
+
+                    b.Property<string>("CefrLevel")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasDefaultValue("B2");
+
+                    b.PrimitiveCollection<string[]>("Collocations")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("CommonMistake")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Definition")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("EnrichedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Etymology")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.PrimitiveCollection<string[]>("Examples")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<int>("IeltsBandMin")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsAcademicWordList")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsIeltsCore")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Mnemonic")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("MwWordId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("PartOfSpeech")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("PhoneticIpa")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Pronunciation")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ShortDefinition")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasDefaultValue("internal");
+
+                    b.PrimitiveCollection<string[]>("Synonyms")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Word")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Word")
+                        .IsUnique();
+
+                    b.HasIndex("IeltsBandMin", "IsIeltsCore");
+
+                    b.ToTable("VocabularyWords", (string)null);
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.WebhookEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ProcessedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProcessingStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("ProviderEventId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessingStatus");
+
+                    b.HasIndex("Provider", "ProviderEventId")
+                        .IsUnique();
+
+                    b.ToTable("WebhookEvents", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -327,10 +1444,110 @@ namespace Lingoura.Infrastructure.Persistence.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Lingoura.Domain.Entities.DailyWord", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.VocabularyWord", "Word")
+                        .WithMany("DailyWords")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Word");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.FeatureEntitlement", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.SubscriptionPlan", "Plan")
+                        .WithMany("Entitlements")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.Invoice", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.PackWord", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.VocabularyPack", "Pack")
+                        .WithMany("PackWords")
+                        .HasForeignKey("PackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lingoura.Domain.Entities.VocabularyWord", "Word")
+                        .WithMany("PackWords")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pack");
+
+                    b.Navigation("Word");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.Subscription", "Subscription")
+                        .WithMany("Payments")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Lingoura.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Lingoura.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Lingoura.Domain.Entities.ApplicationUser", "User")
                         .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.Subscription", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.SubscriptionPlan", "Plan")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Lingoura.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.UsageRecord", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -347,6 +1564,36 @@ namespace Lingoura.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.UserProfile", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.UserWordProgress", b =>
+                {
+                    b.HasOne("Lingoura.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lingoura.Domain.Entities.VocabularyWord", "Word")
+                        .WithMany("UserProgress")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Word");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -405,6 +1652,32 @@ namespace Lingoura.Infrastructure.Persistence.Migrations
                     b.Navigation("ExternalLogins");
 
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.Subscription", b =>
+                {
+                    b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.SubscriptionPlan", b =>
+                {
+                    b.Navigation("Entitlements");
+
+                    b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.VocabularyPack", b =>
+                {
+                    b.Navigation("PackWords");
+                });
+
+            modelBuilder.Entity("Lingoura.Domain.Entities.VocabularyWord", b =>
+                {
+                    b.Navigation("DailyWords");
+
+                    b.Navigation("PackWords");
+
+                    b.Navigation("UserProgress");
                 });
 #pragma warning restore 612, 618
         }

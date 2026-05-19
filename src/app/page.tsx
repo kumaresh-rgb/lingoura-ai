@@ -3,6 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import Link from 'next/link';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useCreateCheckout } from '@/features/billing/hooks/useCreateCheckout';
+import { detectPaymentProvider } from '@/features/billing/utils/payment-region';
+import type { SubscriptionPlan } from '@/shared/types/auth.types';
+import type { BillingInterval } from '@/features/billing/types/billing.types';
 import {
   Mic2, BookOpen, Headphones, PenLine, Brain, Target, Zap,
   Check, Star, ArrowRight, Play, BarChart2, Globe, Users,
@@ -225,8 +230,10 @@ const PLANS = [
     id: 'PRO',
     name: 'Pro',
     tagline: 'For serious learners',
-    monthlyPrice: 19,
+    monthlyPrice: 20,
     annualPrice: 15,
+    monthlyPriceINR: 2277,   // $20 × ₹96.46 + 18% GST
+    annualPriceINR: 1708,    // $15 × ₹96.46 + 18% GST
     badge: 'Most Popular' as string | null,
     icon: 'crown' as const,
     features: [
@@ -253,6 +260,8 @@ const PLANS = [
     tagline: 'For intensive fluency transformation',
     monthlyPrice: 39,
     annualPrice: 29,
+    monthlyPriceINR: 3199,
+    annualPriceINR: 2499,
     badge: null as string | null,
     icon: 'flame' as const,
     features: [
@@ -1272,6 +1281,20 @@ function PlanIcon({ icon }: { icon: string }) {
 
 function PricingSection({ isDark }: { isDark: boolean }) {
   const [interval, setIntervalVal] = useState<'monthly' | 'annual'>('monthly');
+  const { isAuthenticated } = useAuthStore();
+  const checkout = useCreateCheckout();
+
+  function handlePlanClick(planId: string, planHref: string) {
+    if (isAuthenticated && (planId === 'PRO' || planId === 'ELITE')) {
+      checkout.mutate({
+        plan: planId as SubscriptionPlan,
+        interval: interval as BillingInterval,
+        providerHint: detectPaymentProvider(),
+      });
+      return;
+    }
+    window.location.href = planHref;
+  }
 
   const ink  = isDark ? '#f1f5f9' : '#0f172a';
   const ink2 = isDark ? '#94a3b8' : '#475569';
@@ -1414,7 +1437,7 @@ function PricingSection({ isDark }: { isDark: boolean }) {
                         </>
                       ) : isFree ? (
                         <>
-                          <span style={{ fontSize: 34, fontWeight: 900, color: ink, letterSpacing: '-0.03em' }}>$0</span>
+                          <span style={{ fontSize: 34, fontWeight: 900, color: ink, letterSpacing: '-0.03em' }}>Free</span>
                           <span style={{ fontSize: 14, color: ink3, marginLeft: 6, fontWeight: 600 }}>forever</span>
                         </>
                       ) : (
@@ -1438,12 +1461,15 @@ function PricingSection({ isDark }: { isDark: boolean }) {
                     </div>
 
                     {/* CTA */}
-                    <Link
-                      href={plan.href}
+                    <button
+                      onClick={() => handlePlanClick(plan.id, plan.href)}
+                      disabled={checkout.isPending}
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                         padding: '12px 18px', borderRadius: 12, textDecoration: 'none',
                         fontSize: 13, fontWeight: 800, marginBottom: 22, transition: 'all 0.2s',
+                        width: '100%', cursor: checkout.isPending ? 'not-allowed' : 'pointer',
+                        opacity: checkout.isPending ? 0.6 : 1, border: 'none',
                         ...(plan.ctaType === 'primary'
                           ? { background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', boxShadow: '0 8px 24px rgba(99,102,241,0.38)' }
                           : plan.ctaType === 'elite'
@@ -1454,9 +1480,9 @@ function PricingSection({ isDark }: { isDark: boolean }) {
                       }}
                     >
                       {(plan.ctaType === 'primary' || plan.ctaType === 'elite') && <Sparkles size={13} />}
-                      {plan.cta}
+                      {checkout.isPending ? 'Opening checkout…' : plan.cta}
                       <ArrowRight size={13} />
-                    </Link>
+                    </button>
 
                     {plan.popular && (
                       <p style={{ textAlign: 'center', fontSize: 10, color: ink3, marginTop: -14, marginBottom: 16 }}>

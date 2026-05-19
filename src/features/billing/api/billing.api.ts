@@ -2,7 +2,7 @@ import { get, post, del } from '@/shared/api/api-client';
 import { API_ENDPOINTS } from '@/shared/api/endpoints';
 import type {
   Subscription,
-  UsageSummary,
+  UsageRecord,
   BillingPlan,
   CreateCheckoutRequest,
   CreateCheckoutResponse,
@@ -14,8 +14,8 @@ export const billingApi = {
   getSubscription: (): Promise<Subscription> =>
     get<Subscription>(API_ENDPOINTS.billing.subscription),
 
-  getUsage: (): Promise<UsageSummary> =>
-    get<UsageSummary>(API_ENDPOINTS.billing.usage),
+  getUsage: (): Promise<UsageRecord[]> =>
+    get<UsageRecord[]>(API_ENDPOINTS.billing.usage),
 
   getPlans: (): Promise<BillingPlan[]> =>
     get<BillingPlan[]>(API_ENDPOINTS.billing.plans),

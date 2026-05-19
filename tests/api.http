@@ -1,0 +1,257 @@
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║  Lingoura AI — REST Client test file (VS Code REST Client ext)  ║
+# ║  Run the backend first:                                          ║
+# ║    cd backend && dotnet run --project src/Lingoura.Api           ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+@baseUrl = http://localhost:5030/api/v1
+@testEmail = test_api@lingoura.dev
+@testPassword = Test@Password123!
+@accessToken = {{login.response.body.$.data.accessToken}}
+@refreshToken = {{login.response.body.$.data.refreshToken}}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AUTH
+# ─────────────────────────────────────────────────────────────────────────────
+
+### 1. Register a new user → expect 201
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+###
+
+### 2. Register duplicate → expect 409
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+###
+
+### 3. Register with weak password → expect 422
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "weakpwd@test.com",
+  "password": "abc",
+  "firstName": "Weak",
+  "lastName": "User"
+}
+
+###
+
+### 4. Login with correct credentials → expect 200
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}"
+}
+
+###
+
+### 5. Login with wrong password → expect 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "WrongPassword999!"
+}
+
+###
+
+### 6. Login with non-existent email → expect 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "nobody@nowhere.com",
+  "password": "SomePassword123!"
+}
+
+###
+
+### 7. Refresh access token → expect 200
+# (run after Login test; copy refreshToken from login response)
+# @name refresh
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+
+### 8. Refresh with invalid token → expect 401
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "invalid-token-value"
+}
+
+###
+
+### 9. Google login with invalid token → expect 401
+POST {{baseUrl}}/auth/google
+Content-Type: application/json
+
+{
+  "idToken": "not-a-real-google-jwt"
+}
+
+###
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BILLING (public)
+# ─────────────────────────────────────────────────────────────────────────────
+
+### 10. Get subscription plans (public, no auth) → expect 200
+GET {{baseUrl}}/billing/plans
+
+###
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BILLING (protected — paste your accessToken below)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@token = PASTE_ACCESS_TOKEN_HERE
+
+### 11. Get my subscription → expect 200
+GET {{baseUrl}}/billing/subscription
+Authorization: Bearer {{token}}
+
+###
+
+### 12. Get usage summary → expect 200
+GET {{baseUrl}}/billing/usage
+Authorization: Bearer {{token}}
+
+###
+
+### 13. Consume a feature (ai_chats) → expect 200 or 429
+POST {{baseUrl}}/billing/usage/consume
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "feature": "ai_chats",
+  "idempotencyKey": "test-key-001"
+}
+
+###
+
+### 14. Consume same idempotency key again → should return same result (idempotent)
+POST {{baseUrl}}/billing/usage/consume
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "feature": "ai_chats",
+  "idempotencyKey": "test-key-001"
+}
+
+###
+
+### 15. Checkout (Razorpay PRO monthly) → expect 200 with orderId
+POST {{baseUrl}}/billing/checkout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "plan": "PRO",
+  "interval": "monthly",
+  "successUrl": "http://localhost:3000/billing/success",
+  "cancelUrl": "http://localhost:3000/billing/cancel",
+  "providerHint": "razorpay"
+}
+
+###
+
+### 16. Protected endpoint without token → expect 401
+GET {{baseUrl}}/billing/subscription
+
+###
+
+# ─────────────────────────────────────────────────────────────────────────────
+# WEBHOOKS (internal only)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@internalSecret = {{INTERNAL_WEBHOOK_SECRET_FROM_ENV}}
+
+### 17. Razorpay webhook without internal secret → expect 401
+POST {{baseUrl}}/payments/webhook/razorpay
+Content-Type: application/json
+
+{}
+
+###
+
+### 18. Razorpay webhook with correct secret but no signature → expect 400
+POST {{baseUrl}}/payments/webhook/razorpay
+Content-Type: application/json
+X-Internal-Secret: {{internalSecret}}
+
+{"event": "payment.captured"}
+
+###
+
+### 19. Stripe webhook without internal secret → expect 401
+POST {{baseUrl}}/payments/webhook/stripe
+Content-Type: application/json
+
+{}
+
+###
+
+### 20. Stripe webhook with correct secret but no Stripe-Signature → expect 400
+POST {{baseUrl}}/payments/webhook/stripe
+Content-Type: application/json
+X-Internal-Secret: {{internalSecret}}
+
+{"type": "payment_intent.succeeded"}
+
+###
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LOGOUT (protected)
+# ─────────────────────────────────────────────────────────────────────────────
+
+### 21. Logout → expect 200
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+
+### 22. Use refresh token after logout → expect 401 (token revoked)
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###

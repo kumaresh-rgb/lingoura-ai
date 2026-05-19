@@ -299,8 +299,8 @@ function WelcomeStep({ name, onStart }: { name: string; onStart: () => void }) {
   return (
     <div className="w-full max-w-2xl mx-auto text-center">
       {/* Icon */}
-      <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-indigo-500 to-violet-600 text-3xl shadow-2xl shadow-indigo-500/30">
-        ✦
+      <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-indigo-500 to-violet-600 shadow-2xl shadow-indigo-500/30 overflow-hidden">
+        <img src="/logo-icon.png" alt="Lingoura AI" className="h-14 w-14 object-contain" />
       </div>
 
       {/* Badge */}

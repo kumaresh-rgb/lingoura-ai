@@ -92,8 +92,48 @@
   .glass-effect {
     @apply backdrop-blur-[12px] bg-white/70;
   }
-  
+
   .primary-gradient {
     background: linear-gradient(135deg, #4343d5 0%, #5d5fef 100%);
   }
+}
+
+/* ── Thin, styled scrollbars ──────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.25) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.2);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(99, 102, 241, 0.45);
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.18);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(99, 102, 241, 0.38);
+}
+
+/* Fully hidden scrollbar — for horizontal carousels/filter bars */
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

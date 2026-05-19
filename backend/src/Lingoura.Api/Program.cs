@@ -104,7 +104,7 @@ try
     // Fail-fast: validate DB connectivity before accepting any traffic.
     // This surfaces misconfiguration immediately at startup rather than on first request.
     await ValidateDatabaseAsync(app);
-    await SeedDatabaseAsync(app);
+    await SeedDatabaseAsync(app);  // non-fatal — server starts even if seeding fails
 
     // Middleware pipeline — order is critical
     app.UseMiddleware<GlobalExceptionMiddleware>();
@@ -142,8 +142,19 @@ static async Task SeedDatabaseAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+    var db          = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var logger      = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    await DatabaseSeeder.SeedRolesAsync(roleManager, logger);
+    try
+    {
+        await DatabaseSeeder.SeedRolesAsync(roleManager, logger);
+        await DatabaseSeeder.SeedVocabularyAsync(db, logger);
+    }
+    catch (Exception ex)
+    {
+        // Seeding is best-effort — log and continue so the API starts even if the DB
+        // is temporarily unreachable. Data will be seeded on next successful startup.
+        logger.LogWarning(ex, "Database seeding skipped due to error — API will start without seed data");
+    }
 }
 
 static async Task ValidateDatabaseAsync(WebApplication app)

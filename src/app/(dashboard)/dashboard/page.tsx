@@ -166,9 +166,15 @@ export default function DashboardPage() {
           const score = cefrScores.find(s => s.skill === cfg.skill)?.score ?? 0;
           const trendUp = cfg.trend > 0;
           return (
-            <motion.div key={cfg.skill} {...fadeUp(0.05 + i * 0.07)}>
+            <motion.div
+              key={cfg.skill}
+              {...fadeUp(0.05 + i * 0.07)}
+              whileHover={{ y: -4, scale: 1.02 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              style={{ willChange: 'transform' }}
+            >
               <Link href={cfg.href} className={cn(
-                'block p-5 rounded-2xl border bg-surface-container-lowest transition-all hover:shadow-md hover:-translate-y-0.5 group',
+                'block p-5 rounded-2xl border bg-surface-container-lowest hover:shadow-md group',
                 cfg.border
               )}>
                 <div className="flex items-center justify-between mb-3">
@@ -416,22 +422,31 @@ export default function DashboardPage() {
               <Zap size={14} className="text-amber-500" /> Quick Practice
             </h3>
             <div className="space-y-2.5">
-              {QUICK_MODULES.map(mod => {
+              {QUICK_MODULES.map((mod, i) => {
                 const Icon = mod.icon;
                 return (
-                  <Link key={mod.label} href={mod.href} className={cn(
-                    'flex items-center gap-3 p-3.5 rounded-xl border bg-gradient-to-r transition-all hover:shadow-sm group',
-                    mod.bg, mod.border
-                  )}>
-                    <div className="h-9 w-9 rounded-lg bg-white/70 dark:bg-black/20 flex items-center justify-center flex-shrink-0">
-                      <Icon size={16} className={mod.colorCls} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-on-surface">{mod.label}</p>
-                      <p className="text-[10px] text-on-surface-variant truncate">{mod.sub}</p>
-                    </div>
-                    <ChevronRight size={13} className="text-on-surface-variant group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
-                  </Link>
+                  <motion.div
+                    key={mod.label}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + i * 0.07, duration: 0.35 }}
+                    whileHover={{ x: 4 }}
+                    style={{ willChange: 'transform' }}
+                  >
+                    <Link href={mod.href} className={cn(
+                      'flex items-center gap-3 p-3.5 rounded-xl border bg-gradient-to-r hover:shadow-sm group',
+                      mod.bg, mod.border
+                    )}>
+                      <div className="h-9 w-9 rounded-lg bg-white/70 dark:bg-black/20 flex items-center justify-center flex-shrink-0">
+                        <Icon size={16} className={mod.colorCls} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-on-surface">{mod.label}</p>
+                        <p className="text-[10px] text-on-surface-variant truncate">{mod.sub}</p>
+                      </div>
+                      <ChevronRight size={13} className="text-on-surface-variant group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+                    </Link>
+                  </motion.div>
                 );
               })}
               <Link href="/lessons" className="flex items-center gap-3 p-3.5 rounded-xl border border-dashed border-outline-variant hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-all group">
