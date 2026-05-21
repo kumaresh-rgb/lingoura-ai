@@ -26,6 +26,7 @@ export const ROUTES = {
   ANALYTICS: '/analytics',
   PROGRESS: '/progress',
   REVIEW: '/review',
+  GAMES: '/games',
   SETTINGS: '/settings',
 } as const;
 
@@ -42,6 +43,7 @@ export const PROTECTED_ROUTES: Route[] = [
   ROUTES.ANALYTICS,
   ROUTES.PROGRESS,
   ROUTES.REVIEW,
+  ROUTES.GAMES,
   ROUTES.SETTINGS,
 ];
 

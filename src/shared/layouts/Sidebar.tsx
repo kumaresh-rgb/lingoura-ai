@@ -19,6 +19,7 @@ import {
   PinOff,
   Sparkles,
   ChevronRight,
+  Gamepad2,
 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { useUiStore } from '@/shared/store/ui.store';
@@ -34,6 +35,7 @@ const navItems = [
   { name: 'Reading', href: ROUTES.READING, icon: BookText },
   { name: 'Writing', href: ROUTES.WRITING, icon: PenTool },
   { name: 'Vocabulary', href: ROUTES.VOCABULARY, icon: Zap },
+  { name: 'Games', href: ROUTES.GAMES, icon: Gamepad2 },
   { name: 'Review', href: ROUTES.REVIEW, icon: History },
   { name: 'Progress', href: ROUTES.PROGRESS, icon: BarChart3 },
 ];
