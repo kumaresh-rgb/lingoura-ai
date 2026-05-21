@@ -384,11 +384,7 @@ function GlobalCSS({ isDark }: { isDark: boolean }) {
       .lp::-webkit-scrollbar-track { background: transparent; }
       .lp::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.4); border-radius: 9999px; }
 
-      /* ── Gradient text ── */
-      .grad-text {
-        background: linear-gradient(135deg, #818cf8 0%, #a78bfa 40%, #f472b6 100%);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      }
+      /* ── Gradient text — see animated definition below ── */
 
       /* ── Global floating background ── */
       .global-bg {
@@ -534,9 +530,37 @@ function GlobalCSS({ isDark }: { isDark: boolean }) {
         0% { transform: translateX(0); }
         100% { transform: translateX(-50%); }
       }
+      @keyframes marqueeReverse {
+        0% { transform: translateX(-50%); }
+        100% { transform: translateX(0); }
+      }
       @keyframes glowPulse {
         0%, 100% { opacity: 0.6; }
         50% { opacity: 1; }
+      }
+      @keyframes gradShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      @keyframes auroraMove1 {
+        0%, 100% { transform: translate(0,0) scale(1); }
+        33% { transform: translate(60px,-80px) scale(1.15); }
+        66% { transform: translate(-40px,50px) scale(0.9); }
+      }
+      @keyframes auroraMove2 {
+        0%, 100% { transform: translate(0,0) scale(1); }
+        33% { transform: translate(-80px,60px) scale(1.1); }
+        66% { transform: translate(50px,-40px) scale(0.95); }
+      }
+      @keyframes auroraMove3 {
+        0%, 100% { transform: translate(0,0) scale(1); }
+        50% { transform: translate(40px,80px) scale(1.2); }
+      }
+      @keyframes beam {
+        0% { opacity: 0; left: -30%; }
+        10% { opacity: 0.5; }
+        90% { opacity: 0.5; }
+        100% { opacity: 0; left: 130%; }
       }
 
       .orb-float { animation: orbFloat 14s ease-in-out infinite; }
@@ -547,7 +571,50 @@ function GlobalCSS({ isDark }: { isDark: boolean }) {
       /* ── Marquee ── */
       .marquee-track { animation: marquee 28s linear infinite; display: flex; width: max-content; }
       .marquee-track:hover { animation-play-state: paused; }
-      .marquee-wrap { overflow: hidden; mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent); }
+      .marquee-track-r { animation: marqueeReverse 34s linear infinite; display: flex; width: max-content; }
+      .marquee-track-r:hover { animation-play-state: paused; }
+      .marquee-wrap { overflow: hidden; mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent); }
+
+      /* ── Animated gradient text ── */
+      .grad-text {
+        background: linear-gradient(135deg, #818cf8 0%, #a78bfa 30%, #ec4899 60%, #818cf8 100%);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradShift 5s ease infinite;
+      }
+
+      /* ── Aurora background ── */
+      .aurora-container { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+      .aurora-blob {
+        position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none; will-change: transform;
+      }
+      .aurora-blob-1 { animation: auroraMove1 18s ease-in-out infinite; }
+      .aurora-blob-2 { animation: auroraMove2 22s ease-in-out infinite; }
+      .aurora-blob-3 { animation: auroraMove3 26s ease-in-out infinite; }
+
+      /* ── Beam ── */
+      .hero-beam {
+        position: absolute; top: 0; bottom: 0; width: 8%; pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgba(99,102,241,0.08), rgba(139,92,246,0.06), transparent);
+        transform: skewX(-12deg);
+        animation: beam 8s ease-in-out infinite;
+      }
+
+      /* ── Noise grain overlay ── */
+      .noise-overlay {
+        position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: ${isDark ? 0.025 : 0.018};
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        background-repeat: repeat; background-size: 128px 128px;
+      }
+
+      /* ── Grid line background ── */
+      .grid-bg {
+        background-image: linear-gradient(${isDark ? 'rgba(99,102,241,0.05)' : 'rgba(99,102,241,0.04)'} 1px, transparent 1px),
+          linear-gradient(90deg, ${isDark ? 'rgba(99,102,241,0.05)' : 'rgba(99,102,241,0.04)'} 1px, transparent 1px);
+        background-size: 60px 60px;
+      }
 
       /* ── Plan card ── */
       .plan-popular {
@@ -888,8 +955,16 @@ function Hero({ isDark }: { isDark: boolean }) {
 
   return (
     <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', paddingTop: 80, paddingBottom: 48, position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+      {/* Aurora animated background */}
+      <div className="aurora-container" style={{ zIndex: 0 }}>
+        <div className="aurora-blob aurora-blob-1" style={{ width: 700, height: 700, background: isDark ? 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, rgba(139,92,246,0.08) 50%, transparent 70%)' : 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)', top: -120, left: -80 }} />
+        <div className="aurora-blob aurora-blob-2" style={{ width: 600, height: 600, background: isDark ? 'radial-gradient(circle, rgba(236,72,153,0.12) 0%, rgba(139,92,246,0.06) 50%, transparent 70%)' : 'radial-gradient(circle, rgba(236,72,153,0.06) 0%, transparent 70%)', top: '30%', right: -60 }} />
+        <div className="aurora-blob aurora-blob-3" style={{ width: 500, height: 500, background: isDark ? 'radial-gradient(circle, rgba(14,165,233,0.1) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(14,165,233,0.06) 0%, transparent 70%)', bottom: 0, left: '35%' }} />
+      </div>
+      {/* Sweep beam — visible only in dark mode */}
+      {isDark && <div className="hero-beam" style={{ zIndex: 0 }} />}
       {/* Subtle dot-grid background */}
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, backgroundImage: `radial-gradient(${isDark ? 'rgba(99,102,241,0.12)' : 'rgba(99,102,241,0.08)'} 1px, transparent 1px)`, backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)' }} />
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, backgroundImage: `radial-gradient(${isDark ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.07)'} 1px, transparent 1px)`, backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)' }} />
 
       <div className="container-lg" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: 'clamp(40px, 5vw, 72px)', alignItems: 'center' }} className="hero-grid">
@@ -897,9 +972,15 @@ function Hero({ isDark }: { isDark: boolean }) {
           <div style={{ maxWidth: 680 }}>
             {/* Platform badge */}
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: isDark ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.07)', border: `1px solid ${isDark ? 'rgba(99,102,241,0.28)' : 'rgba(99,102,241,0.2)'}`, borderRadius: 999, padding: '5px 14px', marginBottom: 28 }}>
-                <span className="pulse-dot" style={{ width: 6, height: 6, borderRadius: '50%', background: '#818cf8', display: 'inline-block' }} />
-                <span style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#818cf8' : '#6366f1', letterSpacing: '0.06em', textTransform: 'uppercase' }}>AI-Powered English Fluency Platform</span>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 32,
+                background: isDark ? 'linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1))' : 'linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.05))',
+                border: `1px solid ${isDark ? 'rgba(99,102,241,0.35)' : 'rgba(99,102,241,0.22)'}`,
+                borderRadius: 999, padding: '7px 18px', position: 'relative', overflow: 'hidden',
+              }}>
+                <div style={{ position: 'absolute', top: 0, left: '-100%', width: '60%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent)', animation: 'shimmer 3s ease-in-out infinite' }} />
+                <Sparkles size={11} style={{ color: '#818cf8', flexShrink: 0 }} />
+                <span style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#a5b4fc' : '#6366f1', letterSpacing: '0.08em', textTransform: 'uppercase', position: 'relative' }}>AI-Powered English Fluency Platform</span>
               </div>
             </motion.div>
 
@@ -907,21 +988,21 @@ function Hero({ isDark }: { isDark: boolean }) {
             <motion.h1
               initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-              style={{ fontSize: 'clamp(2.6rem, 6.5vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 0, color: headColor }}
+              style={{ fontSize: 'clamp(2.9rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1.03, letterSpacing: '-0.045em', marginBottom: 0, color: headColor }}
             >
               Master Real
             </motion.h1>
             <motion.h1
               initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              style={{ fontSize: 'clamp(2.6rem, 6.5vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 0 }}
+              style={{ fontSize: 'clamp(2.9rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1.03, letterSpacing: '-0.045em', marginBottom: 0 }}
             >
               <span className="grad-text">English Fluency</span>
             </motion.h1>
             <motion.h1
               initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              style={{ fontSize: 'clamp(2.6rem, 6.5vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.04em', marginBottom: 28, color: headColor }}
+              style={{ fontSize: 'clamp(2.9rem, 7vw, 5rem)', fontWeight: 900, lineHeight: 1.03, letterSpacing: '-0.045em', marginBottom: 32, color: headColor }}
             >
               With Your AI Mentor
             </motion.h1>
@@ -1326,67 +1407,86 @@ function AnalyticsSection({ isDark }: { isDark: boolean }) {
 
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
-function Testimonials({ isDark }: { isDark: boolean }) {
+const AVATAR_GRADIENTS: Record<string, string> = {
+  PS: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+  JO: 'linear-gradient(135deg,#8b5cf6,#a855f7)',
+  MZ: 'linear-gradient(135deg,#0ea5e9,#06b6d4)',
+  RS: 'linear-gradient(135deg,#10b981,#14b8a6)',
+  AI: 'linear-gradient(135deg,#ec4899,#f43f5e)',
+  DK: 'linear-gradient(135deg,#f59e0b,#f97316)',
+};
+
+function TestiCard({ t, isDark }: { t: typeof TESTIMONIALS[0]; isDark: boolean }) {
   return (
-    <section className="section" id="testimonials" style={{ position: 'relative', zIndex: 1 }}>
-      <div className="container">
-        <FadeIn>
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <span className="section-label"><Star size={11} /> Real Results</span>
-            <h2 className="section-h">Learners Who Changed<br /><span className="grad-text">Their Lives With AI</span></h2>
-            <p className="section-sub">Thousands of real learners — professionals, students, immigrants — who levelled up with Lingoura AI.</p>
-          </div>
-        </FadeIn>
-        <StaggerChildren>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: 20 }}>
-            {TESTIMONIALS.map((t, i) => (
-              <AnimChild key={t.name}>
-                <div className="card testi-card" style={{
-                  padding: 28, height: '100%', display: 'flex', flexDirection: 'column', gap: 20,
-                  background: isDark ? 'rgba(255,255,255,0.035)' : 'rgba(255,255,255,0.9)',
-                  boxShadow: isDark ? 'none' : '0 4px 32px rgba(99,102,241,0.07), 0 1px 4px rgba(0,0,0,0.05)',
-                }}>
-                  {/* Stars */}
-                  <div style={{ display: 'flex', gap: 3 }}>
-                    {Array.from({ length: t.stars }).map((_, si) => <Star key={si} size={14} style={{ fill: '#f59e0b', color: '#f59e0b' }} />)}
-                  </div>
-                  {/* Quote */}
-                  <p style={{ fontSize: 14, color: isDark ? '#94a3b8' : '#475569', lineHeight: 1.72, flex: 1, fontStyle: 'italic' }}>"{t.text}"</p>
-                  {/* Metric pill */}
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 14px', borderRadius: 10, background: isDark ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.15)', alignSelf: 'flex-start' }}>
-                    <TrendingUp size={14} style={{ color: '#818cf8' }} />
-                    <div>
-                      <span style={{ fontSize: 15, fontWeight: 900, color: '#818cf8', marginRight: 6 }}>{t.metric}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: isDark ? '#64748b' : '#94a3b8' }}>{t.metricLabel}</span>
-                    </div>
-                  </div>
-                  {/* Author */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 16, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(99,102,241,0.08)'}` }}>
-                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: `linear-gradient(135deg, ${t.color.split(' ')[1].replace('from-', '').replace('-500', '')}, ${t.color.split(' ')[2]?.replace('to-', '').replace('-500', '') ?? 'violet'})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: '#fff', flexShrink: 0, backgroundImage: `linear-gradient(135deg, var(--tw-gradient-stops))` }}>
-                      {t.avatar}
-                    </div>
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ fontSize: 14, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', margin: 0 }}>{t.name}</p>
-                      <p style={{ fontSize: 12, color: isDark ? '#64748b' : '#94a3b8', margin: 0 }}>{t.role} · {t.company}</p>
-                    </div>
-                  </div>
-                </div>
-              </AnimChild>
-            ))}
-          </div>
-        </StaggerChildren>
-        {/* Bottom stats */}
-        <FadeIn delay={0.2}>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 40, flexWrap: 'wrap', marginTop: 48, paddingTop: 40, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(99,102,241,0.1)'}` }}>
-            {[{ val: '10,000+', label: 'Active Learners' }, { val: '4.9★', label: 'Average Rating' }, { val: '97%', label: 'Satisfaction Rate' }, { val: '#1', label: 'AI IELTS Platform' }].map(s => (
-              <div key={s.label} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 28, fontWeight: 900, background: 'linear-gradient(135deg,#818cf8,#a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.03em' }}>{s.val}</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: isDark ? '#475569' : '#94a3b8', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </FadeIn>
+    <div style={{
+      width: 320, flexShrink: 0,
+      padding: 24, borderRadius: 20, display: 'flex', flexDirection: 'column', gap: 16,
+      background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.92)',
+      border: `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(99,102,241,0.1)'}`,
+      backdropFilter: 'blur(16px)',
+      boxShadow: isDark ? '0 4px 24px rgba(0,0,0,0.2)' : '0 4px 32px rgba(99,102,241,0.07)',
+    }}>
+      <div style={{ display: 'flex', gap: 3 }}>
+        {Array.from({ length: t.stars }).map((_, si) => <Star key={si} size={12} style={{ fill: '#f59e0b', color: '#f59e0b' }} />)}
       </div>
+      <p style={{ fontSize: 13, color: isDark ? '#94a3b8' : '#475569', lineHeight: 1.7, flex: 1, fontStyle: 'italic', margin: 0 }}>"{t.text}"</p>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 8, background: isDark ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.15)', alignSelf: 'flex-start' }}>
+        <TrendingUp size={12} style={{ color: '#818cf8' }} />
+        <span style={{ fontSize: 13, fontWeight: 900, color: '#818cf8' }}>{t.metric}</span>
+        <span style={{ fontSize: 11, fontWeight: 600, color: isDark ? '#64748b' : '#94a3b8' }}>{t.metricLabel}</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 14, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(99,102,241,0.08)'}` }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', background: AVATAR_GRADIENTS[t.avatar] ?? 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900, color: '#fff', flexShrink: 0 }}>
+          {t.avatar}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <p style={{ fontSize: 13, fontWeight: 800, color: isDark ? '#f1f5f9' : '#0f172a', margin: 0 }}>{t.name}</p>
+          <p style={{ fontSize: 11, color: isDark ? '#64748b' : '#94a3b8', margin: 0 }}>{t.role} · {t.company}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Testimonials({ isDark }: { isDark: boolean }) {
+  const row1 = [...TESTIMONIALS, ...TESTIMONIALS];
+  const row2 = [...TESTIMONIALS.slice(3), ...TESTIMONIALS.slice(0, 3), ...TESTIMONIALS.slice(3), ...TESTIMONIALS.slice(0, 3)];
+
+  return (
+    <section className="section" id="testimonials" style={{ position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+      <FadeIn>
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <span className="section-label"><Star size={11} /> Real Results</span>
+          <h2 className="section-h">Learners Who Changed<br /><span className="grad-text">Their Lives With AI</span></h2>
+          <p className="section-sub">Thousands of real learners — professionals, students, immigrants — who levelled up with Lingoura AI.</p>
+        </div>
+      </FadeIn>
+
+      {/* Row 1 — scrolls left */}
+      <div className="marquee-wrap" style={{ marginBottom: 20 }}>
+        <div className="marquee-track" style={{ gap: 20 }}>
+          {row1.map((t, i) => <TestiCard key={i} t={t} isDark={isDark} />)}
+        </div>
+      </div>
+
+      {/* Row 2 — scrolls right */}
+      <div className="marquee-wrap">
+        <div className="marquee-track-r" style={{ gap: 20 }}>
+          {row2.map((t, i) => <TestiCard key={i} t={t} isDark={isDark} />)}
+        </div>
+      </div>
+
+      {/* Bottom stats */}
+      <FadeIn delay={0.2}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 40, flexWrap: 'wrap', marginTop: 56, paddingTop: 40, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(99,102,241,0.1)'}` }} className="container">
+          {[{ val: '10,000+', label: 'Active Learners' }, { val: '4.9★', label: 'Average Rating' }, { val: '97%', label: 'Satisfaction Rate' }, { val: '#1', label: 'AI IELTS Platform' }].map(s => (
+            <div key={s.label} style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 28, fontWeight: 900, background: 'linear-gradient(135deg,#818cf8,#a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.03em' }}>{s.val}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: isDark ? '#475569' : '#94a3b8', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </FadeIn>
     </section>
   );
 }
@@ -1510,7 +1610,7 @@ function PricingSection({ isDark }: { isDark: boolean }) {
 
         {/* ── Plan Cards ──────────────────────────────────────────────────── */}
         <StaggerChildren>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 20, alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 20, alignItems: 'stretch' }}>
             {PLANS.map((plan) => {
               const price = interval === 'annual' ? plan.annualPrice : plan.monthlyPrice;
               const isFree = plan.id === 'FREE';
@@ -1524,6 +1624,7 @@ function PricingSection({ isDark }: { isDark: boolean }) {
                     transition={{ duration: 0.2 }}
                     style={{
                       padding: 28, display: 'flex', flexDirection: 'column', position: 'relative',
+                      height: '100%',
                       borderRadius: 22,
                       border: `1px solid ${plan.popular ? 'rgba(99,102,241,0.45)' : isElite ? 'rgba(139,92,246,0.35)' : cardBorder}`,
                       background: plan.popular
@@ -1855,6 +1956,7 @@ export default function LandingPage() {
     <div className="lp">
       <GlobalCSS isDark={isDark} />
       <GlobalBackground isDark={isDark} />
+      <div className="noise-overlay" aria-hidden="true" />
       <Navbar isDark={isDark} toggleTheme={toggle} />
       <Hero isDark={isDark} />
       <TrustedBy isDark={isDark} />
